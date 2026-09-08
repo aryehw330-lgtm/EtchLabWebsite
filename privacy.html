@@ -1,92 +1,86 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Privacy Policy - EtchLab</title>
-  <style>
-    :root {
-      --bg: #0d1420; --card: #16223a; --border: #263455;
-      --ink: #f2f5fa; --ink-soft: #9fb0cc; --purple: #9b6bff; --cyan: #35d7e0;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0; background: var(--bg); color: var(--ink);
-      font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif;
-      line-height: 1.6;
-    }
-    .wrap { max-width: 680px; margin: 0 auto; padding: 50px 24px 70px; }
-    .brand { display: flex; align-items: center; gap: 10px; margin-bottom: 30px; text-decoration: none; }
-    .brand img { height: 28px; width: 28px; object-fit: contain; background: #eeeeee; border-radius: 6px; padding: 3px; }
-    .brand span { font-weight: 800; color: var(--ink); font-size: 17px; }
-    h1 { font-size: 26px; margin: 0 0 4px; }
-    h2 { font-size: 17px; margin-top: 30px; color: var(--ink); }
-    p, li { color: var(--ink-soft); }
-    a { color: var(--cyan); }
-    .updated { color: #6d7ea3; font-size: 13px; margin-bottom: 26px; }
-    footer { border-top: 1px solid var(--border); margin-top: 50px; padding-top: 20px; font-size: 13px; color: var(--ink-soft); }
-    footer a { margin-right: 14px; }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy Policy - EtchLab</title>
 </head>
 <body>
-  <div class="wrap">
-    <a class="brand" href="index.html">
-      <img src="logo.png" alt="EtchLab logo">
-      <span>EtchLab</span>
-    </a>
 
-    <h1>Privacy Policy - Laser Name Helper</h1>
-    <p class="updated">Last updated: 2026</p>
+<a href="https://etchlabdesign.com/index.html">
+  <img src="https://etchlabdesign.com/logo.png" alt="EtchLab logo"> EtchLab
+</a>
 
-    <p>Laser Name Helper is EtchLab's sign-up and queue-management tool for
-    in-person laser engraving events. This page explains what
-    information the app touches and how it is used.</p>
+<h1>Privacy Policy - Laser Name Helper</h1>
 
-    <h2>What information is collected</h2>
-    <p>When someone signs up at an event, the sign-up page collects
-    only what is needed to run the queue: the item they chose, their
-    color and font choice (if offered), what they want engraved, and
-    a name to identify them at pickup. An optional phone number may
-    also be collected if the event organizer chooses to ask for one.</p>
+<p>Last updated: 2026</p>
 
-    <h2>Where the information is stored</h2>
-    <p>All sign-up information is stored in a Google Sheet inside the
-    event organizer's own Google Drive - not on any server we operate,
-    and not in any database we control. The organizer's Google account
-    owns and controls that data at all times.</p>
+<p>Laser Name Helper is EtchLab's sign-up and queue-management tool for
+in-person laser engraving events. This page explains what
+information the app touches and how it is used.</p>
 
-    <h2>What the app's Google permissions are used for</h2>
-    <p>When an event organizer signs in with Google, the app requests
-    permission to:</p>
-    <ul>
-      <li>Create and edit a Google Sheet to store sign-ups for their event</li>
-      <li>Create a small sign-up web page (via Google Apps Script) that
-        writes directly into that Sheet</li>
-      <li>Build and read Google Form responses, for organizers who choose to
-        use a Google Form instead of the built-in sign-up page</li>
-    </ul>
-    <p>The app does not read, access, or modify any other files in the
-    organizer's Google Drive, and does not access Gmail, Contacts, or
-    any other Google service.</p>
+<h2>What information is collected</h2>
 
-    <h2>Who can see this information</h2>
-    <p>Only the event organizer (and anyone they choose to share their
-    Google Sheet with) can see sign-up data. We do not access, sell,
-    or share this information with any third party.</p>
+<p>When someone signs up at an event, the sign-up page collects
+only what is needed to run the queue: the item they chose, their
+color and font choice (if offered), what they want engraved, and
+a name to identify them at pickup. An optional phone number may
+also be collected if the event organizer chooses to ask for one.</p>
 
-    <h2>Data retention and deletion</h2>
-    <p>Since all data lives in the organizer's own Google Sheet, they
-    can delete it at any time the same way they would delete any other
-    Google Sheet - the app does not keep a separate copy anywhere.</p>
+<h2>Where the information is stored</h2>
 
-    <h2>Contact</h2>
-    <p>Questions about this policy can be sent to
-    <a href="mailto:etchlabdesign@gmail.com">etchlabdesign@gmail.com</a>.</p>
+<p>All sign-up information is stored in a Google Sheet inside the
+event organizer's own Google Drive - not on any server we operate,
+and not in any database we control. The organizer's Google account
+owns and controls that data at all times.</p>
 
-    <footer>
-      <a href="index.html">Home</a>
-      <a href="terms.html">Terms of Service</a>
-    </footer>
-  </div>
+<h2>How the information is protected</h2>
+
+<p>We take the security of the information the app touches seriously.</p>
+
+<ul>
+  <li>Because sign-up data is stored in the event organizer's own Google Sheet, it is protected by Google's own security infrastructure, including encryption in transit and at rest.</li>
+  <li>All communication between the sign-up page, the app, and Google's services takes place over encrypted HTTPS/TLS connections.</li>
+  <li>Access to the app's Google permissions is protected by Google's OAuth sign-in. Only the authenticated event organizer can authorize the app, and access can be revoked at any time from their Google Account security settings.</li>
+  <li>The app operates no server or database of its own, so there is no separate copy of the data for us to secure, expose, or lose.</li>
+  <li>Our use of information received from Google APIs adheres to the <a href="https://developers.google.com/terms/api-services-user-data-policy">Google API Services User Data Policy</a>, including the Limited Use requirements.</li>
+</ul>
+
+<h2>What the app's Google permissions are used for</h2>
+
+<p>When an event organizer signs in with Google, the app requests
+permission to:</p>
+
+<ul>
+  <li>Create and edit a Google Sheet to store sign-ups for their event</li>
+  <li>Create a small sign-up web page (via Google Apps Script) that
+  writes directly into that Sheet</li>
+  <li>Build and read Google Form responses, for organizers who choose to
+  use a Google Form instead of the built-in sign-up page</li>
+</ul>
+
+<p>The app does not read, access, or modify any other files in the
+organizer's Google Drive, and does not access Gmail, Contacts, or
+any other Google service.</p>
+
+<h2>Who can see this information</h2>
+
+<p>Only the event organizer (and anyone they choose to share their
+Google Sheet with) can see sign-up data. We do not access, sell,
+or share this information with any third party.</p>
+
+<h2>Data retention and deletion</h2>
+
+<p>Since all data lives in the organizer's own Google Sheet, they
+can delete it at any time the same way they would delete any other
+Google Sheet - the app does not keep a separate copy anywhere.</p>
+
+<h2>Contact</h2>
+
+<p>Questions about this policy can be sent to <a href="mailto:etchlabdesign@gmail.com">etchlabdesign@gmail.com</a>.</p>
+
+<a href="https://etchlabdesign.com/index.html">Home</a>
+<a href="https://etchlabdesign.com/terms.html">Terms of Service</a>
+
 </body>
 </html>
