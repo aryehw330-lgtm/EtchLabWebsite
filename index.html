@@ -1,306 +1,346 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>EtchLab - Live Laser Engraving for Events</title>
-  <style>
-    :root {
-      --bg: #0d1420;
-      --bg-alt: #10192a;
-      --card: #16223a;
-      --border: #263455;
-      --ink: #f2f5fa;
-      --ink-soft: #9fb0cc;
-      --purple: #9b6bff;
-      --cyan: #35d7e0;
-    }
-    * { box-sizing: border-box; }
-    html, body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--ink);
-      font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif;
-      line-height: 1.55;
-    }
-    a { color: var(--cyan); }
-    .wrap { max-width: 1000px; margin: 0 auto; padding: 0 24px; }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EtchLab — Live Laser Engraving for Events</title>
+<meta name="description" content="The lab comes to you — live laser engraving for weddings, bar & bat mitzvahs, and corporate events.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --obsidian:#0A0A0B;
+    --surface:#141416;
+    --surface-2:#1C1C20;
+    --laser:#00E5C0;
+    --ember:#FF5E3A;
+    --text:#EDEDED;
+    --muted:#8A8A92;
+    --line:rgba(255,255,255,.08);
+    --display:'Space Grotesk',system-ui,sans-serif;
+    --body:'Inter',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--obsidian);
+    color:var(--text);
+    font-family:var(--body);
+    line-height:1.6;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;text-decoration:none}
 
-    /* ---------- header ---------- */
-    header.site {
-      position: sticky; top: 0; z-index: 10;
-      background: rgba(13,20,32,0.9);
-      backdrop-filter: blur(6px);
-      border-bottom: 1px solid var(--border);
-    }
-    header.site .bar {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 14px 24px;
-    }
-    header.site .brand { display: flex; align-items: center; gap: 10px; }
-    header.site .brand img {
-      height: 34px; width: 34px; display: block; object-fit: contain;
-      background: #eeeeee; border-radius: 8px; padding: 3px;
-    }
-    header.site .brand span {
-      font-weight: 800; letter-spacing: 0.5px; font-size: 19px; color: var(--ink);
-    }
-    nav.site-nav a {
-      color: var(--ink-soft); text-decoration: none; margin-left: 22px; font-size: 14px;
-      font-weight: 600;
-    }
-    nav.site-nav a:hover { color: var(--cyan); }
+  /* ---- Laser cursor layer ---- */
+  #laser-layer{
+    position:fixed;inset:0;pointer-events:none;z-index:9999;
+  }
+  #beam{
+    position:absolute;top:0;left:0;height:2px;
+    transform-origin:left center;
+    background:linear-gradient(90deg,rgba(0,229,192,0) 0%,rgba(0,229,192,.65) 60%,rgba(0,229,192,1) 100%);
+    filter:drop-shadow(0 0 6px rgba(0,229,192,.9));
+    opacity:0;transition:opacity .3s;
+  }
+  #dot{
+    position:absolute;width:14px;height:14px;border-radius:50%;
+    background:radial-gradient(circle,#fff 0%,var(--laser) 40%,rgba(0,229,192,0) 70%);
+    filter:drop-shadow(0 0 10px var(--laser)) drop-shadow(0 0 20px var(--ember));
+    transform:translate(-50%,-50%);opacity:0;transition:opacity .3s;
+  }
 
-    /* ---------- hero ---------- */
-    .hero {
-      position: relative;
-      overflow: hidden;
-      padding: 90px 24px 80px;
-      text-align: center;
-      background:
-        radial-gradient(circle at 50% 0%, rgba(155,107,255,0.18), transparent 55%),
-        radial-gradient(circle at 15% 90%, rgba(53,215,224,0.10), transparent 45%);
-    }
-    .hero .circuit { position: absolute; opacity: 0.35; pointer-events: none; }
-    .hero .circuit.tl { top: 0; left: 0; }
-    .hero .circuit.tr { top: 0; right: 0; transform: scaleX(-1); }
-    .hero .logo-badge {
-      display: inline-block; background: #eeeeee; border-radius: 20px;
-      padding: 22px 26px; margin-bottom: 24px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.06);
-    }
-    .hero .logo-badge img { height: 110px; width: auto; display: block; }
-    .hero h1 {
-      font-size: 42px; margin: 6px 0 14px; letter-spacing: 0.5px;
-    }
-    .hero p.tagline {
-      font-size: 19px; color: var(--ink-soft); max-width: 560px; margin: 0 auto 30px;
-    }
-    .cta-row { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
-    .btn {
-      display: inline-block; text-decoration: none; font-weight: 700; font-size: 15px;
-      padding: 14px 26px; border-radius: 10px; cursor: pointer;
-    }
-    .btn-primary {
-      background: linear-gradient(90deg, var(--purple), var(--cyan));
-      color: #0d1420;
-    }
-    .btn-secondary {
-      background: transparent; color: var(--ink); border: 1px solid var(--border);
-    }
+  /* ---- Nav ---- */
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:20px 32px;
+    background:rgba(10,10,11,.6);
+    backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--line);
+  }
+  .brand{display:flex;align-items:center;gap:12px;font-family:var(--display);font-weight:700;font-size:20px;letter-spacing:-.02em}
+  .brand img{width:30px;height:30px}
+  .brand span{color:var(--laser)}
+  .nav-links{display:flex;gap:28px;font-size:15px;color:var(--muted)}
+  .nav-links a{transition:color .2s}
+  .nav-links a:hover{color:var(--laser)}
+  .nav-toggle{display:none;background:none;border:none;color:var(--text);font-size:24px;cursor:pointer}
 
-    /* ---------- sections ---------- */
-    section { padding: 70px 24px; }
-    section.alt { background: var(--bg-alt); }
-    h2.section-title {
-      font-size: 28px; text-align: center; margin: 0 0 8px;
-    }
-    p.section-sub {
-      text-align: center; color: var(--ink-soft); max-width: 560px; margin: 0 auto 44px;
-    }
+  /* ---- Hero ---- */
+  header{
+    min-height:100vh;display:flex;flex-direction:column;justify-content:center;
+    padding:120px 32px 80px;position:relative;
+    background:
+      radial-gradient(1200px 600px at 70% -10%,rgba(0,229,192,.08),transparent 60%),
+      radial-gradient(800px 500px at 10% 110%,rgba(255,94,58,.06),transparent 60%);
+  }
+  .grid-bg{
+    position:absolute;inset:0;z-index:0;opacity:.4;
+    background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:64px 64px;
+    mask-image:radial-gradient(ellipse at center,#000 20%,transparent 75%);
+  }
+  .hero-inner{position:relative;z-index:1;max-width:1100px;margin:0 auto;width:100%}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    color:var(--laser);font-size:14px;font-weight:500;
+    margin-bottom:24px;
+  }
+  .eyebrow .pulse{width:8px;height:8px;border-radius:50%;background:var(--laser);box-shadow:0 0 8px var(--laser);animation:pulse 1.8s infinite}
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.6)}}
+  h1{
+    font-family:var(--display);font-weight:700;
+    font-size:clamp(42px,8vw,88px);line-height:1.02;letter-spacing:-.03em;
+    max-width:14ch;
+  }
+  .hero-sub{
+    font-size:clamp(17px,2.4vw,21px);color:var(--muted);
+    margin-top:24px;max-width:52ch;
+  }
+  .hero-cta{display:flex;gap:16px;margin-top:40px;flex-wrap:wrap}
+  .btn{
+    font-family:var(--display);font-weight:600;font-size:16px;
+    padding:15px 28px;border-radius:2px;cursor:pointer;
+    transition:transform .15s,box-shadow .25s;position:relative;
+  }
+  .btn-primary{background:var(--laser);color:#04211C;box-shadow:0 0 0 rgba(0,229,192,.5)}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,229,192,.35)}
+  .btn-ghost{border:1px solid var(--line);color:var(--text)}
+  .btn-ghost:hover{border-color:var(--laser);color:var(--laser)}
 
-    /* ---------- services ---------- */
-    .grid-3 {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
-    }
-    .service-card {
-      background: var(--card); border: 1px solid var(--border); border-radius: 14px;
-      padding: 26px 22px;
-    }
-    .service-card .icon {
-      width: 40px; height: 40px; border-radius: 10px;
-      background: linear-gradient(135deg, var(--purple), var(--cyan));
-      margin-bottom: 14px;
-    }
-    .service-card h3 { margin: 0 0 8px; font-size: 18px; }
-    .service-card p { margin: 0; color: var(--ink-soft); font-size: 14px; }
+  /* section framing */
+  section{padding:110px 32px;position:relative}
+  .wrap{max-width:1100px;margin:0 auto}
+  .section-head{margin-bottom:56px;max-width:60ch}
+  .section-head h2{font-family:var(--display);font-weight:600;font-size:clamp(30px,5vw,46px);letter-spacing:-.02em;line-height:1.08}
+  .section-head p{color:var(--muted);margin-top:16px;font-size:18px}
 
-    .materials {
-      margin-top: 40px; text-align: center; color: var(--ink-soft); font-size: 14px;
-    }
-    .materials strong { color: var(--ink); }
+  /* services */
+  .services{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .svc{
+    background:var(--surface);border:1px solid var(--line);
+    padding:34px 28px;border-radius:4px;position:relative;overflow:hidden;
+    transition:border-color .3s,transform .3s;
+  }
+  .svc::before{
+    content:"";position:absolute;left:0;top:0;height:2px;width:0;
+    background:var(--laser);box-shadow:0 0 12px var(--laser);transition:width .4s ease;
+  }
+  .svc:hover{border-color:rgba(0,229,192,.4);transform:translateY(-4px)}
+  .svc:hover::before{width:100%}
+  .svc h3{font-family:var(--display);font-weight:600;font-size:22px;margin-bottom:12px}
+  .svc p{color:var(--muted);font-size:15.5px}
+  .svc .num{font-family:var(--display);color:var(--laser);font-size:14px;opacity:.7;margin-bottom:20px;display:block}
+  .materials{margin-top:36px;color:var(--muted);font-size:17px;text-align:center}
+  .materials b{color:var(--text);font-weight:600}
 
-    /* ---------- pricing ---------- */
-    .grid-2 {
-      display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; align-items: stretch;
-    }
-    .price-card {
-      background: var(--card); border: 1px solid var(--border); border-radius: 16px;
-      padding: 30px 26px; position: relative; display: flex; flex-direction: column;
-    }
-    .price-card.recommended { border-color: var(--purple); }
-    .price-card .badge {
-      position: absolute; top: -12px; right: 22px;
-      background: linear-gradient(90deg, var(--purple), var(--cyan));
-      color: #0d1420; font-size: 11px; font-weight: 800; letter-spacing: 0.5px;
-      padding: 5px 12px; border-radius: 999px; text-transform: uppercase;
-    }
-    .price-card h3 { margin: 0 0 4px; font-size: 16px; letter-spacing: 0.5px; color: var(--ink-soft);
-      text-transform: uppercase; }
-    .price-card .amount { font-size: 40px; font-weight: 800; margin: 4px 0 18px; }
-    .price-card .amount span { font-size: 15px; color: var(--ink-soft); font-weight: 500; }
-    .price-card ul { list-style: none; margin: 0; padding: 0; flex: 1; }
-    .price-card li {
-      padding: 9px 0; border-top: 1px solid var(--border); color: var(--ink-soft); font-size: 14px;
-    }
-    .price-card li:first-child { border-top: none; }
-    .price-card li:before { content: "✓ "; color: var(--cyan); font-weight: 700; }
+  /* pricing */
+  .pricing{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;max-width:840px;margin:0 auto}
+  .plan{
+    background:var(--surface);border:1px solid var(--line);border-radius:6px;
+    padding:40px 34px;position:relative;transition:transform .3s,border-color .3s;
+  }
+  .plan:hover{transform:translateY(-4px)}
+  .plan.featured{border-color:rgba(0,229,192,.5);background:linear-gradient(180deg,rgba(0,229,192,.06),var(--surface))}
+  .plan .tag{
+    position:absolute;top:-12px;right:24px;background:var(--laser);color:#04211C;
+    font-family:var(--display);font-weight:600;font-size:12px;padding:5px 12px;border-radius:2px;
+  }
+  .plan h3{font-family:var(--display);font-weight:600;font-size:20px;color:var(--muted)}
+  .price{font-family:var(--display);font-weight:700;font-size:52px;margin:12px 0 24px;letter-spacing:-.03em}
+  .price span{font-size:18px;color:var(--muted);font-weight:400}
+  .plan ul{list-style:none;display:flex;flex-direction:column;gap:14px}
+  .plan li{display:flex;gap:12px;font-size:15.5px;color:var(--text)}
+  .plan li::before{content:"";flex:none;width:18px;height:18px;margin-top:3px;border-radius:50%;background:radial-gradient(circle,var(--laser) 0%,rgba(0,229,192,.15) 100%);box-shadow:0 0 8px rgba(0,229,192,.5)}
+  .price-note{max-width:840px;margin:28px auto 0;color:var(--muted);font-size:15px;text-align:center;line-height:1.7}
 
-    .fees-note {
-      margin-top: 26px; background: var(--card); border: 1px solid var(--border);
-      border-radius: 12px; padding: 20px 24px; font-size: 14px; color: var(--ink-soft);
-    }
-    .fees-note strong { color: var(--ink); }
-    .fees-note div + div { margin-top: 8px; }
+  /* contact */
+  .contact{text-align:center}
+  .contact h2{font-family:var(--display);font-weight:700;font-size:clamp(32px,6vw,60px);letter-spacing:-.03em;line-height:1.05}
+  .contact p{color:var(--muted);margin:20px auto 40px;max-width:44ch;font-size:18px}
+  .contact-methods{display:flex;flex-direction:column;gap:16px;align-items:center;font-size:18px}
+  .contact-methods a{display:inline-flex;align-items:center;gap:12px;color:var(--text);transition:color .2s}
+  .contact-methods a:hover{color:var(--laser)}
+  .qr{margin-top:44px}
+  .qr img{width:150px;height:150px;border-radius:8px;border:1px solid var(--line)}
 
-    /* ---------- contact ---------- */
-    .contact-box {
-      background: var(--card); border: 1px solid var(--border); border-radius: 18px;
-      padding: 44px; display: flex; align-items: center; justify-content: space-between;
-      gap: 30px; flex-wrap: wrap;
-    }
-    .contact-box .details h3 { margin: 0 0 6px; font-size: 22px; }
-    .contact-box .details p { margin: 0 0 16px; color: var(--ink-soft); }
-    .contact-box .rows div { margin: 6px 0; font-size: 15px; }
-    .contact-box .rows a { text-decoration: none; }
-    .contact-box img.qr { width: 130px; height: 130px; border-radius: 12px; background: #fff; padding: 8px; }
+  footer{
+    border-top:1px solid var(--line);padding:32px;text-align:center;
+    color:var(--muted);font-size:14px;
+  }
+  footer a{transition:color .2s}
+  footer a:hover{color:var(--laser)}
+  footer .sep{margin:0 10px;opacity:.4}
 
-    footer.site {
-      border-top: 1px solid var(--border); padding: 28px 24px; text-align: center;
-      color: var(--ink-soft); font-size: 13px;
-    }
-    footer.site a { color: var(--ink-soft); margin: 0 8px; text-decoration: none; }
-    footer.site a:hover { color: var(--cyan); }
+  /* reveal */
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
+  .reveal.in{opacity:1;transform:none}
 
-    @media (max-width: 760px) {
-      .grid-3 { grid-template-columns: 1fr; }
-      .grid-2 { grid-template-columns: 1fr; }
-      .hero h1 { font-size: 32px; }
-      .contact-box { flex-direction: column; text-align: center; }
-    }
-  </style>
+  @media(max-width:820px){
+    .services{grid-template-columns:1fr}
+    .pricing{grid-template-columns:1fr}
+    .nav-links{display:none}
+  }
+  @media(prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+    .reveal{opacity:1;transform:none}
+    #laser-layer{display:none}
+  }
+</style>
 </head>
 <body>
 
-  <header class="site">
-    <div class="bar">
-      <div class="brand">
-        <img src="logo.png" alt="EtchLab logo">
-        <span>EtchLab</span>
-      </div>
-      <nav class="site-nav">
-        <a href="#services">Services</a>
-        <a href="#pricing">Pricing</a>
-        <a href="#contact">Contact</a>
-      </nav>
-    </div>
-  </header>
+<div id="laser-layer" aria-hidden="true">
+  <div id="beam"></div>
+  <div id="dot"></div>
+</div>
 
-  <section class="hero">
-    <svg class="circuit tl" width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M10 10 H60 V40 H100" stroke="#35d7e0" stroke-width="2"/>
-      <path d="M10 60 H40 V100" stroke="#35d7e0" stroke-width="2"/>
-      <circle cx="100" cy="40" r="4" fill="#35d7e0"/>
-      <circle cx="40" cy="100" r="4" fill="#35d7e0"/>
-      <circle cx="10" cy="10" r="4" fill="#9b6bff"/>
-    </svg>
-    <svg class="circuit tr" width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M10 10 H60 V40 H100" stroke="#35d7e0" stroke-width="2"/>
-      <path d="M10 60 H40 V100" stroke="#35d7e0" stroke-width="2"/>
-      <circle cx="100" cy="40" r="4" fill="#35d7e0"/>
-      <circle cx="40" cy="100" r="4" fill="#35d7e0"/>
-      <circle cx="10" cy="10" r="4" fill="#9b6bff"/>
-    </svg>
-    <div class="logo-badge"><img src="logo.png" alt="EtchLab"></div>
-    <h1>EtchLab</h1>
-    <p class="tagline">The lab comes to you — live laser engraving for unforgettable events.</p>
-    <div class="cta-row">
+<nav>
+  <a class="brand" href="#top"><img src="https://etchlabdesign.com/logo.png" alt="EtchLab logo">Etch<span>Lab</span></a>
+  <div class="nav-links">
+    <a href="#services">Services</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<header id="top">
+  <div class="grid-bg"></div>
+  <div class="hero-inner">
+    <span class="eyebrow reveal"><span class="pulse"></span>Live engraving · on-site · anywhere you celebrate</span>
+    <h1 class="reveal">The lab comes to you.</h1>
+    <p class="hero-sub reveal">Real laser engraving, set up at your event. Guests watch it happen and walk away with something made just for them — on the spot.</p>
+    <div class="hero-cta reveal">
       <a class="btn btn-primary" href="https://instagram.com/etchlabdesign" target="_blank" rel="noopener">Book on Instagram</a>
-      <a class="btn btn-secondary" href="#pricing">See pricing</a>
+      <a class="btn btn-ghost" href="#pricing">See pricing</a>
     </div>
-  </section>
+  </div>
+</header>
 
-  <section id="services">
-    <div class="wrap">
-      <h2 class="section-title">Live engraving, wherever you're celebrating</h2>
-      <p class="section-sub">We bring the laser, the setup, and the engraver to you — guests walk away with something made just for them, on the spot.</p>
-      <div class="grid-3">
-        <div class="service-card">
-          <div class="icon"></div>
-          <h3>Bar &amp; Bat Mitzvahs</h3>
-          <p>A hands-on activity guests remember — personalized keepsakes engraved live at the event.</p>
-        </div>
-        <div class="service-card">
-          <div class="icon"></div>
-          <h3>Weddings</h3>
-          <p>Custom favors and keepsakes engraved on-site, made to match your day.</p>
-        </div>
-        <div class="service-card">
-          <div class="icon"></div>
-          <h3>Corporate Events</h3>
-          <p>Branded giveaways and personalized items engraved live for teams and clients.</p>
-        </div>
-      </div>
-      <p class="materials">Custom engraving on <strong>leather, wood, accessories, and more</strong> — tell us the material and we'll make it work.</p>
+<section id="services">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <h2>Engraving as the entertainment</h2>
+      <p>We bring the laser, the setup, and the engraver. You get an activity guests remember and a keepsake they keep.</p>
     </div>
-  </section>
-
-  <section class="alt" id="pricing">
-    <div class="wrap">
-      <h2 class="section-title">Event Packages</h2>
-      <p class="section-sub">Every package includes travel up to 50 miles and full on-site setup &amp; breakdown.</p>
-      <div class="grid-2">
-        <div class="price-card">
-          <h3>Standard</h3>
-          <div class="amount">$1,000</div>
-          <ul>
-            <li>Up to 4 hours of live engraving</li>
-            <li>1 engraver | 1 laser machine</li>
-            <li>On-site setup &amp; breakdown</li>
-            <li>Travel included up to 50 miles</li>
-          </ul>
-        </div>
-        <div class="price-card recommended">
-          <span class="badge">Recommended</span>
-          <h3>High-Volume Event</h3>
-          <div class="amount">$1,450</div>
-          <ul>
-            <li>Up to 4 hours of live engraving</li>
-            <li>2 engravers | 2 laser machines</li>
-            <li>Faster guest turnaround for large crowds</li>
-            <li>Travel included up to 50 miles</li>
-          </ul>
-        </div>
+    <div class="services">
+      <div class="svc reveal">
+        <span class="num">Bar &amp; Bat Mitzvahs</span>
+        <h3>A hands-on moment</h3>
+        <p>Personalized keepsakes engraved live — the kind of activity guests crowd around all night.</p>
       </div>
-      <div class="fees-note">
-        <div><strong>Additional event time:</strong> $150 per hour after the first 4 hours.</div>
-        <div><strong>Pre-engraving of logos or custom designs:</strong> custom quote based on artwork, quantity, and project scope.</div>
+      <div class="svc reveal">
+        <span class="num">Weddings</span>
+        <h3>Favors, made on-site</h3>
+        <p>Custom favors and keepsakes engraved in real time, made to match the look of your day.</p>
+      </div>
+      <div class="svc reveal">
+        <span class="num">Corporate Events</span>
+        <h3>Branded, on the spot</h3>
+        <p>Logo giveaways and personalized items engraved live for teams, clients, and guests.</p>
       </div>
     </div>
-  </section>
+    <p class="materials reveal">Engraving on <b>leather, wood, accessories, and more</b> — tell us the material and we'll make it work.</p>
+  </div>
+</section>
 
-  <section id="contact">
-    <div class="wrap">
-      <div class="contact-box">
-        <div class="details">
-          <h3>Ready to book your event?</h3>
-          <p>DM us on Instagram, or reach out directly.</p>
-          <div class="rows">
-            <div>📸 <a href="https://instagram.com/etchlabdesign" target="_blank" rel="noopener">@etchlabdesign</a></div>
-            <div>✉️ <a href="mailto:etchlabdesign@gmail.com">etchlabdesign@gmail.com</a></div>
-            <div>📞 <a href="tel:+19737150476">973-715-0476</a></div>
-          </div>
-        </div>
-        <img class="qr" src="instagram-qr.jpeg" alt="Scan to follow @etchlabdesign on Instagram">
+<section id="pricing" style="background:var(--surface);border-block:1px solid var(--line)">
+  <div class="wrap">
+    <div class="section-head reveal" style="text-align:center;margin-inline:auto">
+      <h2>Event packages</h2>
+      <p style="margin-inline:auto">Every package includes travel up to 50 miles and full on-site setup &amp; breakdown.</p>
+    </div>
+    <div class="pricing">
+      <div class="plan reveal">
+        <h3>Standard</h3>
+        <div class="price">$1,000</div>
+        <ul>
+          <li>Up to 4 hours of live engraving</li>
+          <li>1 engraver · 1 laser machine</li>
+          <li>On-site setup &amp; breakdown</li>
+          <li>Travel included up to 50 miles</li>
+        </ul>
+      </div>
+      <div class="plan featured reveal">
+        <span class="tag">Recommended</span>
+        <h3>High-Volume Event</h3>
+        <div class="price">$1,450</div>
+        <ul>
+          <li>Up to 4 hours of live engraving</li>
+          <li>2 engravers · 2 laser machines</li>
+          <li>Faster turnaround for large crowds</li>
+          <li>Travel included up to 50 miles</li>
+        </ul>
       </div>
     </div>
-  </section>
+    <p class="price-note reveal">
+      Additional event time: <b style="color:var(--text)">$150/hour</b> after the first 4 hours.<br>
+      Pre-engraving of logos or custom designs: custom quote based on artwork, quantity, and scope.
+    </p>
+  </div>
+</section>
 
-  <footer class="site">
-    &copy; 2026 EtchLab &middot;
-    <a href="privacy.html">Privacy Policy</a> &middot;
-    <a href="terms.html">Terms of Service</a>
-  </footer>
+<section id="contact" class="contact">
+  <div class="wrap">
+    <h2 class="reveal">Ready to book your event?</h2>
+    <p class="reveal">DM us on Instagram, or reach out directly — we'll get you a date.</p>
+    <div class="contact-methods reveal">
+      <a href="https://instagram.com/etchlabdesign" target="_blank" rel="noopener">📸 @etchlabdesign</a>
+      <a href="mailto:etchlabdesign@gmail.com">✉️ etchlabdesign@gmail.com</a>
+      <a href="tel:+19737150476">📞 973-715-0476</a>
+    </div>
+    <div class="qr reveal">
+      <img src="https://etchlabdesign.com/instagram-qr.jpeg" alt="Scan to follow @etchlabdesign on Instagram">
+    </div>
+  </div>
+</section>
 
+<footer>
+  © 2026 EtchLab
+  <span class="sep">·</span><a href="https://etchlabdesign.com/privacy.html">Privacy Policy</a>
+  <span class="sep">·</span><a href="https://etchlabdesign.com/terms.html">Terms of Service</a>
+</footer>
+
+<script>
+(function(){
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Laser cursor
+  if(!reduce && window.matchMedia('(pointer:fine)').matches){
+    var beam=document.getElementById('beam'),dot=document.getElementById('dot');
+    var tx=window.innerWidth/2,ty=window.innerHeight/2,cx=tx,cy=ty;
+    document.addEventListener('mousemove',function(e){tx=e.clientX;ty=e.clientY;
+      beam.style.opacity=1;dot.style.opacity=1;});
+    document.addEventListener('mouseleave',function(){beam.style.opacity=0;dot.style.opacity=0;});
+    // beam anchored to top-left "emitter"
+    var ox=0,oy=0;
+    (function loop(){
+      cx+=(tx-cx)*.18;cy+=(ty-cy)*.18;
+      var dx=cx-ox,dy=cy-oy;
+      var len=Math.sqrt(dx*dx+dy*dy);
+      var ang=Math.atan2(dy,dx)*180/Math.PI;
+      beam.style.width=len+'px';
+      beam.style.transform='translate('+ox+'px,'+oy+'px) rotate('+ang+'deg)';
+      dot.style.left=cx+'px';dot.style.top=cy+'px';
+      requestAnimationFrame(loop);
+    })();
+  }
+
+  // Hero load reveal (staggered)
+  window.addEventListener('load',function(){
+    document.querySelectorAll('header .reveal').forEach(function(el,i){
+      setTimeout(function(){el.classList.add('in')},120*i+100);
+    });
+  });
+
+  // Scroll reveals
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}});
+  },{threshold:.15});
+  document.querySelectorAll('section .reveal').forEach(function(el){io.observe(el)});
+})();
+</script>
 </body>
 </html>
