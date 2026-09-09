@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="Everything EtchLab can engrave — boards, barware, accessories and Judaica, each with an item number.">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What We Engrave — EtchLab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:#0A0A0B;color:#EDEDED;font-family:'Space Grotesk',system-ui,sans-serif;line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+  a{color:#EDEDED;text-decoration:none}
+  a:hover{color:#00E5C0}
+  @keyframes beamShift{0%{background-position:0% 0}100%{background-position:-220% 0}}
+  @keyframes dotHue{0%{filter:drop-shadow(0 0 10px #00E5C0) drop-shadow(0 0 22px #FF5E3A) hue-rotate(0deg)}100%{filter:drop-shadow(0 0 10px #00E5C0) drop-shadow(0 0 22px #FF5E3A) hue-rotate(360deg)}}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}#laser-layer{display:none}}
+
+  [data-item-card]:hover{border-color:rgba(0,229,192,.4)!important;transform:translateY(-4px)}
+  [data-item-search]:focus,[data-budget]:focus,[data-guests]:focus,[data-event]:focus{border-color:rgba(0,229,192,.6)!important}
+  [data-suggest]:hover{box-shadow:0 8px 30px rgba(0,229,192,.3);transform:translateY(-2px)}
+  [data-lightbox-close]:hover{border-color:rgba(0,229,192,.5);color:#00E5C0}
+</style>
+
+</head>
+<body>
+
+
+<div style="position:relative;width:100%;background:#0A0A0B;overflow:hidden">
+
+<div id="laser-layer" aria-hidden="true" style="position:fixed;inset:0;pointer-events:none;z-index:9999">
+  <div id="beam" style="position:absolute;top:0;left:0;height:2px;transform-origin:left center;background:linear-gradient(90deg,rgba(255,0,128,0) 0%,#FF5E3A 18%,#FFD166 34%,#00E5C0 52%,#3AA0FF 70%,#B45CFF 86%,#FF5E3A 100%);background-size:220% 100%;animation:beamShift 2.4s linear infinite;filter:drop-shadow(0 0 7px rgba(0,229,192,.85)) drop-shadow(0 0 14px rgba(180,92,255,.55));opacity:0;transition:opacity .3s"></div>
+  <div id="dot" style="position:absolute;width:16px;height:16px;border-radius:50%;background:radial-gradient(circle,#fff 0%,#00E5C0 38%,rgba(0,229,192,0) 72%);animation:dotHue 2.4s linear infinite;transform:translate(-50%,-50%);opacity:0;transition:opacity .3s"></div>
+</div>
+
+<div data-lightbox style="display:none;position:fixed;inset:0;z-index:9998;background:rgba(6,6,8,.93);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:clamp(16px,4vw,48px);cursor:zoom-out">
+  <button type="button" data-lightbox-close aria-label="Close" style="position:absolute;top:clamp(14px,3vw,26px);right:clamp(14px,3vw,26px);width:42px;height:42px;border-radius:50%;border:1px solid rgba(255,255,255,.16);background:rgba(20,20,22,.85);color:#EDEDED;font-size:20px;line-height:1;cursor:pointer">×</button>
+  <figure style="margin:0;display:flex;flex-direction:column;align-items:center;gap:14px;max-width:100%;max-height:100%">
+    <img data-lightbox-img alt="" style="max-width:min(1000px,92vw);max-height:76vh;object-fit:contain;border-radius:6px;border:1px solid rgba(255,255,255,.10);box-shadow:0 30px 80px rgba(0,0,0,.6)" />
+    <figcaption style="display:flex;align-items:center;gap:12px;color:#EDEDED;font-size:16px">
+      <span data-lightbox-num style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#04211C;background:#00E5C0;padding:5px 9px;border-radius:2px"></span>
+      <span data-lightbox-name></span>
+    </figcaption>
+  </figure>
+</div>
+
+<nav style="position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px clamp(20px,4vw,44px);background:rgba(10,10,11,.72);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.08)">
+  <a href="index.html" style="display:flex;align-items:center;gap:10px;font-weight:700;font-size:20px;letter-spacing:-.02em">
+    <img src="logo.png" alt="EtchLab" style="width:30px;height:30px;object-fit:contain;filter:invert(1) hue-rotate(180deg)" />
+    <span>Etch<span style="color:#00E5C0">Lab</span></span>
+  </a>
+  <div style="display:flex;align-items:center;gap:clamp(12px,3vw,26px);font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:#8A8A92">
+    <a href="index.html#services" style="color:inherit">Services</a>
+    <a href="index.html#how" style="color:inherit">Process</a>
+    <a href="index.html#pricing" style="color:inherit">Pricing</a>
+    <a href="engravables.html" style="color:#00E5C0">Items</a>
+    <a href="index.html#contact" style="padding:9px 16px;border:1px solid rgba(0,229,192,.45);color:#00E5C0;border-radius:2px">Book</a>
+  </div>
+</nav>
+
+<section style="padding:clamp(40px,6vw,76px) clamp(20px,4vw,44px) clamp(20px,3vw,30px);background:radial-gradient(900px 480px at 60% -20%,rgba(0,229,192,.09),transparent 62%)">
+  <div style="max-width:1180px;margin:0 auto;display:flex;flex-direction:column;align-items:center;text-align:center">
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#00E5C0">Catalog</span>
+    <h1 style="font-weight:700;font-size:clamp(34px,7vw,62px);letter-spacing:-.035em;line-height:1.02;margin-top:12px">What we engrave</h1>
+    <p style="color:#8A8A92;margin-top:16px;font-size:18px;max-width:56ch;text-wrap:pretty">Every piece below is real work from real events. Each item has a number — send us the numbers you want and we'll build the package.</p>
+
+    <div style="position:relative;width:min(520px,100%);margin-top:clamp(22px,3.5vw,32px)">
+      <input data-item-search type="search" placeholder="Search items or numbers — try flask or 301" aria-label="Search engravable items" style="width:100%;background:#141416;border:1px solid rgba(255,255,255,.14);color:#EDEDED;font-family:'Space Grotesk',sans-serif;font-size:16px;padding:15px 18px 15px 46px;border-radius:3px;outline:none" />
+      <svg viewBox="0 0 24 24" fill="none" stroke="#8A8A92" stroke-width="2" aria-hidden="true" style="position:absolute;left:16px;top:50%;transform:translateY(-50%);width:18px;height:18px"><circle cx="11" cy="11" r="7"></circle><line x1="16.5" y1="16.5" x2="21" y2="21"></line></svg>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:14px">
+      <button type="button" data-item-filter="all" style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;padding:9px 14px;border:1px solid rgba(0,229,192,.5);background:rgba(0,229,192,.12);color:#00E5C0;border-radius:2px;cursor:pointer">All</button>
+      <button type="button" data-item-filter="Wood" style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;padding:9px 14px;border:1px solid rgba(255,255,255,.14);background:transparent;color:#8A8A92;border-radius:2px;cursor:pointer">Wood</button>
+      <button type="button" data-item-filter="Barware" style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;padding:9px 14px;border:1px solid rgba(255,255,255,.14);background:transparent;color:#8A8A92;border-radius:2px;cursor:pointer">Barware</button>
+      <button type="button" data-item-filter="Accessories" style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;padding:9px 14px;border:1px solid rgba(255,255,255,.14);background:transparent;color:#8A8A92;border-radius:2px;cursor:pointer">Accessories</button>
+      <button type="button" data-item-filter="Judaica" style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;padding:9px 14px;border:1px solid rgba(255,255,255,.14);background:transparent;color:#8A8A92;border-radius:2px;cursor:pointer">Judaica</button>
+    </div>
+    <div data-item-count style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:#8A8A92;margin-top:14px">15 items</div>
+  </div>
+</section>
+
+<section style="padding:clamp(16px,2.5vw,26px) clamp(20px,4vw,44px) clamp(48px,7vw,80px)">
+  <div style="max-width:1180px;margin:0 auto">
+    <div data-item-grid style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:clamp(12px,2vw,20px)">
+
+      <div data-item-card data-cat="Wood" data-name="Cutting board acacia walnut monogram" data-num="101" style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:4px;overflow:hidden;transition:border-color .3s,transform .3s">
+        <div style="width:100%;aspect-ratio:1/1;background:#0F0F11"><img src="photos/image13.jpg" alt="Engraved cutting board" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" /></div>
+        <div style="padding:13px 14px 15px"><div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px"><span style="font-size:15.5px">Cutting board</span><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#00E5C0;flex:none">101</span></div></div>
+      </div>
+
+      <div data-item-card data-cat="Wood" data-name="Wooden heart curved bamboo dish glass topper" data-num="102" style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:4px;overflow:hidden;transition:border-color .3s,transform .3s">
+        <div style="width:100%;aspect-ratio:1/1;background:#0F0F11"><img src="photos/image10.jpg" alt="Engraved bamboo heart dish" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" /></div>
+        <div style="padding:13px 14px 15px"><div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px"><span style="font-size:15.5px">Wooden heart, curved</span><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#00E5C0;flex:none">102</span></div><div style="color:#8A8A92;font-size:13px;margin-top:5px">4″ glass topper</div></div>
+      </div>
+
+      <div data-item-card data-cat="Wood" data-name="Wooden heart flat acacia coaster logo" data-num="103" style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:4px;overflow:hidden;transition:border-color .3s,transform .3s">
+        <div style="width:100%;aspect-ratio:1/1;background:#0F0F11"><img src="photos/image9.jpg" alt="Engraved wooden heart coaster" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" /></div>
+        <div style="padding:13px 14px 15px"><div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px"><span style="font-size:15.5px">Wooden heart, flat</span><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#00E5C0;flex:none">103</span></div><div style="color:#8A8A92;font-size:13px;margin-top:5px">4″ coaster</div></div>
+      </div>
+
+      <div data-item-card data-cat="Barware" data-name="Bottle and corkscrew opener wood" data-num="201" style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:4px;overflow:hidden;transition:border-color .3s,transform .3s">
+        <div style="width:100%;aspect-ratio:1/1;background:#0F0F11"><img src="photos/image8.jpg" alt="Engraved bottle and corkscrew openers" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" /></div>
+        <div style="padding:13px 14px 15px"><div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px"><span style="font-size:15.5px">Bottle &amp; corkscrew opener</span><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#00E5C0;flex:none">201</span></div></div>
+      </div>
+
+      <div data-item-card data-cat="Barware" data-name="Flat bottle opener keychain silver black" data-num="202" style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:4px;overflow:hidden;transition:border-color .3s,transform .3s">
+        <div style="width:100%;aspect-ratio:1/1;background:#0F0F11"><img src="photos/image11.jpg" alt="Engraved flat bottle openers" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" /></div>
+        <div style="padding:13px 14px 15px"><div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px"><span style="font-size:15.5px">Flat bottle opener</span><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#00E5C0;flex:none">202</span></div><div style="color:#8A8A92;font-size:13px;margin-top:5px">Keychain style</div></div>
+      </div>
+
+      <div data-item-card data-cat="Barware" data-name="Hip flask 8oz matte black" data-num="203" style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:4px;overflow:hidden;transition:border-color .3s,transform .3s">
+        <div style="width:100%;aspect-ratio:1/1;background:#0F0F11"><img src="photos/image14.jpg" alt="Engraved matte black hip flask" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" /></div>
+        <div style="padding:13px 14px 15px"><div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px"><span style="font-size:15.5px">Hip flask</span><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#00E5C0;flex:none">203</span></div><div style="color:#8A8A92;font-size:13px;margin-top:5px">8 oz matte black</div></div>
+      </div>
+
+      <div data-item-card data-cat="Accessories" data-name="Leather luggage tag" data-num="301" style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:4px;overflow:hidden;transition:border-color .3s,transform .3s">
+        <div style="width:100%;aspect-ratio:1/1;background:#0F0F11"><img src="photos/image17.png" alt="Engraved leather luggage tags" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" /></div>
+        <div style="padding:13px 14px 15px"><div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px"><span style="font-size:15.5px">Luggage tag</span><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#00E5C0;flex:none">301</span></div><div style="color:#8A8A92;font-size:13px;margin-top:5px">Leather</div></div>
+      </div>
+
+      <div data-item-card data-cat="Accessories" data-name="Cuff links" data-num="302" style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:4px;overflow:hidden;transition:border-color .3s,transform .3s">
+        <div style="width:100%;aspect-ratio:1/1;background:#0F0F11"><img src="photos/image2.jpg" alt="Engraved monogram cuff links" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" /></div>
+        <div style="padding:13px 14px 15px"><div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px"><span style="font-size:15.5px">Cuff links</span><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#00E5C0;flex:none">302</span></div><div style="color:#8A8A92;font-size:13px;margin-top:5px">Sold per pair</div></div>
+      </div>
+
+      <div data-item-card data-cat="Accessories" data-name="Tie clip" data-num="303" style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:4px;overflow:hidden;transition:border-color .3s,transform .3s">
+        <div style="width:100%;aspect-ratio:1/1;background:#0F0F11"><img src="photos/image4.jpg" alt="Engraved tie clips" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" /></div>
+        <div style="padding:13px 14px 15px"><div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px"><span style="font-size:15.5px">Tie clip</span><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#00E5C0;flex:none">303</span></div></div>
+      </div>
+
+      <div data-item-card data-cat="Accessories" data-name="Multi-tool metal card wallet" data-num="304" style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:4px;overflow:hidden;transition:border-color .3s,transform .3s">
+        <div style="width:100%;aspect-ratio:1/1;background:#0F0F11"><img src="photos/image3.jpg" alt="Engraved multi-tool card" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" /></div>
+        <div style="padding:13px 14px 15px"><div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px"><span style="font-size:15.5px">Multi-tool card</span><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#00E5C0;flex:none">304</span></div><div style="color:#8A8A92;font-size:13px;margin-top:5px">Wallet size</div></div>
+      </div>
+
+      <div data-item-card data-cat="Accessories" data-name="Metal bookmark tassel" data-num="305" style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:4px;overflow:hidden;transition:border-color .3s,transform .3s">
+        <div style="width:100%;aspect-ratio:1/1;background:#0F0F11"><img src="photos/image12.jpg" alt="Engraved metal bookmarks with tassels" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" /></div>
+        <div style="padding:13px 14px 15px"><div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px"><span style="font-size:15.5px">Metal bookmark</span><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#00E5C0;flex:none">305</span></div><div style="color:#8A8A92;font-size:13px;margin-top:5px">With tassel</div></div>
+      </div>
+
+      <div data-item-card data-cat="Accessories" data-name="Dog tag colored aluminum heart" data-num="306" style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:4px;overflow:hidden;transition:border-color .3s,transform .3s">
+        <div style="width:100%;aspect-ratio:1/1;background:#0F0F11"><img src="photos/image5.jpg" alt="Engraved dog tags" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" /></div>
+        <div style="padding:13px 14px 15px"><div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px"><span style="font-size:15.5px">Dog tag</span><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#00E5C0;flex:none">306</span></div><div style="color:#8A8A92;font-size:13px;margin-top:5px">Any color</div></div>
+      </div>
+
+      <div data-item-card data-cat="Accessories" data-name="Heart trinket dish metal jewelry" data-num="307" style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:4px;overflow:hidden;transition:border-color .3s,transform .3s">
+        <div style="width:100%;aspect-ratio:1/1;background:#0F0F11"><img src="photos/image6.jpg" alt="Engraved heart trinket dishes" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" /></div>
+        <div style="padding:13px 14px 15px"><div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px"><span style="font-size:15.5px">Heart trinket dish</span><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#00E5C0;flex:none">307</span></div><div style="color:#8A8A92;font-size:13px;margin-top:5px">Polished metal</div></div>
+      </div>
+
+      <div data-item-card data-cat="Accessories" data-name="Pocket watch chain" data-num="308" style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:4px;overflow:hidden;transition:border-color .3s,transform .3s">
+        <div style="width:100%;aspect-ratio:1/1;background:#0F0F11"><img src="photos/image15.jpg" alt="Engraved pocket watch" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" /></div>
+        <div style="padding:13px 14px 15px"><div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px"><span style="font-size:15.5px">Pocket watch</span><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#00E5C0;flex:none">308</span></div><div style="color:#8A8A92;font-size:13px;margin-top:5px">With chain</div></div>
+      </div>
+
+      <div data-item-card data-cat="Judaica" data-name="Suede kippah yarmulke kippot" data-num="401" style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:4px;overflow:hidden;transition:border-color .3s,transform .3s">
+        <div style="width:100%;aspect-ratio:1/1;background:#0F0F11"><img src="photos/image7.jpg" alt="Engraved suede kippah" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" /></div>
+        <div style="padding:13px 14px 15px"><div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px"><span style="font-size:15.5px">Suede kippah</span><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#00E5C0;flex:none">401</span></div><div style="color:#8A8A92;font-size:13px;margin-top:5px">4-panel with clips</div></div>
+      </div>
+
+    </div>
+
+    <div data-item-empty style="display:none;text-align:center;padding:52px 20px;color:#8A8A92">
+      <div style="font-size:18px;color:#EDEDED;margin-bottom:8px">No items match that search</div>
+      <div style="font-size:15.5px">Ask us anyway — if it fits in the laser, we can probably engrave it.</div>
+    </div>
+
+    <p style="text-align:center;color:#8A8A92;font-size:14.5px;margin-top:26px;max-width:70ch;margin-inline:auto;text-wrap:pretty">Engraving is available on these items when booked alongside a full in-person event. Message us for a quote — pricing depends on the item, quantity, and artwork.</p>
+  </div>
+</section>
+
+<section id="budget" style="padding:clamp(52px,8vw,96px) clamp(20px,4vw,44px);background:#141416;border-block:1px solid rgba(255,255,255,.08)">
+  <div style="max-width:940px;margin:0 auto">
+    <div style="text-align:center;max-width:56ch;margin:0 auto clamp(26px,4vw,40px)">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#00E5C0">Plan it</span>
+      <h2 style="font-weight:600;font-size:clamp(28px,5vw,44px);letter-spacing:-.025em;line-height:1.06;margin-top:12px">What's your product budget?</h2>
+      <p style="color:#8A8A92;margin-top:14px;font-size:17.5px;text-wrap:pretty">Tell us your budget and headcount and we'll suggest which item numbers fit — then we'll follow up with a real quote.</p>
+    </div>
+
+    <div style="background:#1C1C20;border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:clamp(22px,3.5vw,34px)">
+      <div style="display:flex;align-items:center;gap:9px;margin-bottom:18px;padding:10px 13px;border:1px solid rgba(0,229,192,.3);background:rgba(0,229,192,.07);border-radius:3px;flex-wrap:wrap">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#04211C;background:#00E5C0;padding:4px 8px;border-radius:2px">Estimate</span>
+        <span style="color:#EDEDED;font-size:14.5px;text-wrap:pretty">We use your budget to suggest a good fit. Pricing is confirmed by us — nothing here is a quote.</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px">
+        <label style="display:flex;flex-direction:column;gap:7px">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#8A8A92">Product budget (USD)</span>
+          <input data-budget type="number" min="0" step="50" placeholder="800" style="background:#0A0A0B;border:1px solid rgba(255,255,255,.14);color:#EDEDED;font-family:'Space Grotesk',sans-serif;font-size:16px;padding:13px 15px;border-radius:3px;outline:none" />
+        </label>
+        <label style="display:flex;flex-direction:column;gap:7px">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#8A8A92">Guests</span>
+          <input data-guests type="number" min="1" step="5" placeholder="120" style="background:#0A0A0B;border:1px solid rgba(255,255,255,.14);color:#EDEDED;font-family:'Space Grotesk',sans-serif;font-size:16px;padding:13px 15px;border-radius:3px;outline:none" />
+        </label>
+        <label style="display:flex;flex-direction:column;gap:7px">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#8A8A92">Event type</span>
+          <select data-event style="background:#0A0A0B;border:1px solid rgba(255,255,255,.14);color:#EDEDED;font-family:'Space Grotesk',sans-serif;font-size:16px;padding:13px 15px;border-radius:3px;outline:none">
+            <option>Bar / bat mitzvah</option>
+            <option>Sweet 16</option>
+            <option>Quinceañera</option>
+            <option>Wedding</option>
+            <option>Graduation</option>
+            <option>Corporate event</option>
+            <option>Birthday or shower</option>
+          </select>
+        </label>
+      </div>
+      <button type="button" data-suggest style="width:100%;margin-top:20px;background:#00E5C0;color:#04211C;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:16px;padding:15px;border:none;border-radius:3px;cursor:pointer;transition:box-shadow .25s,transform .15s">Get an estimate</button>
+      <div data-suggest-out style="display:none;margin-top:22px;padding-top:22px;border-top:1px solid rgba(255,255,255,.08)"></div>
+    </div>
+  </div>
+</section>
+
+<section style="padding:clamp(44px,7vw,84px) clamp(20px,4vw,44px);text-align:center;background:radial-gradient(900px 460px at 50% 0%,rgba(0,229,192,.08),transparent 65%)">
+  <div style="max-width:640px;margin:0 auto">
+    <h2 style="font-weight:700;font-size:clamp(28px,5.5vw,46px);letter-spacing:-.03em;line-height:1.04">Don't see your item?</h2>
+    <p style="color:#8A8A92;margin:16px auto 28px;font-size:17.5px;max-width:44ch">Send us a photo or a link — if it fits in the laser, we can usually engrave it.</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+      <a href="https://instagram.com/etchlabdesign" target="_blank" rel="noopener" style="font-weight:600;font-size:16px;padding:15px 28px;border-radius:2px;background:#00E5C0;color:#04211C;transition:box-shadow .25s,transform .15s">Ask on Instagram</a>
+      <a href="mailto:etchlabdesign@gmail.com?subject=Item%20question" style="font-weight:600;font-size:16px;padding:15px 28px;border-radius:2px;border:1px solid rgba(255,255,255,.14);color:#EDEDED;transition:border-color .25s">Email us</a>
+    </div>
+  </div>
+</section>
+
+<footer style="border-top:1px solid rgba(255,255,255,.08);padding:30px clamp(20px,4vw,44px);display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;color:#8A8A92;font-size:14px">
+  <span>© 2026 EtchLab</span>
+  <span style="opacity:.4">·</span><a href="index.html" style="color:inherit">Home</a>
+  <span style="opacity:.4">·</span><a href="privacy.html" style="color:inherit">Privacy Policy</a>
+  <span style="opacity:.4">·</span><a href="terms.html" style="color:inherit">Terms of Service</a>
+</footer>
+
+</div>
+
+
+<script>
+(function(){
+  var q=function(s){return document.querySelector(s)};
+  var CATALOG=[{"n":101,"name":"Cutting board","cat":"Wood","unit":52.85},{"n":102,"name":"Wooden heart, curved","cat":"Wood","unit":6.63},{"n":103,"name":"Wooden heart, flat","cat":"Wood","unit":5.01},{"n":201,"name":"Bottle & corkscrew opener","cat":"Barware","unit":4.56},{"n":202,"name":"Flat bottle opener","cat":"Barware","unit":3.6},{"n":203,"name":"Hip flask","cat":"Barware","unit":11.5},{"n":301,"name":"Luggage tag","cat":"Accessories","unit":3.67},{"n":302,"name":"Cuff links","cat":"Accessories","unit":7.5},{"n":303,"name":"Tie clip","cat":"Accessories","unit":5.3},{"n":304,"name":"Multi-tool card","cat":"Accessories","unit":5.75},{"n":305,"name":"Metal bookmark","cat":"Accessories","unit":4.83},{"n":306,"name":"Dog tag","cat":"Accessories","unit":3.7},{"n":401,"name":"Suede kippah","cat":"Judaica","unit":12.04}];
+
+  var search=q('[data-item-search]'),cards=[].slice.call(document.querySelectorAll('[data-item-card]')),
+      buttons=[].slice.call(document.querySelectorAll('[data-item-filter]')),
+      count=q('[data-item-count]'),empty=q('[data-item-empty]'),cat='all';
+  function apply(){
+    var qq=((search&&search.value)||'').trim().toLowerCase(),shown=0;
+    cards.forEach(function(c){
+      var hay=(c.dataset.name+' '+c.dataset.num+' '+c.dataset.cat).toLowerCase();
+      var ok=(cat==='all'||c.dataset.cat===cat)&&(!qq||hay.indexOf(qq)>-1);
+      c.style.display=ok?'':'none'; if(ok)shown++;
+    });
+    if(count)count.textContent=shown===1?'1 item':shown+' items';
+    if(empty)empty.style.display=shown?'none':'block';
+  }
+  if(search)search.addEventListener('input',apply);
+  buttons.forEach(function(b){b.addEventListener('click',function(){
+    cat=b.dataset.itemFilter;
+    buttons.forEach(function(o){var on=o===b;
+      o.style.borderColor=on?'rgba(0,229,192,.5)':'rgba(255,255,255,.14)';
+      o.style.background=on?'rgba(0,229,192,.12)':'transparent';
+      o.style.color=on?'#00E5C0':'#8A8A92';});
+    apply();});});
+  apply();
+
+  // lightbox
+  (function(){
+    var box=q('[data-lightbox]'),img=q('[data-lightbox-img]'),
+        numEl=q('[data-lightbox-num]'),nameEl=q('[data-lightbox-name]'),closeBtn=q('[data-lightbox-close]');
+    if(!box||!img) return;
+    function open(card){
+      var shot=card.querySelector('img'); if(!shot) return;
+      img.src=shot.src; img.alt=shot.alt||'';
+      var label=card.querySelector("div[style*='padding'] span");
+      if(numEl)numEl.textContent=card.dataset.num||'';
+      if(nameEl)nameEl.textContent=label?label.textContent:'';
+      box.style.display='flex'; document.body.style.overflow='hidden';
+    }
+    function close(){ box.style.display='none'; document.body.style.overflow=''; img.removeAttribute('src'); }
+    cards.forEach(function(card){
+      var shot=card.querySelector('img'); if(!shot) return;
+      shot.style.cursor='zoom-in';
+      card.setAttribute('tabindex','0'); card.setAttribute('role','button');
+      card.addEventListener('click',function(){open(card)});
+      card.addEventListener('keydown',function(e){
+        if(e.key==='Enter'||e.key===' '){e.preventDefault();open(card);}
+      });
+    });
+    box.addEventListener('click',function(e){ if(e.target!==img) close(); });
+    if(closeBtn)closeBtn.addEventListener('click',close);
+    document.addEventListener('keydown',function(e){ if(e.key==='Escape') close(); });
+  })();
+
+  var btn=q('[data-suggest]'),out=q('[data-suggest-out]');
+  if(btn&&out) btn.addEventListener('click',function(){
+    var budget=parseFloat((q('[data-budget]')||{}).value)||0,
+        guests=parseInt((q('[data-guests]')||{}).value,10)||0,
+        event=((q('[data-event]')||{}).value)||'Event';
+    if(!budget||!guests){out.innerHTML='<div style="color:#8A8A92;font-size:15.5px">Enter a budget and a guest count first.</div>';out.style.display='block';return;}
+    var per=budget/Math.max(guests,1);
+    var prefMap={'Wedding':['Barware','Wood','Accessories'],'Corporate event':['Accessories','Barware','Wood'],
+      'Bar / bat mitzvah':['Judaica','Accessories','Barware'],'Sweet 16':['Accessories','Wood','Barware'],
+      'Quincea\u00f1era':['Accessories','Wood','Barware'],'Graduation':['Accessories','Barware','Wood'],
+      'Birthday or shower':['Wood','Accessories','Barware']};
+    var prefer=prefMap[event]||['Accessories','Barware','Wood'];
+    var picks=CATALOG.filter(function(i){return i.unit<=per*1.08})
+      .sort(function(a,b){
+        var ra=prefer.indexOf(a.cat),rb=prefer.indexOf(b.cat);
+        return ((ra===-1?4:ra)*100-a.unit)-((rb===-1?4:rb)*100-b.unit);
+      }).slice(0,3);
+    if(!picks.length){
+      out.innerHTML='<div style="font-size:16.5px;color:#EDEDED;margin-bottom:8px">That budget is tight for '+guests+' guests.</div>'+
+        '<div style="color:#8A8A92;font-size:15.5px">Raise the budget, lower the count, or engrave for a subset of guests \u2014 message us and we\'ll find something that works.</div>';
+      out.style.display='block';return;
+    }
+    var rows=picks.map(function(i){
+      return '<div style="display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.07)">'+
+      '<span style="font-family:\'IBM Plex Mono\',monospace;font-size:13px;color:#04211C;background:#00E5C0;padding:5px 9px;border-radius:2px;flex:none">'+i.n+'</span>'+
+      '<span style="min-width:0"><span style="display:block;font-size:16px">'+i.name+'</span>'+
+      '<span style="display:block;font-family:\'IBM Plex Mono\',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#8A8A92">'+i.cat+'</span></span></div>';
+    }).join('');
+    out.innerHTML='<div style="font-family:\'IBM Plex Mono\',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#00E5C0;margin-bottom:6px">Suggested item numbers</div>'+
+      '<div style="font-size:16.5px;margin-bottom:14px">Good fits for '+guests+' guests at your budget:</div>'+rows+
+      '<div style="color:#8A8A92;font-size:15.5px;margin-top:14px">Many hosts pick two \u2014 a keepsake and something usable \u2014 so guests can choose at the table.</div>'+
+      '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#8A8A92;margin-top:14px">Suggestion only \u00b7 we confirm pricing</div>'+
+      '<a href="mailto:etchlabdesign@gmail.com?subject=Quote%20request&body='+
+      encodeURIComponent('Budget: $'+budget+'\nGuests: '+guests+'\nItem numbers: '+picks.map(function(p){return p.n}).join(', '))+
+      '" style="display:inline-block;margin-top:18px;background:#00E5C0;color:#04211C;font-weight:600;font-size:15px;padding:13px 22px;border-radius:3px">Send these numbers to us</a>';
+    out.style.display='block';
+  });
+
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var beam=document.getElementById('beam'),dot=document.getElementById('dot');
+  if(!beam||!dot) return;
+  var tx=innerWidth/2,ty=innerHeight/2,cx=tx,cy=ty,fade;
+  document.addEventListener('mousemove',function(e){tx=e.clientX;ty=e.clientY;beam.style.opacity='1';dot.style.opacity='1'});
+  document.addEventListener('mouseleave',function(){beam.style.opacity='0';dot.style.opacity='0'});
+  function touch(e){var t=e.touches&&e.touches[0];if(!t)return;tx=t.clientX;ty=t.clientY;beam.style.opacity='1';dot.style.opacity='1';clearTimeout(fade)}
+  document.addEventListener('touchstart',touch,{passive:true});
+  document.addEventListener('touchmove',touch,{passive:true});
+  document.addEventListener('touchend',function(){fade=setTimeout(function(){beam.style.opacity='0';dot.style.opacity='0'},900)},{passive:true});
+  (function loop(){
+    cx+=(tx-cx)*.18;cy+=(ty-cy)*.18;
+    beam.style.width=Math.sqrt(cx*cx+cy*cy)+'px';
+    beam.style.transform='rotate('+(Math.atan2(cy,cx)*180/Math.PI)+'deg)';
+    dot.style.left=cx+'px';dot.style.top=cy+'px';
+    requestAnimationFrame(loop);
+  })();
+})();
+</script>
+</body>
+</html>

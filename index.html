@@ -25,11 +25,10 @@
   @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}#laser-layer{display:none}}
 
   .btn-primary:hover{box-shadow:0 8px 30px rgba(0,229,192,.35);transform:translateY(-2px)}
-  .card:hover{border-color:rgba(0,229,192,.4)!important;transform:translateY(-4px)}
-  .plan:hover{transform:translateY(-4px)}
+  [data-reveal] [style*="background:#141416"]:hover{border-color:rgba(0,229,192,.4)}
   [data-etch-input]:focus{border-color:rgba(0,229,192,.6)!important}
   [data-mail-menu] a:hover,[data-mail-copy]:hover{background:rgba(0,229,192,.12);color:#00E5C0}
-  .contact-card:hover{border-color:rgba(0,229,192,.5)!important;color:#00E5C0}
+  nav a:hover,footer a:hover,.top-bar a:hover{color:#00E5C0}
 </style>
 
 </head>
@@ -73,6 +72,7 @@
     <a href="#services" style="color:inherit">Services</a>
     <a href="#how" style="color:inherit">Process</a>
     <a href="#pricing" style="color:inherit">Pricing</a>
+    <a href="engravables.html" style="color:inherit">Items</a>
     <a href="#contact" style="padding:9px 16px;border:1px solid rgba(0,229,192,.45);color:#00E5C0;border-radius:2px">Book</a>
   </div>
 </nav>
@@ -128,17 +128,17 @@
       <p style="color:#8A8A92;margin-top:16px;font-size:18px;text-wrap:pretty">We bring the laser, the setup, and the engraver. You get an activity guests remember and a keepsake they keep.</p>
     </div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px">
-      <div class="card" data-reveal style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:4px;padding:32px 26px 34px;transition:border-color .3s,transform .3s">
+      <div data-reveal style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:4px;padding:32px 26px 34px;transition:border-color .3s,transform .3s">
         <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#00E5C0;display:block;margin-bottom:22px">Milestone Celebrations</span>
         <h3 style="font-weight:600;font-size:22px;margin-bottom:10px">The night they'll keep</h3>
         <p style="color:#8A8A92;font-size:15.5px;text-wrap:pretty">Bar &amp; bat mitzvahs, sweet 16s, quinceañeras, graduations, birthdays, baby showers — personalized keepsakes engraved live, the kind of activity guests crowd around all night.</p>
       </div>
-      <div class="card" data-reveal style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:4px;padding:32px 26px 34px;transition:border-color .3s,transform .3s">
+      <div data-reveal style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:4px;padding:32px 26px 34px;transition:border-color .3s,transform .3s">
         <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#00E5C0;display:block;margin-bottom:22px">Weddings</span>
         <h3 style="font-weight:600;font-size:22px;margin-bottom:10px">Favors, made on-site</h3>
         <p style="color:#8A8A92;font-size:15.5px;text-wrap:pretty">Custom favors and keepsakes engraved in real time, made to match the look of your day.</p>
       </div>
-      <div class="card" data-reveal style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:4px;padding:32px 26px 34px;transition:border-color .3s,transform .3s">
+      <div data-reveal style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:4px;padding:32px 26px 34px;transition:border-color .3s,transform .3s">
         <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#00E5C0;display:block;margin-bottom:22px">Corporate Events</span>
         <h3 style="font-weight:600;font-size:22px;margin-bottom:10px">Branded, on the spot</h3>
         <p style="color:#8A8A92;font-size:15.5px;text-wrap:pretty">Logo giveaways and personalized items engraved live for teams, clients, and guests.</p>
@@ -221,8 +221,8 @@
 
               <div data-screen="3" style="display:none;flex-direction:column;gap:12px;flex:1;align-items:center;justify-content:center;text-align:center">
                 <div style="width:52px;height:52px;border-radius:50%;border:2px solid #00E5C0;display:flex;align-items:center;justify-content:center;color:#00E5C0;font-size:26px;box-shadow:0 0 22px rgba(0,229,192,.4)">✓</div>
-                <div style="font-weight:600;font-size:19px">Ready for pickup</div>
-                <div style="color:#8A8A92;font-size:14.5px">Steel tumbler · "SAM G." · 2 min 14 s</div>
+                <div style="font-weight:600;font-size:19px">You're #4 in the queue</div>
+                <div style="color:#8A8A92;font-size:14.5px">Steel tumbler · "SAM G." — we'll call your number</div>
               </div>
 
             </div>
@@ -233,6 +233,7 @@
   </div>
 </section>
 
+
 <section id="pricing" style="padding:clamp(64px,10vw,116px) clamp(20px,4vw,44px)">
   <div style="max-width:900px;margin:0 auto">
     <div data-reveal style="text-align:center;margin-bottom:clamp(36px,5vw,52px)">
@@ -241,7 +242,7 @@
       <p style="color:#8A8A92;margin:14px auto 0;font-size:18px;max-width:52ch">Every package includes travel up to 50 miles and full on-site setup &amp; breakdown.</p>
     </div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px">
-      <div data-reveal style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:38px 32px;transition:transform .3s" class="plan">
+      <div data-reveal style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:38px 32px;transition:transform .3s">
         <h3 style="font-family:'IBM Plex Mono',monospace;font-weight:500;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:#8A8A92">Standard</h3>
         <div style="font-weight:700;font-size:clamp(40px,6vw,52px);letter-spacing:-.035em;margin:10px 0 24px">$1,000</div>
         <ul style="list-style:none;display:flex;flex-direction:column;gap:13px">
@@ -251,7 +252,7 @@
           <li style="display:flex;gap:12px;font-size:15.5px"><span style="flex:none;width:16px;height:16px;margin-top:4px;border-radius:50%;background:radial-gradient(circle,#00E5C0 0%,rgba(0,229,192,.15) 100%);box-shadow:0 0 8px rgba(0,229,192,.5)"></span>Travel included up to 50 miles</li>
         </ul>
       </div>
-      <div data-reveal style="position:relative;background:linear-gradient(180deg,rgba(0,229,192,.06),#141416);border:1px solid rgba(0,229,192,.5);border-radius:6px;padding:38px 32px;transition:transform .3s" class="plan">
+      <div data-reveal style="position:relative;background:linear-gradient(180deg,rgba(0,229,192,.06),#141416);border:1px solid rgba(0,229,192,.5);border-radius:6px;padding:38px 32px;transition:transform .3s">
         <span style="position:absolute;top:-12px;right:22px;background:#00E5C0;color:#04211C;font-family:'IBM Plex Mono',monospace;font-weight:500;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:6px 12px;border-radius:2px">Recommended</span>
         <h3 style="font-family:'IBM Plex Mono',monospace;font-weight:500;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:#8A8A92">High-Volume Event</h3>
         <div style="font-weight:700;font-size:clamp(40px,6vw,52px);letter-spacing:-.035em;margin:10px 0 24px">$1,450</div>
@@ -264,6 +265,25 @@
       </div>
     </div>
     <p data-reveal style="margin:26px auto 0;color:#8A8A92;font-size:15px;text-align:center;line-height:1.75;max-width:60ch">Additional event time: <b style="color:#EDEDED;font-weight:600">$150/hour</b> after the first 4 hours.<br />Pre-engraving of logos or custom designs: custom quote based on artwork, quantity, and scope.</p>
+
+    <div data-reveal style="margin:clamp(26px,4vw,38px) auto 0;max-width:760px;background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:clamp(22px,3.5vw,30px)">
+      <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:14px">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#04211C;background:#00E5C0;padding:4px 8px;border-radius:2px">Important</span>
+        <span style="color:#EDEDED;font-size:15.5px;font-weight:600">These prices do not include the items themselves.</span>
+      </div>
+      <p style="color:#8A8A92;font-size:15.5px;margin-bottom:18px;text-wrap:pretty">Package pricing covers our time, machines, setup, and engraving. The products being engraved are billed separately — and you have two ways to get them.</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px">
+        <div style="background:#1C1C20;border:1px solid rgba(0,229,192,.35);border-radius:4px;padding:20px">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#00E5C0;margin-bottom:9px">Recommended</div>
+          <h4 style="font-weight:600;font-size:17px;margin-bottom:7px">We source the items</h4>
+          <p style="color:#8A8A92;font-size:14.5px;text-wrap:pretty">We buy the products for you at cost and bill them with your invoice. Everything we stock is a piece we've already tested on our laser, so we know exactly how it engraves.</p>
+        </div>
+        <div style="background:#1C1C20;border:1px solid rgba(255,255,255,.10);border-radius:4px;padding:20px">
+          <h4 style="font-weight:600;font-size:17px;margin-bottom:7px">You buy your own</h4>
+          <p style="color:#8A8A92;font-size:14.5px;text-wrap:pretty">Bring your own products and we'll engrave them. Send them to us first so we can test the material — not everything takes a laser well, and untested items are engraved at your own risk.</p>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -272,9 +292,9 @@
     <h2 data-reveal style="font-weight:700;font-size:clamp(32px,6.5vw,60px);letter-spacing:-.035em;line-height:1.04">Ready to book your event?</h2>
     <p data-reveal style="color:#8A8A92;margin:18px auto 36px;max-width:42ch;font-size:18px">DM us on Instagram, or reach out directly — we'll get you a date.</p>
     <div data-reveal style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:38px">
-      <a href="https://instagram.com/etchlabdesign" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;padding:18px 20px;border:1px solid rgba(255,255,255,.10);background:#141416;border-radius:3px;font-size:16px;transition:border-color .25s" class="contact-card">@etchlabdesign</a>
-      <a href="mailto:etchlabdesign@gmail.com" style="display:flex;align-items:center;justify-content:center;padding:18px 20px;border:1px solid rgba(255,255,255,.10);background:#141416;border-radius:3px;font-size:16px;transition:border-color .25s" class="contact-card">etchlabdesign@gmail.com</a>
-      <a href="tel:+19737150476" style="display:flex;align-items:center;justify-content:center;padding:18px 20px;border:1px solid rgba(255,255,255,.10);background:#141416;border-radius:3px;font-size:16px;transition:border-color .25s" class="contact-card">973-715-0476</a>
+      <a href="https://instagram.com/etchlabdesign" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;padding:18px 20px;border:1px solid rgba(255,255,255,.10);background:#141416;border-radius:3px;font-size:16px;transition:border-color .25s">@etchlabdesign</a>
+      <a href="mailto:etchlabdesign@gmail.com" style="display:flex;align-items:center;justify-content:center;padding:18px 20px;border:1px solid rgba(255,255,255,.10);background:#141416;border-radius:3px;font-size:16px;transition:border-color .25s">etchlabdesign@gmail.com</a>
+      <a href="tel:+19737150476" style="display:flex;align-items:center;justify-content:center;padding:18px 20px;border:1px solid rgba(255,255,255,.10);background:#141416;border-radius:3px;font-size:16px;transition:border-color .25s">973-715-0476</a>
     </div>
     <div data-reveal style="display:inline-flex;flex-direction:column;align-items:center;gap:12px">
       <img src="instagram-qr.jpeg" alt="Scan to follow @etchlabdesign on Instagram" style="width:148px;height:148px;border-radius:8px;border:1px solid rgba(255,255,255,.08)" />
@@ -294,10 +314,9 @@
 
 <script>
 (function(){
-  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   var q=function(s){return document.querySelector(s)};
+  var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // etch demo
   var input=q('[data-etch-input]'),outs=document.querySelectorAll('.etch-out');
   if(input){
     var sync=function(){
@@ -307,25 +326,18 @@
     ['input','keyup','change'].forEach(function(ev){input.addEventListener(ev,sync)});
   }
 
-  // email menu
   var trigger=q('[data-mail-trigger]'),menu=q('[data-mail-menu]');
   if(trigger&&menu){
-    trigger.addEventListener('click',function(e){
-      e.preventDefault();
-      menu.style.display = menu.style.display==='block' ? 'none' : 'block';
-    });
-    document.addEventListener('click',function(e){
-      if(!menu.contains(e.target)&&e.target!==trigger) menu.style.display='none';
-    });
+    trigger.addEventListener('click',function(e){e.preventDefault();menu.style.display=menu.style.display==='block'?'none':'block';});
+    document.addEventListener('click',function(e){if(!menu.contains(e.target)&&e.target!==trigger)menu.style.display='none';});
     var copy=menu.querySelector('[data-mail-copy]');
-    if(copy) copy.addEventListener('click',function(){
-      if(navigator.clipboard) navigator.clipboard.writeText('etchlabdesign@gmail.com');
+    if(copy)copy.addEventListener('click',function(){
+      if(navigator.clipboard)navigator.clipboard.writeText('etchlabdesign@gmail.com');
       copy.textContent='Copied \u2713';
       setTimeout(function(){copy.textContent='Copy address';menu.style.display='none'},1100);
     });
   }
 
-  // tablet run-through
   (function(){
     var screens=[0,1,2,3].map(function(i){return q('[data-screen="'+i+'"]')});
     if(screens.some(function(s){return !s})) return;
@@ -333,7 +345,7 @@
         status=q('[data-tab-status]'),bar=q('[data-progress]'),label=q('[data-progress-label]'),
         line=q('[data-engrave-line]'),fill=q('[data-engrave-fill]'),word='SAM G.',timers=[];
     function at(ms,fn){timers.push(setTimeout(fn,ms))}
-    function show(n){screens.forEach(function(s,i){s.style.display = i===n?'flex':'none'})}
+    function show(n){screens.forEach(function(s,i){s.style.display=i===n?'flex':'none'})}
     function cycle(){
       timers.forEach(clearTimeout);timers=[];
       show(0);
@@ -362,7 +374,6 @@
 
   if(reduce) return;
 
-  // reveals
   var nodes=[].slice.call(document.querySelectorAll('[data-reveal]'));
   nodes.forEach(function(el){
     el.style.opacity='0';el.style.transform='translateY(22px)';
@@ -385,7 +396,6 @@
   requestAnimationFrame(revealInView);
   setTimeout(revealInView,600);
 
-  // laser cursor (mouse + touch)
   var beam=document.getElementById('beam'),dot=document.getElementById('dot');
   if(!beam||!dot) return;
   var tx=innerWidth/2,ty=innerHeight/2,cx=tx,cy=ty,fade;
