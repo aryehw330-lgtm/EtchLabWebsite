@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Proposal Builder — EtchLab (internal)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#0A0A0B;color:#EDEDED;font-family:'Space Grotesk',system-ui,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased}
+  a{color:#EDEDED;text-decoration:none}
+  a:hover{color:#00E5C0}
+  input,select,textarea,button{font-family:inherit}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:rgba(0,229,192,.6)!important}
+  .lib-card:hover{border-color:rgba(0,229,192,.45)!important;transform:translateY(-3px)}
+  .chip:hover{border-color:rgba(0,229,192,.5)!important;color:#00E5C0!important}
+  .btn:hover{box-shadow:0 8px 26px rgba(0,229,192,.28);transform:translateY(-1px)}
+  @media print{
+    @page{margin:14mm}
+    body{background:#fff;color:#111}
+    [data-build],[data-topbar]{display:none!important}
+    [data-present]{display:block!important;background:#fff!important;color:#111!important;padding:0!important}
+    [data-p-grid]{display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:8mm!important}
+    .p-card{break-inside:avoid;page-break-inside:avoid;border-color:#ddd!important;background:#fff!important}
+    .p-card:nth-child(6n){page-break-after:always;break-after:page}
+    .p-card:last-child{page-break-after:auto;break-after:auto}
+    .p-ink{color:#111!important}
+    .p-sub{color:#555!important}
+    [data-p-total]{break-inside:avoid;page-break-inside:avoid}
+  }
+</style>
+</head>
+<body>
+
+<div style="min-height:100vh;background:#0A0A0B">
+
+<div data-topbar style="position:sticky;top:0;z-index:60;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:14px clamp(16px,3vw,32px);background:rgba(10,10,11,.88);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.08)">
+  <div style="display:flex;align-items:center;gap:11px">
+    <img src="logo.png" alt="" style="width:26px;height:26px;object-fit:contain;filter:invert(1) hue-rotate(180deg)" />
+    <span style="font-weight:700;font-size:17px;letter-spacing:-.02em">Proposal Builder</span>
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#8A8A92;border:1px solid rgba(255,255,255,.14);padding:3px 8px;border-radius:2px">Internal</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+    <span data-saved style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#8A8A92"></span>
+    <button type="button" data-mode="build" class="chip" style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;padding:9px 14px;border:1px solid rgba(0,229,192,.5);background:rgba(0,229,192,.12);color:#00E5C0;border-radius:2px;cursor:pointer">Build</button>
+    <button type="button" data-mode="present" class="chip" style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;padding:9px 14px;border:1px solid rgba(255,255,255,.14);background:transparent;color:#8A8A92;border-radius:2px;cursor:pointer">Client view</button>
+    <button type="button" data-word class="chip" style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;padding:9px 14px;border:1px solid rgba(255,255,255,.14);background:transparent;color:#8A8A92;border-radius:2px;cursor:pointer">Save Word</button>
+    <button type="button" data-print class="btn" style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;padding:9px 14px;border:none;background:#00E5C0;color:#04211C;border-radius:2px;cursor:pointer;transition:box-shadow .2s,transform .15s">Save PDF</button>
+  </div>
+</div>
+
+<div data-build style="display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:clamp(16px,2.5vw,28px);align-items:start;padding:clamp(16px,3vw,32px)">
+
+  <aside style="position:sticky;top:78px;display:flex;flex-direction:column;gap:16px">
+    <div style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:20px">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#00E5C0;margin-bottom:14px">This proposal</div>
+      <div style="display:flex;flex-direction:column;gap:11px">
+        <input data-f="client" placeholder="Client name" style="background:#0A0A0B;border:1px solid rgba(255,255,255,.14);color:#EDEDED;font-size:15px;padding:11px 13px;border-radius:3px" />
+        <input data-f="event" placeholder="Event — e.g. Sam's Bar Mitzvah" style="background:#0A0A0B;border:1px solid rgba(255,255,255,.14);color:#EDEDED;font-size:15px;padding:11px 13px;border-radius:3px" />
+        <input data-f="theme" placeholder="Theme — e.g. Alice in Wonderland" style="background:#0A0A0B;border:1px solid rgba(255,255,255,.14);color:#EDEDED;font-size:15px;padding:11px 13px;border-radius:3px" />
+        <div style="display:flex;gap:10px">
+          <input data-f="date" type="date" style="flex:1;min-width:0;background:#0A0A0B;border:1px solid rgba(255,255,255,.14);color:#EDEDED;font-size:15px;padding:11px 13px;border-radius:3px" />
+          <input data-f="guests" type="number" min="1" placeholder="Guests" style="width:96px;background:#0A0A0B;border:1px solid rgba(255,255,255,.14);color:#EDEDED;font-size:15px;padding:11px 13px;border-radius:3px" />
+        </div>
+      </div>
+    </div>
+
+    <div style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:20px">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#00E5C0;margin-bottom:14px">Event package</div>
+      <div style="display:flex;flex-direction:column;gap:11px">
+        <select data-f="pkg" style="background:#0A0A0B;border:1px solid rgba(255,255,255,.14);color:#EDEDED;font-size:15px;padding:11px 13px;border-radius:3px">
+          <option value="standard">Standard — $1,000</option>
+          <option value="highvolume">High-Volume — $1,450</option>
+        </select>
+        <div style="display:flex;gap:10px;align-items:center">
+          <input data-f="extraHours" type="number" min="0" step="1" placeholder="0" style="width:82px;background:#0A0A0B;border:1px solid rgba(255,255,255,.14);color:#EDEDED;font-size:15px;padding:11px 13px;border-radius:3px" />
+          <span style="font-size:13.5px;color:#8A8A92">extra hours @ $150/hr</span>
+        </div>
+        <label style="display:flex;align-items:center;gap:9px;font-size:14px;color:#8A8A92;cursor:pointer">
+          <input data-f="showPricing" type="checkbox" style="width:16px;height:16px;accent-color:#00E5C0" />
+          Show pricing in client view
+        </label>
+      </div>
+    </div>
+
+    <div style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:20px">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:12px">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#00E5C0">Selected</span>
+        <span data-sel-count style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8A8A92">0 items</span>
+      </div>
+      <div data-selected style="display:flex;flex-direction:column;gap:8px"></div>
+      <div data-sel-total style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.08);display:none"></div>
+    </div>
+
+    <button type="button" data-new class="chip" style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;padding:11px;border:1px solid rgba(255,255,255,.14);background:transparent;color:#8A8A92;border-radius:2px;cursor:pointer">Start a new proposal</button>
+  </aside>
+
+  <main style="display:flex;flex-direction:column;gap:18px;min-width:0">
+
+    <div style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:20px">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#00E5C0;margin-bottom:14px">Add an item you found</div>
+      <div style="display:grid;grid-template-columns:minmax(0,190px) minmax(0,1fr);gap:16px;align-items:start">
+        <div data-drop style="position:relative;aspect-ratio:1/1;border:1.5px dashed rgba(255,255,255,.20);border-radius:5px;background:#0F0F11;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;text-align:center;padding:14px;cursor:pointer;transition:border-color .2s,background .2s">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#8A8A92" stroke-width="1.6" style="width:26px;height:26px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="M7 10l5-5 5 5"></path><path d="M12 5v13"></path></svg>
+          <span style="font-size:13.5px;color:#8A8A92;line-height:1.4">Drop a screenshot<br />or click to browse</span>
+          <img data-preview alt="" style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:4px" />
+          <input data-file type="file" accept="image/*" style="display:none" />
+        </div>
+        <div style="display:flex;flex-direction:column;gap:11px;min-width:0">
+          <input data-n="name" placeholder="Item name — e.g. Teacup keychain" style="background:#0A0A0B;border:1px solid rgba(255,255,255,.14);color:#EDEDED;font-size:15px;padding:11px 13px;border-radius:3px" />
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <input data-n="price" type="number" min="0" step="0.5" placeholder="Item cost $" style="flex:1;min-width:120px;background:#0A0A0B;border:1px solid rgba(255,255,255,.14);color:#EDEDED;font-size:15px;padding:11px 13px;border-radius:3px" />
+            <input data-n="engrave" type="number" min="0" step="0.5" placeholder="Engraving $" style="flex:1;min-width:120px;background:#0A0A0B;border:1px solid rgba(255,255,255,.14);color:#EDEDED;font-size:15px;padding:11px 13px;border-radius:3px" />
+          </div>
+          <input data-n="themes" placeholder="Themes, comma separated — alice in wonderland, tea party" style="background:#0A0A0B;border:1px solid rgba(255,255,255,.14);color:#EDEDED;font-size:15px;padding:11px 13px;border-radius:3px" />
+          <input data-n="link" placeholder="Supplier link (kept private)" style="background:#0A0A0B;border:1px solid rgba(255,255,255,.14);color:#EDEDED;font-size:14px;padding:11px 13px;border-radius:3px" />
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+            <button type="button" data-save-item class="btn" style="font-weight:600;font-size:15px;padding:12px 20px;border:none;background:#00E5C0;color:#04211C;border-radius:3px;cursor:pointer;transition:box-shadow .2s,transform .15s">Save to library</button>
+            <span data-add-msg style="font-size:13.5px;color:#8A8A92"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:20px">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:14px">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#00E5C0">Library</span>
+        <span data-lib-count style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8A8A92"></span>
+      </div>
+      <input data-lib-search type="search" placeholder="Search by name or theme — try beach" style="width:100%;background:#0A0A0B;border:1px solid rgba(255,255,255,.14);color:#EDEDED;font-size:15px;padding:12px 14px;border-radius:3px;margin-bottom:12px" />
+      <div data-themes style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:16px"></div>
+      <div data-lib-grid style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px"></div>
+      <div data-lib-empty style="display:none;text-align:center;padding:36px 16px;color:#8A8A92;font-size:15px">Nothing matches. Drop a screenshot above to add it.</div>
+    </div>
+
+  </main>
+</div>
+
+<div data-present style="display:none;padding:clamp(20px,4vw,56px) clamp(16px,4vw,44px)">
+  <div style="max-width:1080px;margin:0 auto">
+    <header style="text-align:center;padding-bottom:clamp(22px,3vw,34px);border-bottom:1px solid rgba(255,255,255,.10);margin-bottom:clamp(24px,3.5vw,40px)">
+      <img src="logo.png" alt="EtchLab" style="width:74px;height:auto;object-fit:contain;filter:invert(1) hue-rotate(180deg);margin-bottom:14px" />
+      <div data-p-theme style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#00E5C0"></div>
+      <h1 data-p-event class="p-ink" style="font-weight:700;font-size:clamp(28px,5vw,50px);letter-spacing:-.03em;line-height:1.05;margin-top:10px">Your event</h1>
+      <div data-p-meta class="p-sub" style="color:#8A8A92;font-size:16px;margin-top:10px"></div>
+    </header>
+
+    <div data-p-grid style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:clamp(14px,2vw,22px)"></div>
+
+    <div data-p-empty style="text-align:center;padding:60px 20px;color:#8A8A92;font-size:16px">No items selected yet — pick some in Build mode.</div>
+
+    <div data-p-total style="margin-top:clamp(24px,3.5vw,38px);padding-top:22px;border-top:1px solid rgba(255,255,255,.10)"></div>
+
+    <div data-p-pricing style="display:none;margin-top:clamp(20px,3vw,32px)"></div>
+
+    <p class="p-sub" style="margin-top:26px;color:#8A8A92;font-size:14px;text-align:center;max-width:70ch;margin-inline:auto;text-wrap:pretty">All figures are estimates and subject to change. Product costs are billed separately from the event package. Final pricing is confirmed before booking.</p>
+  </div>
+</div>
+
+</div>
+
+<script>
+// Item photos live at images/items/<item number>.jpg — same files the public
+// site (engravables.html) uses, so the two never show different pictures.
+// Prices/names/categories below mirror the EtchLab Items google sheet
+// (https://docs.google.com/spreadsheets/d/1VHhNc0Z6sKUmA7peyPkF9BueEBfUaAVA4L_dNkB27xw)
+// as of the last time this file was hand-synced from it. To wire up a live
+// feed instead of this hand-synced snapshot: File > Share > Publish to web
+// on that sheet (CSV), then set SHEET_CSV_URL below to the resulting
+// "https://docs.google.com/spreadsheets/d/e/.../pub?output=csv" link.
+const SHEET_CSV_URL = "";
+
+const SEED = [
+  { id: "c101", n: "101", name: "Cutting board", price: 44.85, engrave: 8, themes: ["wedding", "housewarming", "corporate"], img: "images/items/101.jpg", cat: true },
+  { id: "c102", n: "102", name: "Wooden heart, curved", price: 2.63, engrave: 4, themes: ["wedding", "garden", "rustic"], img: "images/items/102.jpg", cat: true },
+  { id: "c103", n: "103", name: "Wooden heart, flat", price: 1.01, engrave: 4, themes: ["wedding", "rustic", "coaster"], img: "images/items/103.jpg", cat: true },
+  { id: "c201", n: "201", name: "Bottle & corkscrew opener", price: 1.56, engrave: 3, themes: ["wedding", "bar", "rustic"], img: "images/items/201.jpg", cat: true },
+  { id: "c202", n: "202", name: "Flat bottle opener", price: 0.60, engrave: 3, themes: ["wedding", "bar", "corporate"], img: "images/items/202.jpg", cat: true },
+  { id: "c203", n: "203", name: "Hip flask", price: 6.50, engrave: 5, themes: ["groomsmen", "bar", "gatsby"], img: "images/items/203.jpg", cat: true },
+  { id: "c301", n: "301", name: "Luggage tag", price: 0.67, engrave: 3, themes: ["travel", "destination", "corporate"], img: "images/items/301.jpg", cat: true },
+  { id: "c302", n: "302", name: "Cuff links", price: 4.50, engrave: 3, themes: ["formal", "black tie", "groomsmen"], img: "images/items/302.jpg", cat: true },
+  { id: "c303", n: "303", name: "Tie clip", price: 2.30, engrave: 3, themes: ["formal", "black tie", "groomsmen"], img: "images/items/303.jpg", cat: true },
+  { id: "c304", n: "304", name: "Multi-tool card", price: 1.75, engrave: 4, themes: ["corporate", "outdoor", "groomsmen"], img: "images/items/304.jpg", cat: true },
+  { id: "c305", n: "305", name: "Metal bookmark", price: 0.83, engrave: 4, themes: ["literary", "alice in wonderland", "book"], img: "images/items/305.jpg", cat: true },
+  { id: "c306", n: "306", name: "Dog tag", price: 0.70, engrave: 3, themes: ["school", "sports", "graduation"], img: "images/items/306.jpg", cat: true },
+  { id: "c309", n: "309", name: "100 Pieces Multicolor PU Leather Keychain", price: 0.19, engrave: 3, themes: ["travel", "corporate", "everyday"], img: "images/items/309.jpg", cat: true },
+  { id: "c307", n: "307", name: "Heart jewelry display", price: 8.50, engrave: 5, themes: ["formal", "bridal", "jewelry"], img: "images/items/307.jpg", cat: true },
+  { id: "c308", n: "308", name: "Pocket watch", price: 12.50, engrave: 5, themes: ["alice in wonderland", "vintage", "gatsby"], img: "images/items/308.jpg", cat: true },
+  { id: "c401", n: "401", name: "Suede kippah", price: 7.04, engrave: 5, themes: ["bar mitzvah", "bat mitzvah", "judaica"], img: "images/items/401.jpg", cat: true }
+];
+
+const LIB_KEY = "etchlab.proposal.library.v1";
+const DOC_KEY = "etchlab.proposal.current.v1";
+
+class ProposalBuilder {
+  constructor() {
+    this.componentDidMount();
+  }
+
+  componentDidMount() {
+    this.library = this.loadLibrary();
+    this.doc = this.loadDoc();
+    this.pending = null;
+    this.activeTheme = "all";
+    this.wireFields();
+    this.wireDrop();
+    this.wireLibrary();
+    this.wireModes();
+    this.renderAll();
+    this.refreshFromSheet();
+  }
+
+  // Best-effort live sync: if SHEET_CSV_URL is set (sheet published to web),
+  // overlay name/price/engraving fee from the sheet onto the matching catalog
+  // items by item number, then re-render. Silently no-ops otherwise or on
+  // any fetch/parse failure so this never blocks the page from working.
+  async refreshFromSheet() {
+    if (!SHEET_CSV_URL) return;
+    try {
+      const res = await fetch(SHEET_CSV_URL, { cache: "no-store" });
+      if (!res.ok) return;
+      const text = await res.text();
+      const rows = text.trim().split("\n").map((line) => {
+        const cells = [];
+        let cur = "", inQ = false;
+        for (let i = 0; i < line.length; i++) {
+          const ch = line[i];
+          if (ch === '"') inQ = !inQ;
+          else if (ch === "," && !inQ) { cells.push(cur); cur = ""; }
+          else cur += ch;
+        }
+        cells.push(cur);
+        return cells.map((c) => c.trim());
+      });
+      const header = rows[0].map((h) => h.toLowerCase());
+      const idx = (name) => header.indexOf(name);
+      const iId = idx("item id"), iName = idx("item name"), iUnit = idx("unit cost"), iFee = idx("engraving fee");
+      if (iId === -1) return;
+      let changed = false;
+      rows.slice(1).forEach((r) => {
+        const n = r[iId];
+        const item = this.library.find((i) => i.n === n);
+        if (!item) return;
+        if (iName > -1 && r[iName]) { item.name = r[iName]; changed = true; }
+        if (iUnit > -1 && r[iUnit]) {
+          const v = parseFloat(r[iUnit].replace(/[^0-9.]/g, ""));
+          if (!isNaN(v)) { item.price = v; changed = true; }
+        }
+        if (iFee > -1 && r[iFee]) {
+          const v = parseFloat(r[iFee].replace(/[^0-9.]/g, ""));
+          if (!isNaN(v)) { item.engrave = v; changed = true; }
+        }
+      });
+      if (changed) this.renderAll();
+    } catch (e) {
+      console.warn("[proposal-builder] sheet sync skipped:", e);
+    }
+  }
+
+  loadLibrary() {
+    try {
+      const raw = localStorage.getItem(LIB_KEY);
+      if (raw) {
+        const saved = JSON.parse(raw);
+        const ids = saved.map((i) => i.id);
+        return SEED.filter((s) => ids.indexOf(s.id) === -1).concat(saved);
+      }
+    } catch (e) {}
+    return SEED.slice();
+  }
+
+  loadDoc() {
+    try {
+      const raw = localStorage.getItem(DOC_KEY);
+      if (raw) return JSON.parse(raw);
+    } catch (e) {}
+    return { client: "", event: "", theme: "", date: "", guests: "", picks: [], pkg: "standard", extraHours: "", showPricing: true };
+  }
+
+  save() {
+    try {
+      localStorage.setItem(LIB_KEY, JSON.stringify(this.library.filter((i) => !i.cat)));
+      localStorage.setItem(DOC_KEY, JSON.stringify(this.doc));
+      const el = document.querySelector("[data-saved]");
+      if (el) {
+        el.textContent = "Saved";
+        clearTimeout(this._saveT);
+        this._saveT = setTimeout(() => { el.textContent = ""; }, 1400);
+      }
+    } catch (e) {}
+  }
+
+  esc(s) {
+    return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
+  }
+
+  wireFields() {
+    document.querySelectorAll("[data-f]").forEach((el) => {
+      const k = el.dataset.f;
+      const isCheck = el.type === "checkbox";
+      if (isCheck) el.checked = this.doc[k] !== false;
+      else if (this.doc[k]) el.value = this.doc[k];
+      const handler = () => {
+        this.doc[k] = isCheck ? el.checked : el.value;
+        this.save();
+        this.renderSelected();
+        this.renderPresent();
+      };
+      el.addEventListener("input", handler);
+      if (isCheck || el.tagName === "SELECT") el.addEventListener("change", handler);
+    });
+
+    const nw = document.querySelector("[data-new]");
+    if (nw) nw.addEventListener("click", () => {
+      if (!confirm("Clear this proposal? Your library stays.")) return;
+      this.doc = { client: "", event: "", theme: "", date: "", guests: "", picks: [], pkg: "standard", extraHours: "", showPricing: true };
+      document.querySelectorAll("[data-f]").forEach((el) => {
+        if (el.type === "checkbox") el.checked = true;
+        else if (el.tagName === "SELECT") el.value = "standard";
+        else el.value = "";
+      });
+      this.save();
+      this.renderAll();
+    });
+  }
+
+  wireDrop() {
+    const zone = document.querySelector("[data-drop]");
+    const file = document.querySelector("[data-file]");
+    const prev = document.querySelector("[data-preview]");
+    if (!zone || !file) return;
+
+    const shrink = (blob) => new Promise((res) => {
+      const img = new Image();
+      img.onload = () => {
+        const max = 700;
+        const scale = Math.min(1, max / Math.max(img.width, img.height));
+        const c = document.createElement("canvas");
+        c.width = Math.round(img.width * scale);
+        c.height = Math.round(img.height * scale);
+        c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+        res(c.toDataURL("image/jpeg", 0.82));
+      };
+      img.src = URL.createObjectURL(blob);
+    });
+
+    const take = async (blob) => {
+      if (!blob || blob.type.indexOf("image") !== 0) return;
+      this.pending = await shrink(blob);
+      prev.src = this.pending;
+      prev.style.display = "block";
+    };
+
+    zone.addEventListener("click", () => file.click());
+    file.addEventListener("change", () => take(file.files[0]));
+    ["dragenter", "dragover"].forEach((ev) => zone.addEventListener(ev, (e) => {
+      e.preventDefault();
+      zone.style.borderColor = "rgba(0,229,192,.6)";
+      zone.style.background = "rgba(0,229,192,.06)";
+    }));
+    ["dragleave", "drop"].forEach((ev) => zone.addEventListener(ev, (e) => {
+      e.preventDefault();
+      zone.style.borderColor = "rgba(255,255,255,.20)";
+      zone.style.background = "#0F0F11";
+    }));
+    zone.addEventListener("drop", (e) => {
+      const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+      if (f) take(f);
+    });
+    document.addEventListener("paste", (e) => {
+      const items = (e.clipboardData && e.clipboardData.items) || [];
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].type.indexOf("image") === 0) { take(items[i].getAsFile()); break; }
+      }
+    });
+
+    const btn = document.querySelector("[data-save-item]");
+    const msg = document.querySelector("[data-add-msg]");
+    if (btn) btn.addEventListener("click", () => {
+      const get = (k) => (document.querySelector('[data-n="' + k + '"]') || {}).value || "";
+      const name = get("name").trim();
+      if (!name) { msg.textContent = "Give it a name first."; return; }
+      const fields = {
+        name: name,
+        price: parseFloat(get("price")) || 0,
+        engrave: parseFloat(get("engrave")) || 0,
+        themes: get("themes").split(",").map((t) => t.trim().toLowerCase()).filter(Boolean),
+        link: get("link").trim(),
+        img: this.pending || ""
+      };
+
+      if (this.editingId) {
+        const existing = this.library.filter((i) => i.id === this.editingId)[0];
+        if (existing) Object.keys(fields).forEach((k) => { existing[k] = fields[k]; });
+        this.editingId = null;
+        btn.textContent = "Save to library";
+        msg.textContent = "Updated.";
+      } else {
+        const item = Object.assign({ id: "u" + Date.now(), n: "" }, fields);
+        this.library.unshift(item);
+        this.doc.picks.push(item.id);
+        msg.textContent = "Added to library and this proposal.";
+      }
+      this.pending = null;
+      prev.style.display = "none";
+      prev.removeAttribute("src");
+      ["name", "price", "engrave", "themes", "link"].forEach((k) => {
+        const el = document.querySelector('[data-n="' + k + '"]');
+        if (el) el.value = "";
+      });
+      setTimeout(() => { msg.textContent = ""; }, 2200);
+      this.save();
+      this.renderAll();
+    });
+  }
+
+  wireLibrary() {
+    const search = document.querySelector("[data-lib-search]");
+    if (search) search.addEventListener("input", () => this.renderLibrary());
+  }
+
+  wireModes() {
+    const build = document.querySelector("[data-build]");
+    const present = document.querySelector("[data-present]");
+    const setMode = (m) => {
+      build.style.display = m === "build" ? "grid" : "none";
+      present.style.display = m === "present" ? "block" : "none";
+      document.querySelectorAll("[data-mode]").forEach((b) => {
+        const on = b.dataset.mode === m;
+        b.style.borderColor = on ? "rgba(0,229,192,.5)" : "rgba(255,255,255,.14)";
+        b.style.background = on ? "rgba(0,229,192,.12)" : "transparent";
+        b.style.color = on ? "#00E5C0" : "#8A8A92";
+      });
+      if (m === "present") this.renderPresent();
+    };
+    document.querySelectorAll("[data-mode]").forEach((b) => {
+      b.addEventListener("click", () => setMode(b.dataset.mode));
+    });
+    const print = document.querySelector("[data-print]");
+    if (print) print.addEventListener("click", () => { setMode("present"); setTimeout(() => window.print(), 250); });
+    const word = document.querySelector("[data-word]");
+    if (word) word.addEventListener("click", () => { setMode("present"); setTimeout(() => this.exportWord(), 250); });
+  }
+
+  allThemes() {
+    const seen = {};
+    this.library.forEach((i) => (i.themes || []).forEach((t) => { seen[t] = (seen[t] || 0) + 1; }));
+    return Object.keys(seen).sort((a, b) => seen[b] - seen[a]);
+  }
+
+  renderAll() {
+    this.renderThemes();
+    this.renderLibrary();
+    this.renderSelected();
+    this.renderPresent();
+  }
+
+  renderThemes() {
+    const wrap = document.querySelector("[data-themes]");
+    if (!wrap) return;
+    const themes = ["all"].concat(this.allThemes());
+    wrap.innerHTML = themes.map((t) => {
+      const on = t === this.activeTheme;
+      return '<button type="button" class="chip" data-theme="' + this.esc(t) + '" style="font-family:\'IBM Plex Mono\',monospace;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;padding:7px 11px;border:1px solid ' +
+        (on ? "rgba(0,229,192,.5)" : "rgba(255,255,255,.14)") + ';background:' + (on ? "rgba(0,229,192,.12)" : "transparent") +
+        ';color:' + (on ? "#00E5C0" : "#8A8A92") + ';border-radius:2px;cursor:pointer">' + this.esc(t) + '</button>';
+    }).join("");
+    wrap.querySelectorAll("[data-theme]").forEach((b) => {
+      b.addEventListener("click", () => {
+        this.activeTheme = b.dataset.theme;
+        this.renderThemes();
+        this.renderLibrary();
+      });
+    });
+  }
+
+  renderLibrary() {
+    const grid = document.querySelector("[data-lib-grid]");
+    const empty = document.querySelector("[data-lib-empty]");
+    const count = document.querySelector("[data-lib-count]");
+    const search = document.querySelector("[data-lib-search]");
+    if (!grid) return;
+    const q = ((search && search.value) || "").trim().toLowerCase();
+
+    const list = this.library.filter((i) => {
+      const hay = (i.name + " " + (i.n || "") + " " + (i.themes || []).join(" ")).toLowerCase();
+      const okTheme = this.activeTheme === "all" || (i.themes || []).indexOf(this.activeTheme) > -1;
+      return okTheme && (!q || hay.indexOf(q) > -1);
+    });
+
+    grid.innerHTML = list.map((i) => {
+      const on = this.doc.picks.indexOf(i.id) > -1;
+      const media = i.img
+        ? '<img src="' + this.esc(i.img) + '" alt="" style="width:100%;height:100%;object-fit:cover;display:block" />'
+        : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#5A5A62;font-size:12px">No photo</div>';
+      return '<div class="lib-card" style="position:relative;background:#0F0F11;border:1px solid ' +
+        (on ? "rgba(0,229,192,.55)" : "rgba(255,255,255,.08)") + ';border-radius:4px;overflow:hidden;transition:border-color .25s,transform .25s">' +
+        (on ? '<span style="position:absolute;top:8px;right:8px;z-index:3;width:22px;height:22px;border-radius:50%;background:#00E5C0;color:#04211C;font-size:13px;display:flex;align-items:center;justify-content:center;pointer-events:none">✓</span>' : "") +
+        (i.cat ? "" :
+          '<button type="button" data-edit="' + this.esc(i.id) + '" title="Edit" style="position:absolute;top:8px;left:8px;z-index:3;width:24px;height:24px;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:rgba(10,10,11,.82);color:#EDEDED;font-size:11px;line-height:1;cursor:pointer">✎</button>' +
+          '<button type="button" data-del="' + this.esc(i.id) + '" title="Delete from library" style="position:absolute;bottom:8px;right:8px;z-index:3;width:24px;height:24px;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:rgba(10,10,11,.82);color:#EDEDED;font-size:14px;line-height:1;cursor:pointer">×</button>') +
+        '<div data-pick="' + this.esc(i.id) + '" style="cursor:pointer">' +
+        '<div style="width:100%;aspect-ratio:1/1;background:#141416">' + media + '</div>' +
+        '<div style="padding:10px 11px 12px">' +
+        '<div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px">' +
+        '<span style="font-size:14px;line-height:1.3">' + this.esc(i.name) + '</span>' +
+        (i.n ? '<span style="font-family:\'IBM Plex Mono\',monospace;font-size:11.5px;color:#00E5C0;flex:none">' + this.esc(i.n) + '</span>' : "") +
+        '</div>' +
+        '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:11px;color:#8A8A92;margin-top:4px">$' + (i.price + i.engrave).toFixed(2) + ' ea</div>' +
+        '</div></div></div>';
+    }).join("");
+
+    if (count) count.textContent = this.library.length + " saved";
+    if (empty) empty.style.display = list.length ? "none" : "block";
+
+    grid.querySelectorAll("[data-pick]").forEach((el) => {
+      el.addEventListener("click", () => {
+        const id = el.dataset.pick;
+        const at = this.doc.picks.indexOf(id);
+        if (at > -1) this.doc.picks.splice(at, 1); else this.doc.picks.push(id);
+        this.save();
+        this.renderLibrary();
+        this.renderSelected();
+        this.renderPresent();
+      });
+    });
+
+    grid.querySelectorAll("[data-del]").forEach((b) => {
+      b.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const id = b.dataset.del;
+        const item = this.library.filter((i) => i.id === id)[0];
+        if (!item) return;
+        if (!confirm('Delete "' + item.name + '" from the library for good?')) return;
+        this.library = this.library.filter((i) => i.id !== id);
+        this.doc.picks = this.doc.picks.filter((p) => p !== id);
+        this.save();
+        this.renderAll();
+      });
+    });
+
+    grid.querySelectorAll("[data-edit]").forEach((b) => {
+      b.addEventListener("click", (e) => {
+        e.stopPropagation();
+        this.editItem(b.dataset.edit);
+      });
+    });
+  }
+
+  editItem(id) {
+    const item = this.library.filter((i) => i.id === id)[0];
+    if (!item) return;
+    this.editingId = id;
+    this.pending = item.img || null;
+    const prev = document.querySelector("[data-preview]");
+    if (prev) {
+      if (item.img) { prev.src = item.img; prev.style.display = "block"; }
+      else { prev.style.display = "none"; prev.removeAttribute("src"); }
+    }
+    const set = (k, v) => {
+      const el = document.querySelector('[data-n="' + k + '"]');
+      if (el) el.value = v == null ? "" : v;
+    };
+    set("name", item.name);
+    set("price", item.price || "");
+    set("engrave", item.engrave || "");
+    set("themes", (item.themes || []).join(", "));
+    set("link", item.link || "");
+    const btn = document.querySelector("[data-save-item]");
+    if (btn) btn.textContent = "Update item";
+    const msg = document.querySelector("[data-add-msg]");
+    if (msg) msg.textContent = "Editing “" + item.name + "” — press Update to save.";
+    const zone = document.querySelector("[data-drop]");
+    if (zone && zone.scrollIntoView) window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  picked() {
+    return this.doc.picks.map((id) => this.library.filter((i) => i.id === id)[0]).filter(Boolean);
+  }
+
+  renderSelected() {
+    const wrap = document.querySelector("[data-selected]");
+    const count = document.querySelector("[data-sel-count]");
+    const totalBox = document.querySelector("[data-sel-total]");
+    if (!wrap) return;
+    const items = this.picked();
+    const guests = parseInt(this.doc.guests, 10) || 0;
+
+    if (!items.length) {
+      wrap.innerHTML = '<div style="color:#8A8A92;font-size:14px">Click items in the library to add them.</div>';
+      if (count) count.textContent = "0 items";
+      if (totalBox) totalBox.style.display = "none";
+      return;
+    }
+
+    wrap.innerHTML = items.map((i) =>
+      '<div style="display:flex;align-items:center;gap:10px">' +
+      (i.img ? '<img src="' + this.esc(i.img) + '" alt="" style="width:34px;height:34px;object-fit:cover;border-radius:3px;flex:none" />' :
+        '<span style="width:34px;height:34px;border-radius:3px;background:#0F0F11;flex:none"></span>') +
+      '<span style="flex:1;min-width:0;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + this.esc(i.name) + '</span>' +
+      '<button type="button" data-drop-item="' + this.esc(i.id) + '" aria-label="Remove" style="flex:none;border:none;background:none;color:#8A8A92;font-size:17px;cursor:pointer;line-height:1">×</button>' +
+      '</div>').join("");
+
+    if (count) count.textContent = items.length === 1 ? "1 item" : items.length + " items";
+
+    if (totalBox) {
+      const cheapest = items.reduce((a, b) => ((a.price + a.engrave) < (b.price + b.engrave) ? a : b));
+      const dearest = items.reduce((a, b) => ((a.price + a.engrave) > (b.price + b.engrave) ? a : b));
+      const lo = (cheapest.price + cheapest.engrave) * guests;
+      const hi = (dearest.price + dearest.engrave) * guests;
+      totalBox.style.display = "block";
+      totalBox.innerHTML = guests
+        ? '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#8A8A92;margin-bottom:5px">If one per guest × ' + guests + '</div>' +
+          '<div style="font-size:19px;font-weight:600;color:#00E5C0">$' + Math.round(lo).toLocaleString() + ' – $' + Math.round(hi).toLocaleString() + '</div>' +
+          '<div style="font-size:12.5px;color:#8A8A92;margin-top:3px">Product + engraving, depending which they pick</div>'
+        : '<div style="font-size:13.5px;color:#8A8A92">Add a guest count to see totals.</div>';
+    }
+
+    wrap.querySelectorAll("[data-drop-item]").forEach((b) => {
+      b.addEventListener("click", () => {
+        const at = this.doc.picks.indexOf(b.dataset.dropItem);
+        if (at > -1) this.doc.picks.splice(at, 1);
+        this.save();
+        this.renderAll();
+      });
+    });
+  }
+
+  exportWord() {
+    const items = this.picked();
+    const q = this.quote();
+    const showPricing = this.doc.showPricing !== false;
+    const title = this.doc.event || this.doc.client || "Engraving proposal";
+
+    const cells = items.map((i) => {
+      const each = i.price + i.engrave;
+      const media = i.img
+        ? '<img src="' + this.esc(i.img) + '" width="200" style="width:200px" />'
+        : '<div style="width:200px;height:200px;background:#f2f2f2;color:#888;font-size:11pt;text-align:center;line-height:200px">Photo to come</div>';
+      return '<td width="215" valign="top" style="padding:0 10px 20px 0">' + media +
+        '<p style="margin:6px 0 0;font-family:Calibri,Arial,sans-serif;font-size:12pt;color:#111">' +
+        this.esc(i.name) + (i.n ? ' <span style="color:#0a8f7a">#' + this.esc(i.n) + '</span>' : "") + '</p>' +
+        '<p style="margin:2px 0 0;font-family:Calibri,Arial,sans-serif;font-size:11pt;color:#0a8f7a"><b>$' +
+        each.toFixed(2) + '</b> <span style="color:#666;font-size:9pt">EST. PER ITEM</span></p></td>';
+    });
+
+    let grid = "";
+    for (let r = 0; r < cells.length; r += 3) {
+      grid += '<tr>' + cells.slice(r, r + 3).join("") + '</tr>';
+      if (r + 3 < cells.length && (r + 3) % 6 === 0) {
+        grid += '<tr><td colspan="3" style="page-break-before:always"></td></tr>';
+      }
+    }
+
+    const meta = [];
+    if (this.doc.client) meta.push("Prepared for " + this.doc.client);
+    if (this.doc.date) {
+      const d = new Date(this.doc.date + "T12:00:00");
+      if (!isNaN(d)) meta.push(d.toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" }));
+    }
+    if (q.guests) meta.push(q.guests + " guests");
+
+    const pRow = (label, sub, amount) =>
+      '<tr><td style="padding:8px 0;border-bottom:1px solid #ddd;font-family:Calibri,Arial,sans-serif;font-size:12pt;color:#111">' +
+      label + (sub ? '<br /><span style="font-size:10pt;color:#666">' + sub + '</span>' : "") +
+      '</td><td align="right" style="padding:8px 0;border-bottom:1px solid #ddd;font-family:Calibri,Arial,sans-serif;font-size:12pt;color:#111"><b>' +
+      amount + '</b></td></tr>';
+
+    let pricing = "";
+    if (showPricing) {
+      const same = Math.round(q.totalLo) === Math.round(q.totalHi);
+      pricing =
+        '<p style="margin:26px 0 8px;font-family:Calibri,Arial,sans-serif;font-size:10pt;color:#0a8f7a;letter-spacing:1.5px"><b>ESTIMATED INVESTMENT</b></p>' +
+        '<table width="100%" cellspacing="0" cellpadding="0">' +
+        pRow(q.label, q.subLabel, this.money(q.base)) +
+        (q.hours ? pRow("Additional event time", q.hours + (q.hours === 1 ? " hour" : " hours") + " @ $150/hr", this.money(q.extra)) : "") +
+        (items.length && q.guests ? pRow("Products &amp; engraving", q.guests + " guests · depending which items they choose", this.money(q.lo) + " – " + this.money(q.hi)) : "") +
+        '<tr><td style="padding:12px 0;font-family:Calibri,Arial,sans-serif;font-size:11pt;color:#666;letter-spacing:1px">ESTIMATED TOTAL</td>' +
+        '<td align="right" style="padding:12px 0;font-family:Calibri,Arial,sans-serif;font-size:18pt;color:#0a8f7a"><b>' +
+        (same ? this.money(q.totalLo) : this.money(q.totalLo) + " – " + this.money(q.totalHi)) + '</b></td></tr></table>' +
+        '<p style="margin:10px 0 0;font-family:Calibri,Arial,sans-serif;font-size:10pt;color:#666">Package includes on-site setup &amp; breakdown and travel up to 50 miles. Product costs are billed in addition to the event package.</p>';
+    }
+
+    const html =
+      '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word">' +
+      '<head><meta charset="utf-8" /><title>' + this.esc(title) + '</title>' +
+      '<!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View></w:WordDocument></xml><![endif]-->' +
+      '<style>@page{size:Letter;margin:0.6in}body{font-family:Calibri,Arial,sans-serif}</style></head><body>' +
+      '<p style="margin:0 0 4px;font-family:Calibri,Arial,sans-serif;font-size:10pt;color:#0a8f7a;letter-spacing:1.5px"><b>' +
+      this.esc(this.doc.theme ? this.doc.theme.toUpperCase() + " — ENGRAVING PROPOSAL" : "ENGRAVING PROPOSAL") + '</b></p>' +
+      '<p style="margin:0;font-family:Calibri,Arial,sans-serif;font-size:26pt;color:#111"><b>' + this.esc(title) + '</b></p>' +
+      '<p style="margin:4px 0 20px;font-family:Calibri,Arial,sans-serif;font-size:12pt;color:#666">' + this.esc(meta.join(" · ")) + '</p>' +
+      '<table cellspacing="0" cellpadding="0">' + grid + '</table>' +
+      pricing +
+      '<p style="margin:22px 0 0;font-family:Calibri,Arial,sans-serif;font-size:9.5pt;color:#888">All figures are estimates and subject to change. Product costs are billed separately from the event package. Final pricing is confirmed before booking.</p>' +
+      '</body></html>';
+
+    const blob = new Blob(["﻿", html], { type: "application/msword" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = (title.replace(/[^\w\s-]/g, "").trim() || "proposal") + ".doc";
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+  }
+
+  renderPricing() {
+    const box = document.querySelector("[data-p-pricing]");
+    if (!box) return;
+    if (this.doc.showPricing === false) { box.style.display = "none"; return; }
+    const q = this.quote();
+    box.style.display = "block";
+
+    const row = (label, sub, amount) =>
+      '<div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.07)">' +
+      '<span style="min-width:0"><span class="p-ink" style="display:block;font-size:16px">' + label + '</span>' +
+      (sub ? '<span class="p-sub" style="display:block;font-size:13px;color:#8A8A92">' + sub + '</span>' : "") +
+      '</span><span class="p-ink" style="flex:none;font-size:16px;font-weight:600">' + amount + '</span></div>';
+
+    let html =
+      '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#00E5C0;margin-bottom:12px">Estimated investment</div>' +
+      row(q.label, q.subLabel, this.money(q.base));
+
+    if (q.hours) html += row("Additional event time", q.hours + (q.hours === 1 ? " hour" : " hours") + " @ $150/hr", this.money(q.extra));
+
+    if (q.items.length && q.guests) {
+      html += row("Products &amp; engraving",
+        q.guests + " guests · depending which items they choose",
+        this.money(q.lo) + " – " + this.money(q.hi));
+    } else if (q.items.length) {
+      html += row("Products &amp; engraving", "Add a guest count for an estimate", "—");
+    }
+
+    const same = Math.round(q.totalLo) === Math.round(q.totalHi);
+    html += '<div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,.14)">' +
+      '<span class="p-sub" style="font-family:\'IBM Plex Mono\',monospace;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:#8A8A92">Estimated total</span>' +
+      '<span style="flex:none;font-size:28px;font-weight:700;letter-spacing:-.02em;color:#00E5C0">' +
+      (same ? this.money(q.totalLo) : this.money(q.totalLo) + " – " + this.money(q.totalHi)) + '</span></div>';
+
+    html += '<div class="p-sub" style="color:#8A8A92;font-size:13.5px;margin-top:12px;text-wrap:pretty">Package includes on-site setup &amp; breakdown and travel up to 50 miles. Product costs are billed in addition to the event package.</div>';
+
+    box.innerHTML = html;
+  }
+
+  money(n) {
+    return "$" + Math.round(n).toLocaleString();
+  }
+
+  quote() {
+    const items = this.picked();
+    const guests = parseInt(this.doc.guests, 10) || 0;
+    const base = this.doc.pkg === "highvolume" ? 1450 : 1000;
+    const hours = parseInt(this.doc.extraHours, 10) || 0;
+    const extra = hours * 150;
+    let lo = 0, hi = 0;
+    if (items.length && guests) {
+      const each = items.map((i) => i.price + i.engrave);
+      lo = Math.min.apply(null, each) * guests;
+      hi = Math.max.apply(null, each) * guests;
+    }
+    return {
+      base, hours, extra, guests, items,
+      label: this.doc.pkg === "highvolume" ? "High-Volume Event package" : "Standard package",
+      subLabel: this.doc.pkg === "highvolume" ? "2 engravers · 2 machines · up to 4 hours" : "1 engraver · 1 machine · up to 4 hours",
+      lo, hi,
+      totalLo: base + extra + lo,
+      totalHi: base + extra + hi
+    };
+  }
+
+  renderPresent() {
+    const grid = document.querySelector("[data-p-grid]");
+    const empty = document.querySelector("[data-p-empty]");
+    const totalBox = document.querySelector("[data-p-total]");
+    if (!grid) return;
+    const items = this.picked();
+    const guests = parseInt(this.doc.guests, 10) || 0;
+
+    const themeEl = document.querySelector("[data-p-theme]");
+    const eventEl = document.querySelector("[data-p-event]");
+    const metaEl = document.querySelector("[data-p-meta]");
+    if (themeEl) themeEl.textContent = this.doc.theme ? this.doc.theme + " — engraving proposal" : "Engraving proposal";
+    if (eventEl) eventEl.textContent = this.doc.event || this.doc.client || "Your event";
+    if (metaEl) {
+      const bits = [];
+      if (this.doc.client && this.doc.event) bits.push("Prepared for " + this.doc.client);
+      if (this.doc.date) {
+        const d = new Date(this.doc.date + "T12:00:00");
+        if (!isNaN(d)) bits.push(d.toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" }));
+      }
+      if (guests) bits.push(guests + " guests");
+      metaEl.textContent = bits.join(" · ");
+    }
+
+    if (empty) empty.style.display = items.length ? "none" : "block";
+    if (totalBox) totalBox.style.display = (items.length && this.doc.showPricing === false) ? "block" : "none";
+
+    grid.innerHTML = items.map((i) => {
+      const each = i.price + i.engrave;
+      const media = i.img
+        ? '<img src="' + this.esc(i.img) + '" alt="" style="width:100%;height:100%;object-fit:cover;display:block" />'
+        : '<div style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:#5A5A62">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" style="width:24px;height:24px"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="9" cy="10" r="1.6"></circle><path d="M21 16l-5-5-6 6"></path></svg>' +
+          '<span style="font-size:12px">Photo to come</span></div>';
+      return '<div class="p-card" style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:4px;overflow:hidden">' +
+        '<div style="width:100%;aspect-ratio:1/1;background:#0F0F11">' + media + '</div>' +
+        '<div style="padding:14px 15px 16px">' +
+        '<div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px">' +
+        '<span class="p-ink" style="font-size:15.5px;line-height:1.35">' + this.esc(i.name) + '</span>' +
+        (i.n ? '<span style="font-family:\'IBM Plex Mono\',monospace;font-size:13px;color:#00E5C0;flex:none">' + this.esc(i.n) + '</span>' : "") +
+        '</div>' +
+        '<div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-top:6px">' +
+        '<span style="font-size:15px;color:#00E5C0;font-weight:600">$' + each.toFixed(2) + '</span>' +
+        '<span class="p-sub" style="font-family:\'IBM Plex Mono\',monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#8A8A92">est. per item</span>' +
+        '</div></div></div>';
+    }).join("");
+
+    this.renderPricing();
+
+    if (totalBox && items.length) {
+      const cheapest = items.reduce((a, b) => ((a.price + a.engrave) < (b.price + b.engrave) ? a : b));
+      const dearest = items.reduce((a, b) => ((a.price + a.engrave) > (b.price + b.engrave) ? a : b));
+      totalBox.innerHTML = guests
+        ? '<div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap">' +
+          '<span class="p-sub" style="font-family:\'IBM Plex Mono\',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#8A8A92">Estimated product total · ' + guests + ' guests</span>' +
+          '<span class="p-ink" style="font-size:24px;font-weight:700;letter-spacing:-.02em">$' +
+          Math.round((cheapest.price + cheapest.engrave) * guests).toLocaleString() + ' – $' +
+          Math.round((dearest.price + dearest.engrave) * guests).toLocaleString() + '</span></div>'
+        : '<div class="p-sub" style="color:#8A8A92;font-size:15px">Add a guest count to show an estimated total.</div>';
+    }
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => new ProposalBuilder());
+</script>
+</body>
+</html>
