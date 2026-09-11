@@ -670,7 +670,7 @@ class ProposalBuilder {
   }
 
   setOverride(id, field, value) {
-    const base = this.library.filter((i) => i.id === id)[0];
+    const base = this.library.filter((i) => i.id === id)[0] || (this.doc.customItems || {})[id];
     if (!base) return;
     if (!this.doc.overrides) this.doc.overrides = {};
     if (!this.doc.overrides[id]) this.doc.overrides[id] = {};
@@ -681,9 +681,20 @@ class ProposalBuilder {
       const v = parseFloat(value);
       this.doc.overrides[id][field] = isNaN(v) ? base[field] : v;
     }
+    if (field === "price" && base.n) this.learnPrice(base.n, this.doc.overrides[id].price);
     this.save();
     this.renderSelected();
     this.renderPresent();
+  }
+
+  learnPrice(n, price) {
+    if (typeof price !== "number" || isNaN(price)) return;
+    try {
+      const key = "etchlab.learnedPrices.v1";
+      const m = JSON.parse(localStorage.getItem(key)) || {};
+      m[n] = price;
+      localStorage.setItem(key, JSON.stringify(m));
+    } catch (e) {}
   }
 
   renderSelected() {
