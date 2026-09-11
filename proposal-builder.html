@@ -145,7 +145,7 @@
 
     <div data-p-pricing style="display:none;margin-top:clamp(20px,3vw,32px)"></div>
 
-    <p class="p-sub" style="margin-top:26px;color:#8A8A92;font-size:14px;text-align:center;max-width:70ch;margin-inline:auto;text-wrap:pretty">All figures are estimates and subject to change. Product costs are billed separately from the event package. Final pricing is confirmed before booking.</p>
+    <p class="p-sub" style="margin-top:26px;color:#8A8A92;font-size:14px;text-align:center;max-width:70ch;margin-inline:auto;text-wrap:pretty">Product costs are billed separately from the event package. Final pricing is confirmed before booking.</p>
   </div>
 </div>
 
@@ -611,8 +611,13 @@ class ProposalBuilder {
     return this.doc.picks.map((id) => {
       const base = this.library.filter((i) => i.id === id)[0];
       if (!base) return null;
-      const ov = overrides[id];
-      return ov ? Object.assign({}, base, ov) : base;
+      const ov = overrides[id] || {};
+      const merged = Object.assign({}, base);
+      merged.priceSet = typeof ov.price === "number";
+      merged.price = merged.priceSet ? ov.price : 0;
+      merged.engrave = typeof ov.engrave === "number" ? ov.engrave : 0;
+      merged.qty = typeof ov.qty === "number" ? ov.qty : 1;
+      return merged;
     }).filter(Boolean);
   }
 
@@ -620,9 +625,14 @@ class ProposalBuilder {
     const base = this.library.filter((i) => i.id === id)[0];
     if (!base) return;
     if (!this.doc.overrides) this.doc.overrides = {};
-    const v = parseFloat(value);
     if (!this.doc.overrides[id]) this.doc.overrides[id] = {};
-    this.doc.overrides[id][field] = isNaN(v) ? base[field] : v;
+    if (field === "qty") {
+      const v = Math.max(1, Math.round(parseFloat(value)) || 1);
+      this.doc.overrides[id][field] = v;
+    } else {
+      const v = parseFloat(value);
+      this.doc.overrides[id][field] = isNaN(v) ? base[field] : v;
+    }
     this.save();
     this.renderSelected();
     this.renderPresent();
@@ -634,7 +644,6 @@ class ProposalBuilder {
     const totalBox = document.querySelector("[data-sel-total]");
     if (!wrap) return;
     const items = this.picked();
-    const guests = parseInt(this.doc.guests, 10) || 0;
 
     if (!items.length) {
       wrap.innerHTML = '<div style="color:#8A8A92;font-size:14px">Click items in the library to add them.</div>';
@@ -652,26 +661,26 @@ class ProposalBuilder {
       '<button type="button" data-drop-item="' + this.esc(i.id) + '" aria-label="Remove" style="flex:none;border:none;background:none;color:#8A8A92;font-size:17px;cursor:pointer;line-height:1">×</button>' +
       '</div>' +
       '<div style="display:flex;align-items:center;gap:6px;padding-left:44px;flex-wrap:wrap">' +
-      '<span style="font-size:10.5px;color:#8A8A92;font-family:\'IBM Plex Mono\',monospace">cost $</span>' +
-      '<input type="number" min="0" step="0.01" data-ov-price="' + this.esc(i.id) + '" value="' + i.price.toFixed(2) + '" title="Item cost, this proposal only" style="width:58px;background:#0A0A0B;border:1px solid rgba(255,255,255,.14);color:#EDEDED;font-size:12px;padding:4px 6px;border-radius:3px" />' +
+      '<span style="font-size:10.5px;color:#8A8A92;font-family:\'IBM Plex Mono\',monospace">price $</span>' +
+      '<input type="number" min="0" step="0.01" data-ov-price="' + this.esc(i.id) + '" value="' + (i.priceSet ? i.price.toFixed(2) : "") + '" placeholder="0.00" title="Type the price for this proposal" style="width:64px;background:#0A0A0B;border:1px solid ' + (i.priceSet ? "rgba(255,255,255,.14)" : "rgba(255,159,67,.6)") + ';color:#EDEDED;font-size:12px;padding:4px 6px;border-radius:3px" />' +
       '<span style="font-size:10.5px;color:#8A8A92;font-family:\'IBM Plex Mono\',monospace">engrave $</span>' +
       '<input type="number" min="0" step="0.01" data-ov-engrave="' + this.esc(i.id) + '" value="' + i.engrave.toFixed(2) + '" title="Engraving fee, this proposal only" style="width:58px;background:#0A0A0B;border:1px solid rgba(255,255,255,.14);color:#EDEDED;font-size:12px;padding:4px 6px;border-radius:3px" />' +
+      '<span style="font-size:10.5px;color:#8A8A92;font-family:\'IBM Plex Mono\',monospace">qty</span>' +
+      '<input type="number" min="1" step="1" data-ov-qty="' + this.esc(i.id) + '" value="' + i.qty + '" title="Quantity ordered" style="width:48px;background:#0A0A0B;border:1px solid rgba(255,255,255,.14);color:#EDEDED;font-size:12px;padding:4px 6px;border-radius:3px" />' +
       '</div>' +
       '</div>').join("");
 
     if (count) count.textContent = items.length === 1 ? "1 item" : items.length + " items";
 
     if (totalBox) {
-      const cheapest = items.reduce((a, b) => ((a.price + a.engrave) < (b.price + b.engrave) ? a : b));
-      const dearest = items.reduce((a, b) => ((a.price + a.engrave) > (b.price + b.engrave) ? a : b));
-      const lo = (cheapest.price + cheapest.engrave) * guests;
-      const hi = (dearest.price + dearest.engrave) * guests;
+      const total = items.reduce((sum, i) => sum + (i.price + i.engrave) * i.qty, 0);
+      const missing = items.filter((i) => !i.priceSet).length;
       totalBox.style.display = "block";
-      totalBox.innerHTML = guests
-        ? '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#8A8A92;margin-bottom:5px">If one per guest × ' + guests + '</div>' +
-          '<div style="font-size:19px;font-weight:600;color:#00E5C0">$' + Math.round(lo).toLocaleString() + ' – $' + Math.round(hi).toLocaleString() + '</div>' +
-          '<div style="font-size:12.5px;color:#8A8A92;margin-top:3px">Product + engraving, depending which they pick</div>'
-        : '<div style="font-size:13.5px;color:#8A8A92">Add a guest count to see totals.</div>';
+      totalBox.innerHTML =
+        '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#8A8A92;margin-bottom:5px">Product total</div>' +
+        '<div style="font-size:19px;font-weight:600;color:#00E5C0">$' + total.toFixed(2) + '</div>' +
+        (missing ? '<div style="font-size:12.5px;color:#FF9F43;margin-top:3px">' + missing + (missing === 1 ? " item needs a price" : " items need a price") + '</div>'
+          : '<div style="font-size:12.5px;color:#8A8A92;margin-top:3px">Price × quantity, summed</div>');
     }
 
     wrap.querySelectorAll("[data-drop-item]").forEach((b) => {
@@ -688,6 +697,9 @@ class ProposalBuilder {
     wrap.querySelectorAll("[data-ov-price]").forEach((el) => {
       el.addEventListener("change", () => this.setOverride(el.dataset.ovPrice, "price", el.value));
     });
+    wrap.querySelectorAll("[data-ov-qty]").forEach((el) => {
+      el.addEventListener("change", () => this.setOverride(el.dataset.ovQty, "qty", el.value));
+    });
     wrap.querySelectorAll("[data-ov-engrave]").forEach((el) => {
       el.addEventListener("change", () => this.setOverride(el.dataset.ovEngrave, "engrave", el.value));
     });
@@ -701,14 +713,15 @@ class ProposalBuilder {
 
     const cells = items.map((i) => {
       const each = i.price + i.engrave;
+      const lineTotal = each * i.qty;
       const media = i.img
         ? '<img src="' + this.esc(this.absImg(i.img)) + '" width="130" style="width:130px" />'
         : '<div style="width:130px;height:130px;background:#f2f2f2;color:#888;font-size:9pt;text-align:center;line-height:130px">Photo to come</div>';
       return '<td width="145" valign="top" style="padding:0 10px 20px 0">' + media +
         '<p style="margin:6px 0 0;font-family:Calibri,Arial,sans-serif;font-size:12pt;color:#111">' +
         this.esc(i.name) + (i.n ? ' <span style="color:#0a8f7a">#' + this.esc(i.n) + '</span>' : "") + '</p>' +
-        '<p style="margin:2px 0 0;font-family:Calibri,Arial,sans-serif;font-size:11pt;color:#0a8f7a"><b>$' +
-        each.toFixed(2) + '</b> <span style="color:#666;font-size:9pt">EST. PER ITEM</span></p></td>';
+        '<p style="margin:2px 0 0;font-family:Calibri,Arial,sans-serif;font-size:11pt;color:#0a8f7a"><b>' +
+        this.moneyExact(lineTotal) + '</b> <span style="color:#666;font-size:9pt">QTY ' + i.qty + ' &times; ' + this.moneyExact(each) + '</span></p></td>';
     });
 
     let grid = "";
@@ -735,17 +748,16 @@ class ProposalBuilder {
 
     let pricing = "";
     if (showPricing) {
-      const same = Math.round(q.totalLo) === Math.round(q.totalHi);
       pricing =
-        '<p style="margin:26px 0 8px;font-family:Calibri,Arial,sans-serif;font-size:10pt;color:#0a8f7a;letter-spacing:1.5px"><b>ESTIMATED INVESTMENT</b></p>' +
+        '<p style="margin:26px 0 8px;font-family:Calibri,Arial,sans-serif;font-size:10pt;color:#0a8f7a;letter-spacing:1.5px"><b>INVESTMENT</b></p>' +
         '<table width="100%" cellspacing="0" cellpadding="0">' +
         pRow(q.label, q.subLabel, this.money(q.base)) +
         (q.hours ? pRow("Additional event time", q.hours + (q.hours === 1 ? " hour" : " hours") + " @ $150/hr", this.money(q.extra)) : "") +
         (q.engravingAmount ? pRow(q.engravingLabel, "", this.money(q.engravingAmount)) : "") +
-        (items.length && q.guests ? pRow("Products &amp; engraving", q.guests + " guests · depending which items they choose", this.money(q.lo) + " – " + this.money(q.hi)) : "") +
-        '<tr><td style="padding:12px 0;font-family:Calibri,Arial,sans-serif;font-size:11pt;color:#666;letter-spacing:1px">ESTIMATED TOTAL</td>' +
+        (items.length ? pRow("Products &amp; engraving", items.length + (items.length === 1 ? " item" : " items") + (q.missingPrice ? " · " + q.missingPrice + " missing a price" : ""), this.moneyExact(q.itemsTotal)) : "") +
+        '<tr><td style="padding:12px 0;font-family:Calibri,Arial,sans-serif;font-size:11pt;color:#666;letter-spacing:1px">TOTAL</td>' +
         '<td align="right" style="padding:12px 0;font-family:Calibri,Arial,sans-serif;font-size:18pt;color:#0a8f7a"><b>' +
-        (same ? this.money(q.totalLo) : this.money(q.totalLo) + " – " + this.money(q.totalHi)) + '</b></td></tr></table>' +
+        this.moneyExact(q.total) + '</b></td></tr></table>' +
         '<p style="margin:10px 0 0;font-family:Calibri,Arial,sans-serif;font-size:10pt;color:#666">Package includes on-site setup &amp; breakdown and travel up to 50 miles. Product costs are billed in addition to the event package.</p>';
     }
 
@@ -760,7 +772,7 @@ class ProposalBuilder {
       '<p style="margin:4px 0 20px;font-family:Calibri,Arial,sans-serif;font-size:12pt;color:#666">' + this.esc(meta.join(" · ")) + '</p>' +
       '<table cellspacing="0" cellpadding="0">' + grid + '</table>' +
       pricing +
-      '<p style="margin:22px 0 0;font-family:Calibri,Arial,sans-serif;font-size:9.5pt;color:#888">All figures are estimates and subject to change. Product costs are billed separately from the event package. Final pricing is confirmed before booking.</p>' +
+      '<p style="margin:22px 0 0;font-family:Calibri,Arial,sans-serif;font-size:9.5pt;color:#888">Product costs are billed separately from the event package. Final pricing is confirmed before booking.</p>' +
       '</body></html>';
 
     const blob = new Blob(["﻿", html], { type: "application/msword" });
@@ -786,26 +798,22 @@ class ProposalBuilder {
       '</span><span class="p-ink" style="flex:none;font-size:16px;font-weight:600">' + amount + '</span></div>';
 
     let html =
-      '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#00E5C0;margin-bottom:12px">Estimated investment</div>' +
+      '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#00E5C0;margin-bottom:12px">Investment</div>' +
       row(q.label, q.subLabel, this.money(q.base));
 
     if (q.hours) html += row("Additional event time", q.hours + (q.hours === 1 ? " hour" : " hours") + " @ $150/hr", this.money(q.extra));
 
     if (q.engravingAmount) html += row(q.engravingLabel, "", this.money(q.engravingAmount));
 
-    if (q.items.length && q.guests) {
+    if (q.items.length) {
       html += row("Products &amp; engraving",
-        q.guests + " guests · depending which items they choose",
-        this.money(q.lo) + " – " + this.money(q.hi));
-    } else if (q.items.length) {
-      html += row("Products &amp; engraving", "Add a guest count for an estimate", "—");
+        q.items.length + (q.items.length === 1 ? " item" : " items") + (q.missingPrice ? " · " + q.missingPrice + " missing a price" : ""),
+        this.moneyExact(q.itemsTotal));
     }
 
-    const same = Math.round(q.totalLo) === Math.round(q.totalHi);
     html += '<div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,.14)">' +
-      '<span class="p-sub" style="font-family:\'IBM Plex Mono\',monospace;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:#8A8A92">Estimated total</span>' +
-      '<span style="flex:none;font-size:28px;font-weight:700;letter-spacing:-.02em;color:#00E5C0">' +
-      (same ? this.money(q.totalLo) : this.money(q.totalLo) + " – " + this.money(q.totalHi)) + '</span></div>';
+      '<span class="p-sub" style="font-family:\'IBM Plex Mono\',monospace;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:#8A8A92">Total</span>' +
+      '<span style="flex:none;font-size:28px;font-weight:700;letter-spacing:-.02em;color:#00E5C0">' + this.moneyExact(q.total) + '</span></div>';
 
     html += '<div class="p-sub" style="color:#8A8A92;font-size:13.5px;margin-top:12px;text-wrap:pretty">Package includes on-site setup &amp; breakdown and travel up to 50 miles. Product costs are billed in addition to the event package.</div>';
 
@@ -816,6 +824,10 @@ class ProposalBuilder {
     return "$" + Math.round(n).toLocaleString();
   }
 
+  moneyExact(n) {
+    return "$" + n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
   quote() {
     const items = this.picked();
     const guests = parseInt(this.doc.guests, 10) || 0;
@@ -824,20 +836,15 @@ class ProposalBuilder {
     const extra = hours * 150;
     const engravingAmount = parseFloat(this.doc.engravingAmount) || 0;
     const engravingLabel = (this.doc.engravingLabel || "").trim() || "Additional engraving";
-    let lo = 0, hi = 0;
-    if (items.length && guests) {
-      const each = items.map((i) => i.price + i.engrave);
-      lo = Math.min.apply(null, each) * guests;
-      hi = Math.max.apply(null, each) * guests;
-    }
+    const itemsTotal = items.reduce((sum, i) => sum + (i.price + i.engrave) * i.qty, 0);
+    const missingPrice = items.filter((i) => !i.priceSet).length;
     return {
       base, hours, extra, guests, items,
       label: this.doc.pkg === "highvolume" ? "High-Volume Event package" : "Standard package",
       subLabel: this.doc.pkg === "highvolume" ? "2 engravers · 2 machines · up to 4 hours" : "1 engraver · 1 machine · up to 4 hours",
-      lo, hi,
+      itemsTotal, missingPrice,
       engravingAmount, engravingLabel,
-      totalLo: base + extra + lo + engravingAmount,
-      totalHi: base + extra + hi + engravingAmount
+      total: base + extra + itemsTotal + engravingAmount
     };
   }
 
@@ -870,6 +877,7 @@ class ProposalBuilder {
 
     grid.innerHTML = items.map((i) => {
       const each = i.price + i.engrave;
+      const lineTotal = each * i.qty;
       const media = i.img
         ? '<img src="' + this.esc(i.img) + '" alt="" style="width:100%;height:100%;object-fit:cover;display:block" />'
         : '<div style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:#5A5A62">' +
@@ -883,23 +891,20 @@ class ProposalBuilder {
         (i.n ? '<span style="font-family:\'IBM Plex Mono\',monospace;font-size:13px;color:#00E5C0;flex:none">' + this.esc(i.n) + '</span>' : "") +
         '</div>' +
         '<div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-top:6px">' +
-        '<span style="font-size:15px;color:#00E5C0;font-weight:600">$' + each.toFixed(2) + '</span>' +
-        '<span class="p-sub" style="font-family:\'IBM Plex Mono\',monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#8A8A92">est. per item</span>' +
+        '<span style="font-size:15px;color:#00E5C0;font-weight:600">' + this.moneyExact(lineTotal) + '</span>' +
+        '<span class="p-sub" style="font-family:\'IBM Plex Mono\',monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#8A8A92">qty ' + i.qty + ' × ' + this.moneyExact(each) + '</span>' +
         '</div></div></div>';
     }).join("");
 
     this.renderPricing();
 
     if (totalBox && items.length) {
-      const cheapest = items.reduce((a, b) => ((a.price + a.engrave) < (b.price + b.engrave) ? a : b));
-      const dearest = items.reduce((a, b) => ((a.price + a.engrave) > (b.price + b.engrave) ? a : b));
-      totalBox.innerHTML = guests
-        ? '<div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap">' +
-          '<span class="p-sub" style="font-family:\'IBM Plex Mono\',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#8A8A92">Estimated product total · ' + guests + ' guests</span>' +
-          '<span class="p-ink" style="font-size:24px;font-weight:700;letter-spacing:-.02em">$' +
-          Math.round((cheapest.price + cheapest.engrave) * guests).toLocaleString() + ' – $' +
-          Math.round((dearest.price + dearest.engrave) * guests).toLocaleString() + '</span></div>'
-        : '<div class="p-sub" style="color:#8A8A92;font-size:15px">Add a guest count to show an estimated total.</div>';
+      const q = this.quote();
+      totalBox.innerHTML =
+        '<div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap">' +
+        '<span class="p-sub" style="font-family:\'IBM Plex Mono\',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#8A8A92">Product total</span>' +
+        '<span class="p-ink" style="font-size:24px;font-weight:700;letter-spacing:-.02em">' + this.moneyExact(q.itemsTotal) + '</span></div>' +
+        (q.missingPrice ? '<div style="color:#FF9F43;font-size:13px;margin-top:6px">' + q.missingPrice + (q.missingPrice === 1 ? " item still needs a price" : " items still need a price") + '</div>' : "");
     }
   }
 }
