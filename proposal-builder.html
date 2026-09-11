@@ -101,6 +101,14 @@
     </div>
 
     <div style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:20px">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#00E5C0;margin-bottom:14px">Travel</div>
+      <div style="display:flex;flex-direction:column;gap:11px">
+        <input data-f="travelAmount" type="number" min="0" step="1" placeholder="Travel charge $" style="background:#0A0A0B;border:1px solid rgba(255,255,255,.14);color:#EDEDED;font-size:15px;padding:11px 13px;border-radius:3px" />
+        <div style="font-size:12.5px;color:#8A8A92">Optional flat charge, added to the total below. Leave blank if travel is within the standard range.</div>
+      </div>
+    </div>
+
+    <div style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:20px">
       <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:12px">
         <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#00E5C0">Selected</span>
         <span data-sel-count style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8A8A92">0 items</span>
@@ -485,7 +493,7 @@ class ProposalBuilder {
       const raw = localStorage.getItem(DOC_KEY);
       if (raw) return JSON.parse(raw);
     } catch (e) {}
-    return { client: "", event: "", theme: "", date: "", guests: "", picks: [], pkg: "standard", extraHours: "", showPricing: true, engravingLabel: "", engravingAmount: "", overrides: {}, customItems: {} };
+    return { client: "", event: "", theme: "", date: "", guests: "", picks: [], pkg: "standard", extraHours: "", showPricing: true, engravingLabel: "", engravingAmount: "", travelAmount: "", overrides: {}, customItems: {} };
   }
 
   save() {
@@ -530,7 +538,7 @@ class ProposalBuilder {
     const nw = document.querySelector("[data-new]");
     if (nw) nw.addEventListener("click", () => {
       if (!confirm("Clear this proposal? Your library stays.")) return;
-      this.doc = { client: "", event: "", theme: "", date: "", guests: "", picks: [], pkg: "standard", extraHours: "", showPricing: true, engravingLabel: "", engravingAmount: "", overrides: {}, customItems: {} };
+      this.doc = { client: "", event: "", theme: "", date: "", guests: "", picks: [], pkg: "standard", extraHours: "", showPricing: true, engravingLabel: "", engravingAmount: "", travelAmount: "", overrides: {}, customItems: {} };
       document.querySelectorAll("[data-f]").forEach((el) => {
         if (el.type === "checkbox") el.checked = true;
         else if (el.tagName === "SELECT") el.value = "standard";
@@ -723,10 +731,10 @@ class ProposalBuilder {
       '</div>' +
       '<div style="display:flex;align-items:center;gap:6px;padding-left:44px;flex-wrap:wrap">' +
       '<span style="font-size:10.5px;color:#8A8A92;font-family:\'IBM Plex Mono\',monospace">price $</span>' +
-      '<input type="number" min="0" step="0.01" data-ov-price="' + this.esc(i.id) + '" value="' + (i.priceSet ? i.price.toFixed(2) : "") + '" placeholder="0.00" title="Type the price for this proposal" style="width:64px;background:#0A0A0B;border:1px solid ' + (i.priceSet ? "rgba(255,255,255,.14)" : "rgba(255,159,67,.6)") + ';color:#EDEDED;font-size:12px;padding:4px 6px;border-radius:3px" />' +
+      '<input type="number" min="0" step="0.01" data-ov-price="' + this.esc(i.id) + '" value="' + (i.priceSet ? i.price.toFixed(2) : "") + '" placeholder="0.00" title="Total price for this line — whatever this item actually costs for however many are being ordered" style="width:64px;background:#0A0A0B;border:1px solid ' + (i.priceSet ? "rgba(255,255,255,.14)" : "rgba(255,159,67,.6)") + ';color:#EDEDED;font-size:12px;padding:4px 6px;border-radius:3px" />' +
       (i.catalogPrice ? '<span style="font-size:10.5px;color:#5A5A62" title="Catalog reference price, not used automatically">(catalog $' + i.catalogPrice.toFixed(2) + ')</span>' : "") +
       '<span style="font-size:10.5px;color:#8A8A92;font-family:\'IBM Plex Mono\',monospace">qty</span>' +
-      '<input type="number" min="1" step="1" data-ov-qty="' + this.esc(i.id) + '" value="' + i.qty + '" title="Quantity ordered" style="width:48px;background:#0A0A0B;border:1px solid rgba(255,255,255,.14);color:#EDEDED;font-size:12px;padding:4px 6px;border-radius:3px" />' +
+      '<input type="number" min="1" step="1" data-ov-qty="' + this.esc(i.id) + '" value="' + i.qty + '" title="Quantity ordered — reference only, not multiplied into the total" style="width:48px;background:#0A0A0B;border:1px solid rgba(255,255,255,.14);color:#EDEDED;font-size:12px;padding:4px 6px;border-radius:3px" />' +
       '<span style="font-size:10.5px;color:#8A8A92;font-family:\'IBM Plex Mono\',monospace">engrave $</span>' +
       '<input type="number" min="0" step="0.01" data-ov-engrave="' + this.esc(i.id) + '" value="' + i.engrave.toFixed(2) + '" title="Engraving fee, this proposal only" style="width:58px;background:#0A0A0B;border:1px solid rgba(255,255,255,.14);color:#EDEDED;font-size:12px;padding:4px 6px;border-radius:3px" />' +
       '</div>' +
@@ -735,14 +743,14 @@ class ProposalBuilder {
     if (count) count.textContent = items.length === 1 ? "1 item" : items.length + " items";
 
     if (totalBox) {
-      const total = items.reduce((sum, i) => sum + (i.price + i.engrave) * i.qty, 0);
+      const total = items.reduce((sum, i) => sum + i.price + i.engrave, 0);
       const missing = items.filter((i) => !i.priceSet).length;
       totalBox.style.display = "block";
       totalBox.innerHTML =
         '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#8A8A92;margin-bottom:5px">Product total</div>' +
         '<div style="font-size:19px;font-weight:600;color:#00E5C0">$' + total.toFixed(2) + '</div>' +
         (missing ? '<div style="font-size:12.5px;color:#FF9F43;margin-top:3px">' + missing + (missing === 1 ? " item needs a price" : " items need a price") + '</div>'
-          : '<div style="font-size:12.5px;color:#8A8A92;margin-top:3px">Price × quantity, summed</div>');
+          : '<div style="font-size:12.5px;color:#8A8A92;margin-top:3px">Prices summed as entered — qty is a reference note only</div>');
     }
 
     wrap.querySelectorAll("[data-drop-item]").forEach((b) => {
@@ -775,8 +783,7 @@ class ProposalBuilder {
     const title = this.doc.event || this.doc.client || "Engraving proposal";
 
     const cells = items.map((i) => {
-      const each = i.price + i.engrave;
-      const lineTotal = each * i.qty;
+      const lineTotal = i.price + i.engrave;
       const media = i.img
         ? '<img src="' + this.esc(this.absImg(i.img)) + '" width="130" style="width:130px" />'
         : '<div style="width:130px;height:130px;background:#f2f2f2;color:#888;font-size:9pt;text-align:center;line-height:130px">Photo to come</div>';
@@ -784,7 +791,7 @@ class ProposalBuilder {
         '<p style="margin:6px 0 0;font-family:Calibri,Arial,sans-serif;font-size:12pt;color:#111">' +
         this.esc(i.name) + (i.n ? ' <span style="color:#0a8f7a">#' + this.esc(i.n) + '</span>' : "") + '</p>' +
         '<p style="margin:2px 0 0;font-family:Calibri,Arial,sans-serif;font-size:11pt;color:#0a8f7a"><b>' +
-        this.moneyExact(lineTotal) + '</b> <span style="color:#666;font-size:9pt">QTY ' + i.qty + ' &times; ' + this.moneyExact(each) + '</span></p></td>';
+        this.moneyExact(lineTotal) + '</b> <span style="color:#666;font-size:9pt">QTY ' + i.qty + '</span></p></td>';
     });
 
     let grid = "";
@@ -817,6 +824,7 @@ class ProposalBuilder {
         pRow(q.label, q.subLabel, this.money(q.base)) +
         (q.hours ? pRow("Additional event time", q.hours + (q.hours === 1 ? " hour" : " hours") + " @ $150/hr", this.money(q.extra)) : "") +
         (q.engravingAmount ? pRow(q.engravingLabel, "", this.money(q.engravingAmount)) : "") +
+        (q.travelAmount ? pRow("Travel", "", this.money(q.travelAmount)) : "") +
         (items.length ? pRow("Products &amp; engraving", items.length + (items.length === 1 ? " item" : " items") + (q.missingPrice ? " · " + q.missingPrice + " missing a price" : ""), this.moneyExact(q.itemsTotal)) : "") +
         '<tr><td style="padding:12px 0;font-family:Calibri,Arial,sans-serif;font-size:11pt;color:#666;letter-spacing:1px">TOTAL</td>' +
         '<td align="right" style="padding:12px 0;font-family:Calibri,Arial,sans-serif;font-size:18pt;color:#0a8f7a"><b>' +
@@ -868,6 +876,8 @@ class ProposalBuilder {
 
     if (q.engravingAmount) html += row(q.engravingLabel, "", this.money(q.engravingAmount));
 
+    if (q.travelAmount) html += row("Travel", "", this.money(q.travelAmount));
+
     if (q.items.length) {
       html += row("Products &amp; engraving",
         q.items.length + (q.items.length === 1 ? " item" : " items") + (q.missingPrice ? " · " + q.missingPrice + " missing a price" : ""),
@@ -899,7 +909,8 @@ class ProposalBuilder {
     const extra = hours * 150;
     const engravingAmount = parseFloat(this.doc.engravingAmount) || 0;
     const engravingLabel = (this.doc.engravingLabel || "").trim() || "Additional engraving";
-    const itemsTotal = items.reduce((sum, i) => sum + (i.price + i.engrave) * i.qty, 0);
+    const travelAmount = parseFloat(this.doc.travelAmount) || 0;
+    const itemsTotal = items.reduce((sum, i) => sum + i.price + i.engrave, 0);
     const missingPrice = items.filter((i) => !i.priceSet).length;
     return {
       base, hours, extra, guests, items,
@@ -907,7 +918,8 @@ class ProposalBuilder {
       subLabel: this.doc.pkg === "highvolume" ? "2 engravers · 2 machines · up to 4 hours" : "1 engraver · 1 machine · up to 4 hours",
       itemsTotal, missingPrice,
       engravingAmount, engravingLabel,
-      total: base + extra + itemsTotal + engravingAmount
+      travelAmount,
+      total: base + extra + itemsTotal + engravingAmount + travelAmount
     };
   }
 
@@ -939,8 +951,7 @@ class ProposalBuilder {
     if (totalBox) totalBox.style.display = (items.length && this.doc.showPricing === false) ? "block" : "none";
 
     grid.innerHTML = items.map((i) => {
-      const each = i.price + i.engrave;
-      const lineTotal = each * i.qty;
+      const lineTotal = i.price + i.engrave;
       const media = i.img
         ? '<img src="' + this.esc(i.img) + '" alt="" style="width:100%;height:100%;object-fit:cover;display:block" />'
         : '<div style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:#5A5A62">' +
@@ -955,7 +966,7 @@ class ProposalBuilder {
         '</div>' +
         '<div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-top:6px">' +
         '<span style="font-size:15px;color:#00E5C0;font-weight:600">' + this.moneyExact(lineTotal) + '</span>' +
-        '<span class="p-sub" style="font-family:\'IBM Plex Mono\',monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#8A8A92">qty ' + i.qty + ' × ' + this.moneyExact(each) + '</span>' +
+        '<span class="p-sub" style="font-family:\'IBM Plex Mono\',monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#8A8A92">qty ' + i.qty + '</span>' +
         '</div></div></div>';
     }).join("");
 
