@@ -663,10 +663,10 @@ class ProposalBuilder {
       '<div style="display:flex;align-items:center;gap:6px;padding-left:44px;flex-wrap:wrap">' +
       '<span style="font-size:10.5px;color:#8A8A92;font-family:\'IBM Plex Mono\',monospace">price $</span>' +
       '<input type="number" min="0" step="0.01" data-ov-price="' + this.esc(i.id) + '" value="' + (i.priceSet ? i.price.toFixed(2) : "") + '" placeholder="0.00" title="Type the price for this proposal" style="width:64px;background:#0A0A0B;border:1px solid ' + (i.priceSet ? "rgba(255,255,255,.14)" : "rgba(255,159,67,.6)") + ';color:#EDEDED;font-size:12px;padding:4px 6px;border-radius:3px" />' +
-      '<span style="font-size:10.5px;color:#8A8A92;font-family:\'IBM Plex Mono\',monospace">engrave $</span>' +
-      '<input type="number" min="0" step="0.01" data-ov-engrave="' + this.esc(i.id) + '" value="' + i.engrave.toFixed(2) + '" title="Engraving fee, this proposal only" style="width:58px;background:#0A0A0B;border:1px solid rgba(255,255,255,.14);color:#EDEDED;font-size:12px;padding:4px 6px;border-radius:3px" />' +
       '<span style="font-size:10.5px;color:#8A8A92;font-family:\'IBM Plex Mono\',monospace">qty</span>' +
       '<input type="number" min="1" step="1" data-ov-qty="' + this.esc(i.id) + '" value="' + i.qty + '" title="Quantity ordered" style="width:48px;background:#0A0A0B;border:1px solid rgba(255,255,255,.14);color:#EDEDED;font-size:12px;padding:4px 6px;border-radius:3px" />' +
+      '<span style="font-size:10.5px;color:#8A8A92;font-family:\'IBM Plex Mono\',monospace">engrave $</span>' +
+      '<input type="number" min="0" step="0.01" data-ov-engrave="' + this.esc(i.id) + '" value="' + i.engrave.toFixed(2) + '" title="Engraving fee, this proposal only" style="width:58px;background:#0A0A0B;border:1px solid rgba(255,255,255,.14);color:#EDEDED;font-size:12px;padding:4px 6px;border-radius:3px" />' +
       '</div>' +
       '</div>').join("");
 
