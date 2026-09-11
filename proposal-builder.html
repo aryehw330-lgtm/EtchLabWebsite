@@ -32,7 +32,7 @@
   }
   @media (max-width: 760px){
     [data-build]{grid-template-columns:1fr!important}
-    [data-build] aside{position:static!important}
+    [data-build] aside{position:static!important;max-height:none!important;overflow:visible!important}
     [data-lib-grid]{grid-template-columns:repeat(auto-fill,minmax(80px,1fr))!important;gap:6px!important}
     [data-p-grid]{grid-template-columns:repeat(auto-fill,minmax(80px,1fr))!important;justify-content:stretch!important;gap:6px!important}
   }
@@ -59,7 +59,7 @@
 
 <div data-build style="display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:clamp(16px,2.5vw,28px);align-items:start;padding:clamp(16px,3vw,32px)">
 
-  <aside style="position:sticky;top:78px;display:flex;flex-direction:column;gap:16px">
+  <aside style="position:sticky;top:78px;max-height:calc(100vh - 96px);overflow-y:auto;display:flex;flex-direction:column;gap:16px">
     <div style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:20px">
       <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#00E5C0;margin-bottom:14px">This proposal</div>
       <div style="display:flex;flex-direction:column;gap:11px">
