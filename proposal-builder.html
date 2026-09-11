@@ -107,6 +107,17 @@
       </div>
       <div data-selected style="display:flex;flex-direction:column;gap:8px"></div>
       <div data-sel-total style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.08);display:none"></div>
+
+      <div style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.08)">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#8A8A92;margin-bottom:8px">Add an item you found</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <input data-custom-name placeholder="Item name" style="background:#0A0A0B;border:1px solid rgba(255,255,255,.14);color:#EDEDED;font-size:13px;padding:8px 10px;border-radius:3px" />
+          <input data-custom-link type="url" placeholder="Link (optional)" style="background:#0A0A0B;border:1px solid rgba(255,255,255,.14);color:#EDEDED;font-size:13px;padding:8px 10px;border-radius:3px" />
+          <input data-custom-photo type="file" accept="image/*" style="font-size:12px;color:#8A8A92" />
+          <button type="button" data-custom-add style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;padding:9px;border:1px solid rgba(0,229,192,.4);background:rgba(0,229,192,.08);color:#00E5C0;border-radius:3px;cursor:pointer">Add to this proposal</button>
+          <div style="font-size:11.5px;color:#8A8A92">Price, quantity and engraving are set below, same as any other item.</div>
+        </div>
+      </div>
     </div>
 
     <button type="button" data-new class="chip" style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;padding:11px;border:1px solid rgba(255,255,255,.14);background:transparent;color:#8A8A92;border-radius:2px;cursor:pointer">Start a new proposal</button>
@@ -371,8 +382,43 @@ class ProposalBuilder {
     this.wireFields();
     this.wireLibrary();
     this.wireModes();
+    this.wireCustomItem();
     this.renderAll();
     this.refreshFromSheet();
+  }
+
+  wireCustomItem() {
+    const btn = document.querySelector("[data-custom-add]");
+    if (!btn) return;
+    btn.addEventListener("click", () => {
+      const nameEl = document.querySelector("[data-custom-name]");
+      const linkEl = document.querySelector("[data-custom-link]");
+      const fileEl = document.querySelector("[data-custom-photo]");
+      const name = (nameEl.value || "").trim();
+      if (!name) { nameEl.focus(); return; }
+      const link = (linkEl.value || "").trim();
+      const file = fileEl.files && fileEl.files[0];
+
+      const finish = (imgDataUrl) => {
+        const id = "custom" + Date.now();
+        if (!this.doc.customItems) this.doc.customItems = {};
+        this.doc.customItems[id] = { id, name: name, img: imgDataUrl || null, n: null, link: link || undefined };
+        this.doc.picks.push(id);
+        this.save();
+        nameEl.value = "";
+        linkEl.value = "";
+        fileEl.value = "";
+        this.renderAll();
+      };
+
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = () => finish(reader.result);
+        reader.readAsDataURL(file);
+      } else {
+        finish(null);
+      }
+    });
   }
 
   // Best-effort live sync: if SHEET_CSV_URL is set (sheet published to web),
@@ -439,7 +485,7 @@ class ProposalBuilder {
       const raw = localStorage.getItem(DOC_KEY);
       if (raw) return JSON.parse(raw);
     } catch (e) {}
-    return { client: "", event: "", theme: "", date: "", guests: "", picks: [], pkg: "standard", extraHours: "", showPricing: true, engravingLabel: "", engravingAmount: "", overrides: {} };
+    return { client: "", event: "", theme: "", date: "", guests: "", picks: [], pkg: "standard", extraHours: "", showPricing: true, engravingLabel: "", engravingAmount: "", overrides: {}, customItems: {} };
   }
 
   save() {
@@ -484,7 +530,7 @@ class ProposalBuilder {
     const nw = document.querySelector("[data-new]");
     if (nw) nw.addEventListener("click", () => {
       if (!confirm("Clear this proposal? Your library stays.")) return;
-      this.doc = { client: "", event: "", theme: "", date: "", guests: "", picks: [], pkg: "standard", extraHours: "", showPricing: true, engravingLabel: "", engravingAmount: "", overrides: {} };
+      this.doc = { client: "", event: "", theme: "", date: "", guests: "", picks: [], pkg: "standard", extraHours: "", showPricing: true, engravingLabel: "", engravingAmount: "", overrides: {}, customItems: {} };
       document.querySelectorAll("[data-f]").forEach((el) => {
         if (el.type === "checkbox") el.checked = true;
         else if (el.tagName === "SELECT") el.value = "standard";
@@ -608,11 +654,13 @@ class ProposalBuilder {
 
   picked() {
     const overrides = this.doc.overrides || {};
+    const customItems = this.doc.customItems || {};
     return this.doc.picks.map((id) => {
-      const base = this.library.filter((i) => i.id === id)[0];
+      const base = this.library.filter((i) => i.id === id)[0] || customItems[id];
       if (!base) return null;
       const ov = overrides[id] || {};
       const merged = Object.assign({}, base);
+      merged.catalogPrice = typeof base.price === "number" ? base.price : null;
       merged.priceSet = typeof ov.price === "number";
       merged.price = merged.priceSet ? ov.price : 0;
       merged.engrave = typeof ov.engrave === "number" ? ov.engrave : 0;
@@ -657,12 +705,15 @@ class ProposalBuilder {
       '<div style="display:flex;align-items:center;gap:10px">' +
       (i.img ? '<img src="' + this.esc(i.img) + '" alt="" style="width:34px;height:34px;object-fit:cover;border-radius:3px;flex:none" />' :
         '<span style="width:34px;height:34px;border-radius:3px;background:#0F0F11;flex:none"></span>') +
-      '<span style="flex:1;min-width:0;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + this.esc(i.name) + '</span>' +
+      '<span style="flex:1;min-width:0;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + this.esc(i.name) +
+      (i.link ? ' <a href="' + this.esc(i.link) + '" target="_blank" rel="noopener" title="Open link" style="color:#00E5C0;text-decoration:none">↗</a>' : "") +
+      '</span>' +
       '<button type="button" data-drop-item="' + this.esc(i.id) + '" aria-label="Remove" style="flex:none;border:none;background:none;color:#8A8A92;font-size:17px;cursor:pointer;line-height:1">×</button>' +
       '</div>' +
       '<div style="display:flex;align-items:center;gap:6px;padding-left:44px;flex-wrap:wrap">' +
       '<span style="font-size:10.5px;color:#8A8A92;font-family:\'IBM Plex Mono\',monospace">price $</span>' +
       '<input type="number" min="0" step="0.01" data-ov-price="' + this.esc(i.id) + '" value="' + (i.priceSet ? i.price.toFixed(2) : "") + '" placeholder="0.00" title="Type the price for this proposal" style="width:64px;background:#0A0A0B;border:1px solid ' + (i.priceSet ? "rgba(255,255,255,.14)" : "rgba(255,159,67,.6)") + ';color:#EDEDED;font-size:12px;padding:4px 6px;border-radius:3px" />' +
+      (i.catalogPrice ? '<span style="font-size:10.5px;color:#5A5A62" title="Catalog reference price, not used automatically">(catalog $' + i.catalogPrice.toFixed(2) + ')</span>' : "") +
       '<span style="font-size:10.5px;color:#8A8A92;font-family:\'IBM Plex Mono\',monospace">qty</span>' +
       '<input type="number" min="1" step="1" data-ov-qty="' + this.esc(i.id) + '" value="' + i.qty + '" title="Quantity ordered" style="width:48px;background:#0A0A0B;border:1px solid rgba(255,255,255,.14);color:#EDEDED;font-size:12px;padding:4px 6px;border-radius:3px" />' +
       '<span style="font-size:10.5px;color:#8A8A92;font-family:\'IBM Plex Mono\',monospace">engrave $</span>' +
@@ -689,6 +740,7 @@ class ProposalBuilder {
         const at = this.doc.picks.indexOf(id);
         if (at > -1) this.doc.picks.splice(at, 1);
         if (this.doc.overrides) delete this.doc.overrides[id];
+        if (this.doc.customItems) delete this.doc.customItems[id];
         this.save();
         this.renderAll();
       });
