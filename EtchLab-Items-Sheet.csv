@@ -51,7 +51,7 @@ Number,Item,Category,Pack Size,Product Cost (Pack),Cost Each,Engraving Price,Not
 710,Mini Purse Charm,Leather,1,$3.90,$3.90,$3,"From November 8 proposal, orange leather",PENDING,Yes,Yes
 711,Vintage Coin Purse,Leather,1,$3.90,$3.90,$3,"From November 8 proposal, tan/brown kiss-lock",https://www.aliexpress.us/item/3256806754056192.html,Yes,Yes
 712,Hair Barrettes,Metal,2,$14.30,$7.15,$3,"From November 8 proposal, gold or silver metal",https://www.amazon.com/Olbye-Dainty-Barrette-Bridal-Accessories/dp/B07TB4VLDP,Yes,Yes
-713,Sunglasses,Accessories,1,$10.40,$10.40,$3,"From November 8 proposal, round/oval gold frame",PENDING,Yes,Yes
+713,Sunglasses,Metal,1,$10.40,$10.40,$3,"From November 8 proposal, round/oval gold frame",PENDING,Yes,Yes
 714,Flat Pouch,Leather,1,$3.90,$3.90,$3,"From November 8 proposal, tan leather, magnetic closure",PENDING,Yes,Yes
 715,Zip Pouch,Leather,1,$6.50,$6.50,$3,"From November 8 proposal, orange leather",PENDING,Yes,Yes
 716,Wooden Hairbrushes,Wood,24,$38.88,$1.62,$3,"From November 8 proposal, bamboo",https://www.amazon.com/Tessco-you-Brushes-Bristles-Engraving/dp/B0F6YH1JY6,Yes,Yes
@@ -174,10 +174,10 @@ Number,Item,Category,Pack Size,Product Cost (Pack),Cost Each,Engraving Price,Not
 1098,Twist Ring - Adjustable,Jewelry,1,$3.50,$3.50,$3,From Claw Clip & Jewelry proposal,PENDING,Yes,Yes
 1099,Beaded Bracelet with Heart Charm - Variant,Jewelry,1,$5.00,$5.00,$3,From Claw Clip & Jewelry proposal,PENDING,Yes,Yes
 1100,Unicorn Charm Necklace Pair,Jewelry,1,$4.50,$4.50,$3,From Claw Clip & Jewelry proposal,https://monarchpine.com/products/unicorn-pendant-necklace-silver-or-gold-1-total-metal-blank-264,Yes,Yes
-1201,Wireless Headphones,Accessories,,,,,"From customer event photos, NEEDS PRICING",PENDING,Yes,No
+1201,Wireless Headphones,Tech,,,,,"From customer event photos, NEEDS PRICING",PENDING,Yes,No
 1202,Stainless Steel Tumbler,Metal,,,,,"From customer event photos, NEEDS PRICING",PENDING,Yes,No
-1203,Portable Power Bank,Accessories,,,,,"From customer event photos, NEEDS PRICING",PENDING,Yes,No
-1204,Slim Card Power Bank,Accessories,,,,,"From customer event photos, NEEDS PRICING",PENDING,Yes,No
+1203,Portable Power Bank,Tech,,,,,"From customer event photos, NEEDS PRICING",PENDING,Yes,No
+1204,Slim Card Power Bank,Tech,,,,,"From customer event photos, NEEDS PRICING",PENDING,Yes,No
 1205,Wood Baseball Bat,Wood,,,,,"From customer event photos, NEEDS PRICING",PENDING,Yes,No
 1206,Metal Pen Set,Metal,,,,,"From customer event photos, NEEDS PRICING",PENDING,Yes,No
 1207,Sport Mesh Kippah,Judaica,,,,,"From customer event photos, NEEDS PRICING",PENDING,Yes,No
