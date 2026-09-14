@@ -27,6 +27,7 @@
   .btn-primary:hover{box-shadow:0 8px 30px rgba(0,229,192,.35);transform:translateY(-2px)}
   [data-reveal] [style*="background:#141416"]:hover{border-color:rgba(0,229,192,.4)}
   [data-etch-input]:focus{border-color:rgba(0,229,192,.6)!important}
+  [data-etch-input]::placeholder{color:#5A5A62;opacity:1}
   [data-mail-menu] a:hover,[data-mail-copy]:hover{background:rgba(0,229,192,.12);color:#00E5C0}
   nav a:hover,footer a:hover,.top-bar a:hover{color:#00E5C0}
 </style>
@@ -107,13 +108,13 @@
             </clipPath>
           </defs>
           <g clip-path="url(#etchReveal)">
-            <text x="410" y="108" text-anchor="middle" font-family="'Space Grotesk',sans-serif" font-size="88" font-weight="700" letter-spacing="-3" fill="#EDEDED" class="etch-out">MAYA R.</text>
-            <text x="410" y="108" text-anchor="middle" font-family="'Space Grotesk',sans-serif" font-size="88" font-weight="700" letter-spacing="-3" fill="none" stroke="#00E5C0" stroke-width="1.4" style="filter:drop-shadow(0 0 6px rgba(0,229,192,.85))" class="etch-out">MAYA R.</text>
+            <text x="410" y="108" text-anchor="middle" font-family="'Space Grotesk',sans-serif" font-size="88" font-weight="700" letter-spacing="-3" fill="#EDEDED" class="etch-out">ETCH LAB</text>
+            <text x="410" y="108" text-anchor="middle" font-family="'Space Grotesk',sans-serif" font-size="88" font-weight="700" letter-spacing="-3" fill="none" stroke="#00E5C0" stroke-width="1.4" style="filter:drop-shadow(0 0 6px rgba(0,229,192,.85))" class="etch-out">ETCH LAB</text>
           </g>
           <line x1="70" y1="140" x2="750" y2="140" stroke="rgba(255,255,255,.10)" stroke-width="1"></line>
         </svg>
         <div style="display:flex;gap:10px;justify-content:center;align-items:center;margin-top:16px;flex-wrap:wrap">
-          <input data-etch-input="1" value="MAYA R." maxlength="14" aria-label="Text to engrave" placeholder="TYPE A NAME" style="width:min(320px,100%);background:#0A0A0B;border:1px solid rgba(255,255,255,.14);color:#EDEDED;font-family:'IBM Plex Mono',monospace;font-size:15px;letter-spacing:.08em;text-transform:uppercase;padding:12px 16px;border-radius:2px;outline:none" />
+          <input data-etch-input="1" value="" maxlength="14" aria-label="Text to engrave" placeholder="TYPE A NAME" style="width:min(320px,100%);background:#0A0A0B;border:1px solid rgba(255,255,255,.14);color:#EDEDED;font-family:'IBM Plex Mono',monospace;font-size:15px;letter-spacing:.08em;text-transform:uppercase;padding:12px 16px;border-radius:2px;outline:none" />
           <span style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:#8A8A92">max 14 chars</span>
         </div>
       </div>
@@ -332,7 +333,7 @@
   var input=q('[data-etch-input]'),outs=document.querySelectorAll('.etch-out');
   if(input){
     var sync=function(){
-      var v=(input.value||'').toUpperCase().slice(0,14)||'ETCHLAB';
+      var v=(input.value||'').toUpperCase().slice(0,14)||'ETCH LAB';
       for(var i=0;i<outs.length;i++) outs[i].textContent=v;
     };
     ['input','keyup','change'].forEach(function(ev){input.addEventListener(ev,sync)});
