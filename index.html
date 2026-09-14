@@ -40,6 +40,8 @@
 <div id="laser-layer" aria-hidden="true" style="position:fixed;inset:0;pointer-events:none;z-index:9999">
   <div id="beam" style="position:absolute;top:0;left:0;height:2px;transform-origin:left center;background:linear-gradient(90deg,rgba(255,0,128,0) 0%,#FF5E3A 18%,#FFD166 34%,#00E5C0 52%,#3AA0FF 70%,#B45CFF 86%,#FF5E3A 100%);background-size:220% 100%;animation:beamShift 2.4s linear infinite;filter:drop-shadow(0 0 7px rgba(0,229,192,.85)) drop-shadow(0 0 14px rgba(180,92,255,.55));opacity:0;transition:opacity .3s"></div>
   <div id="dot" style="position:absolute;width:16px;height:16px;border-radius:50%;background:radial-gradient(circle,#fff 0%,#00E5C0 38%,rgba(0,229,192,0) 72%);animation:dotHue 2.4s linear infinite;transform:translate(-50%,-50%);opacity:0;transition:opacity .3s"></div>
+  <div id="etch-beam" style="position:fixed;top:0;left:0;height:2px;transform-origin:left center;background:linear-gradient(90deg,rgba(255,0,128,0) 0%,#FF5E3A 18%,#FFD166 34%,#00E5C0 52%,#3AA0FF 70%,#B45CFF 86%,#FF5E3A 100%);background-size:220% 100%;animation:beamShift 2.4s linear infinite;filter:drop-shadow(0 0 7px rgba(0,229,192,.85)) drop-shadow(0 0 14px rgba(180,92,255,.55));opacity:0;transition:opacity .25s"></div>
+  <div id="etch-dot" style="position:fixed;width:12px;height:12px;border-radius:50%;background:radial-gradient(circle,#fff 0%,#00E5C0 38%,rgba(0,229,192,0) 72%);animation:dotHue 2.4s linear infinite;transform:translate(-50%,-50%);opacity:0;transition:opacity .25s"></div>
 </div>
 
 <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:9px clamp(20px,4vw,44px);background:#141416;border-bottom:1px solid rgba(255,255,255,.08);font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#8A8A92">
@@ -95,9 +97,19 @@
         <span style="color:#00E5C0">◉ laser ready</span>
       </div>
       <div style="padding:clamp(18px,3vw,32px) 20px">
+        <div style="display:flex;justify-content:center;margin-bottom:4px">
+          <img id="etch-logo" src="logo.png" alt="" style="width:26px;height:26px;object-fit:contain;filter:invert(1) hue-rotate(180deg);opacity:.9" />
+        </div>
         <svg viewBox="0 0 820 165" style="display:block;width:100%;height:auto;max-height:210px">
-          <text x="410" y="108" text-anchor="middle" font-family="'Space Grotesk',sans-serif" font-size="88" font-weight="700" letter-spacing="-3" fill="#EDEDED" class="etch-out" style="animation:etchBurn 5s ease-in-out infinite">MAYA R.</text>
-          <text x="410" y="108" text-anchor="middle" font-family="'Space Grotesk',sans-serif" font-size="88" font-weight="700" letter-spacing="-3" fill="none" stroke="#00E5C0" stroke-width="1.4" stroke-dasharray="1600" style="filter:drop-shadow(0 0 6px rgba(0,229,192,.85));animation:etchDraw 5s linear infinite" class="etch-out">MAYA R.</text>
+          <defs>
+            <clipPath id="etchReveal" clipPathUnits="userSpaceOnUse">
+              <rect id="etch-reveal-rect" x="0" y="0" width="0" height="165"></rect>
+            </clipPath>
+          </defs>
+          <g clip-path="url(#etchReveal)">
+            <text x="410" y="108" text-anchor="middle" font-family="'Space Grotesk',sans-serif" font-size="88" font-weight="700" letter-spacing="-3" fill="#EDEDED" class="etch-out">MAYA R.</text>
+            <text x="410" y="108" text-anchor="middle" font-family="'Space Grotesk',sans-serif" font-size="88" font-weight="700" letter-spacing="-3" fill="none" stroke="#00E5C0" stroke-width="1.4" style="filter:drop-shadow(0 0 6px rgba(0,229,192,.85))" class="etch-out">MAYA R.</text>
+          </g>
           <line x1="70" y1="140" x2="750" y2="140" stroke="rgba(255,255,255,.10)" stroke-width="1"></line>
         </svg>
         <div style="display:flex;gap:10px;justify-content:center;align-items:center;margin-top:16px;flex-wrap:wrap">
@@ -153,7 +165,7 @@
     <div data-reveal style="max-width:52ch;margin:0 auto clamp(34px,5vw,52px);text-align:center">
       <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#00E5C0">02 — How it runs</span>
       <h2 style="font-weight:600;font-size:clamp(30px,5vw,46px);letter-spacing:-.025em;line-height:1.06;margin-top:14px">Tablet to laser, in minutes</h2>
-      <p style="color:#8A8A92;margin-top:14px;font-size:18px;text-wrap:pretty">Guests order on our tablet station — it goes straight to the machine and gets engraved on the spot.</p>
+      <p style="color:#8A8A92;margin-top:14px;font-size:18px;text-wrap:pretty">Guests order on our tablet station — it goes straight to the machine and gets engraved on the spot. No line, no clipboard, no downtime between orders — it's what makes us one of the most efficient custom live laser engravers you can book.</p>
     </div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:clamp(24px,4vw,48px);align-items:center">
       <div style="display:flex;flex-direction:column;gap:14px">
@@ -325,6 +337,41 @@
     };
     ['input','keyup','change'].forEach(function(ev){input.addEventListener(ev,sync)});
   }
+
+  // Hero laser: a short beam drops from the mini logo sitting right above
+  // the name and cuts it left-to-right. The reveal is driven by an SVG
+  // clip-path rect (in the text's own coordinate space via getBBox), so
+  // the letters actually appear exactly where the beam currently is —
+  // no separate CSS animation clock to fall out of sync with.
+  (function(){
+    if(reduce) return;
+    var etchBeam=document.getElementById('etch-beam'),etchDot=document.getElementById('etch-dot');
+    var strokeText=outs[1],etchLogo=document.getElementById('etch-logo'),revealRect=document.getElementById('etch-reveal-rect');
+    if(!etchBeam||!etchDot||!strokeText||!etchLogo||!revealRect) return;
+    var CYCLE=5000,DRAW_FRAC=0.6;
+    (function frame(){
+      var lr=etchLogo.getBoundingClientRect(),tr=strokeText.getBoundingClientRect();
+      if(lr.width&&tr.width){
+        var t=(performance.now()%CYCLE)/CYCLE,drawT=Math.min(t/DRAW_FRAC,1);
+        var bbox=strokeText.getBBox();
+        revealRect.setAttribute('x',bbox.x);
+        revealRect.setAttribute('y',bbox.y-10);
+        revealRect.setAttribute('width',Math.max(0,bbox.width*drawT));
+        revealRect.setAttribute('height',bbox.height+20);
+        var ox=lr.left+lr.width/2,oy=lr.bottom-2;
+        var tx=tr.left+tr.width*drawT,ty=tr.top+tr.height*0.62;
+        var dx=tx-ox,dy=ty-oy,dist=Math.sqrt(dx*dx+dy*dy),ang=Math.atan2(dy,dx)*180/Math.PI;
+        etchBeam.style.left=ox+'px';etchBeam.style.top=oy+'px';
+        etchBeam.style.width=dist+'px';
+        etchBeam.style.transform='rotate('+ang+'deg)';
+        etchDot.style.left=tx+'px';etchDot.style.top=ty+'px';
+        var visible=drawT<1;
+        etchBeam.style.opacity=visible?'1':'0';
+        etchDot.style.opacity=visible?'1':'0';
+      }
+      requestAnimationFrame(frame);
+    })();
+  })();
 
   var trigger=q('[data-mail-trigger]'),menu=q('[data-mail-menu]');
   if(trigger&&menu){
