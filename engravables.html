@@ -1402,10 +1402,6 @@
   function learnedPrices(){
     try{ return JSON.parse(localStorage.getItem(LEARNED_KEY))||{}; }catch(e){ return {}; }
   }
-  function saveLearnedPrice(n,price){
-    var m=learnedPrices(); m[n]=price;
-    try{ localStorage.setItem(LEARNED_KEY,JSON.stringify(m)); }catch(e){}
-  }
   function effectiveUnit(item){
     var v=learnedPrices()[item.n];
     return (typeof v==='number'&&!isNaN(v))?v:item.unit;
@@ -1442,41 +1438,6 @@
     apply();});});
   apply();
 
-
-  // Hidden price-edit UI: invisible to normal visitors. Visit once with
-  // ?edit=1 to unlock on this device (stored in localStorage); after that
-  // a small price field appears on every item card for updating the
-  // reference price used by the budget-suggestion tool above. Never shown
-  // to the public, never displayed as part of any item's listing.
-  (function(){
-    var UNLOCK_KEY='etchlab.itemsEditUnlocked';
-    try{
-      var params=new URLSearchParams(location.search);
-      if(params.get('edit')==='1') localStorage.setItem(UNLOCK_KEY,'1');
-      if(params.get('edit')==='0') localStorage.removeItem(UNLOCK_KEY);
-    }catch(e){}
-    var unlocked=false;
-    try{ unlocked=localStorage.getItem(UNLOCK_KEY)==='1'; }catch(e){}
-    if(!unlocked) return;
-
-    cards.forEach(function(card){
-      var num=parseInt(card.dataset.num,10);
-      if(!num) return;
-      var catalogItem=CATALOG.filter(function(c){return c.n===num})[0];
-      var learned=learnedPrices()[num];
-      var current=(typeof learned==='number')?learned:(catalogItem?catalogItem.unit:'');
-      var wrap=document.createElement('div');
-      wrap.style.cssText='padding:8px 14px 12px;border-top:1px dashed rgba(255,159,67,.45);display:flex;align-items:center;gap:6px';
-      wrap.innerHTML='<span style="font-size:10px;color:#FF9F43;font-family:\'IBM Plex Mono\',monospace;letter-spacing:.06em;text-transform:uppercase">ref price $</span>'+
-        '<input type="number" min="0" step="0.01" value="'+(current===''?'':current)+'" style="width:64px;background:#0A0A0B;border:1px solid rgba(255,159,67,.5);color:#EDEDED;font-size:12px;padding:3px 6px;border-radius:3px" />';
-      card.appendChild(wrap);
-      wrap.addEventListener('click',function(e){ e.stopPropagation(); });
-      wrap.querySelector('input').addEventListener('change',function(e){
-        var v=parseFloat(e.target.value);
-        if(!isNaN(v)) saveLearnedPrice(num,v);
-      });
-    });
-  })();
 
   // lightbox
   (function(){
