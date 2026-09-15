@@ -40,6 +40,11 @@
   <div id="dot" style="position:absolute;width:16px;height:16px;border-radius:50%;background:radial-gradient(circle,#fff 0%,#00E5C0 38%,rgba(0,229,192,0) 72%);animation:dotHue 2.4s linear infinite;transform:translate(-50%,-50%);opacity:0;transition:opacity .3s"></div>
 </div>
 
+<div data-lightbox style="display:none;position:fixed;inset:0;z-index:9998;background:rgba(6,6,8,.93);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:clamp(16px,4vw,48px);cursor:zoom-out">
+  <button type="button" data-lightbox-close aria-label="Close" style="position:absolute;top:clamp(14px,3vw,26px);right:clamp(14px,3vw,26px);width:42px;height:42px;border-radius:50%;border:1px solid rgba(255,255,255,.16);background:rgba(20,20,22,.85);color:#EDEDED;font-size:20px;line-height:1;cursor:pointer">×</button>
+  <video data-lightbox-video controls autoplay muted loop playsinline style="max-width:min(560px,92vw);max-height:86vh;width:auto;height:auto;border-radius:6px;border:1px solid rgba(255,255,255,.10);box-shadow:0 30px 80px rgba(0,0,0,.6);cursor:auto"></video>
+</div>
+
 <nav style="position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px clamp(20px,4vw,44px);background:rgba(10,10,11,.72);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.08)">
   <a href="index.html" style="display:flex;align-items:center;gap:10px;font-weight:700;font-size:20px;letter-spacing:-.02em">
     <img src="logo.png" alt="EtchLab" style="width:30px;height:30px;object-fit:contain;filter:invert(1) hue-rotate(180deg)" />
@@ -115,6 +120,37 @@
       });
     },{threshold:.35});
     vids.forEach(function(v){io.observe(v)});
+  }
+
+  // Click a clip to pop it up larger, with real controls.
+  var box=document.querySelector('[data-lightbox]'),boxVideo=document.querySelector('[data-lightbox-video]'),
+      closeBtn=document.querySelector('[data-lightbox-close]');
+  if(box&&boxVideo){
+    function openLightbox(src){
+      boxVideo.src=src;
+      box.style.display='flex';
+      document.body.style.overflow='hidden';
+      boxVideo.play().catch(function(){});
+    }
+    function closeLightbox(){
+      box.style.display='none';
+      document.body.style.overflow='';
+      boxVideo.pause();
+      boxVideo.removeAttribute('src');
+      boxVideo.load();
+    }
+    vids.forEach(function(v){
+      var tile=v.closest('[data-clip]');
+      if(!tile) return;
+      tile.style.cursor='zoom-in';
+      tile.addEventListener('click',function(){
+        var src=v.querySelector('source');
+        openLightbox(src?src.src:v.currentSrc);
+      });
+    });
+    if(closeBtn) closeBtn.addEventListener('click',closeLightbox);
+    box.addEventListener('click',function(e){ if(e.target===box) closeLightbox(); });
+    document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeLightbox(); });
   }
 
   if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
