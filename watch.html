@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="Watch EtchLab engrave live at real events — raw clips straight off the machine.">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Watch It Live — EtchLab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:#0A0A0B;color:#EDEDED;font-family:'Space Grotesk',system-ui,sans-serif;line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+  a{color:#EDEDED;text-decoration:none}
+  a:hover{color:#00E5C0}
+  @keyframes beamShift{0%{background-position:0% 0}100%{background-position:-220% 0}}
+  @keyframes dotHue{0%{filter:drop-shadow(0 0 10px #00E5C0) drop-shadow(0 0 22px #FF5E3A) hue-rotate(0deg)}100%{filter:drop-shadow(0 0 10px #00E5C0) drop-shadow(0 0 22px #FF5E3A) hue-rotate(360deg)}}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}#laser-layer{display:none}}
+
+  [data-clip]:hover{border-color:rgba(0,229,192,.4)!important;transform:translateY(-4px)}
+  [data-clip] video{background:#000}
+  [data-clip] video::-webkit-media-controls-panel{background-color:rgba(10,10,11,.6)}
+
+  @media(max-width:640px){
+    nav{flex-wrap:wrap;row-gap:10px}
+    nav > div{width:100%;justify-content:space-between;flex-wrap:wrap;row-gap:8px}
+    [data-clip-grid]{grid-template-columns:repeat(2,1fr)!important;gap:10px!important}
+  }
+</style>
+
+</head>
+<body>
+
+
+<div style="position:relative;width:100%;background:#0A0A0B;overflow:hidden">
+
+<div id="laser-layer" aria-hidden="true" style="position:fixed;inset:0;pointer-events:none;z-index:9999">
+  <div id="beam" style="position:absolute;top:0;left:0;height:2px;transform-origin:left center;background:linear-gradient(90deg,rgba(255,0,128,0) 0%,#FF5E3A 18%,#FFD166 34%,#00E5C0 52%,#3AA0FF 70%,#B45CFF 86%,#FF5E3A 100%);background-size:220% 100%;animation:beamShift 2.4s linear infinite;filter:drop-shadow(0 0 7px rgba(0,229,192,.85)) drop-shadow(0 0 14px rgba(180,92,255,.55));opacity:0;transition:opacity .3s"></div>
+  <div id="dot" style="position:absolute;width:16px;height:16px;border-radius:50%;background:radial-gradient(circle,#fff 0%,#00E5C0 38%,rgba(0,229,192,0) 72%);animation:dotHue 2.4s linear infinite;transform:translate(-50%,-50%);opacity:0;transition:opacity .3s"></div>
+</div>
+
+<nav style="position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px clamp(20px,4vw,44px);background:rgba(10,10,11,.72);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.08)">
+  <a href="index.html" style="display:flex;align-items:center;gap:10px;font-weight:700;font-size:20px;letter-spacing:-.02em">
+    <img src="logo.png" alt="EtchLab" style="width:30px;height:30px;object-fit:contain;filter:invert(1) hue-rotate(180deg)" />
+    <span>Etch<span style="color:#00E5C0">Lab</span></span>
+  </a>
+  <div style="display:flex;align-items:center;gap:clamp(12px,3vw,26px);font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:#8A8A92">
+    <a href="index.html#services" style="color:inherit">Services</a>
+    <a href="index.html#how" style="color:inherit">Process</a>
+    <a href="index.html#pricing" style="color:inherit">Pricing</a>
+    <a href="engravables.html" style="color:inherit">Items</a>
+    <a href="watch.html" style="color:#00E5C0">Watch</a>
+    <a href="index.html#contact" style="padding:9px 16px;border:1px solid rgba(0,229,192,.45);color:#00E5C0;border-radius:2px">Book</a>
+  </div>
+</nav>
+
+<section style="padding:clamp(40px,6vw,76px) clamp(20px,4vw,44px) clamp(20px,3vw,30px);background:radial-gradient(900px 480px at 60% -20%,rgba(0,229,192,.09),transparent 62%)">
+  <div style="max-width:1180px;margin:0 auto;display:flex;flex-direction:column;align-items:center;text-align:center">
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#00E5C0">See it live</span>
+    <h1 style="font-weight:700;font-size:clamp(34px,7vw,62px);letter-spacing:-.035em;line-height:1.02;margin-top:12px">Watch it happen.</h1>
+    <p style="color:#8A8A92;margin-top:16px;font-size:18px;max-width:56ch;text-wrap:pretty">Raw clips straight off the machine, from real events. Tap any clip to play, pause, or go fullscreen — sound is coming soon once we swap these for the versions with audio.</p>
+  </div>
+</section>
+
+<section style="padding:clamp(16px,2.5vw,26px) clamp(20px,4vw,44px) clamp(64px,9vw,100px)">
+  <div style="max-width:1180px;margin:0 auto">
+    <div data-clip-grid style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px">
+
+<div data-clip style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:6px;overflow:hidden;transition:border-color .3s,transform .3s"><div style="width:100%;aspect-ratio:3/4"><video controls playsinline preload="none" poster="images/videos/live1_poster.jpg" style="width:100%;height:100%;object-fit:contain;display:block"><source src="images/videos/live1.mp4" type="video/mp4" /></video></div></div>
+<div data-clip style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:6px;overflow:hidden;transition:border-color .3s,transform .3s"><div style="width:100%;aspect-ratio:3/4"><video controls playsinline preload="none" poster="images/videos/live2_poster.jpg" style="width:100%;height:100%;object-fit:contain;display:block"><source src="images/videos/live2.mp4" type="video/mp4" /></video></div></div>
+<div data-clip style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:6px;overflow:hidden;transition:border-color .3s,transform .3s"><div style="width:100%;aspect-ratio:3/4"><video controls playsinline preload="none" poster="images/videos/live3_poster.jpg" style="width:100%;height:100%;object-fit:contain;display:block"><source src="images/videos/live3.mp4" type="video/mp4" /></video></div></div>
+<div data-clip style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:6px;overflow:hidden;transition:border-color .3s,transform .3s"><div style="width:100%;aspect-ratio:3/4"><video controls playsinline preload="none" poster="images/videos/live4_poster.jpg" style="width:100%;height:100%;object-fit:contain;display:block"><source src="images/videos/live4.mp4" type="video/mp4" /></video></div></div>
+<div data-clip style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:6px;overflow:hidden;transition:border-color .3s,transform .3s"><div style="width:100%;aspect-ratio:3/4"><video controls playsinline preload="none" poster="images/videos/live5_poster.jpg" style="width:100%;height:100%;object-fit:contain;display:block"><source src="images/videos/live5.mp4" type="video/mp4" /></video></div></div>
+<div data-clip style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:6px;overflow:hidden;transition:border-color .3s,transform .3s"><div style="width:100%;aspect-ratio:3/4"><video controls playsinline preload="none" poster="images/videos/live6_poster.jpg" style="width:100%;height:100%;object-fit:contain;display:block"><source src="images/videos/live6.mp4" type="video/mp4" /></video></div></div>
+<div data-clip style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:6px;overflow:hidden;transition:border-color .3s,transform .3s"><div style="width:100%;aspect-ratio:3/4"><video controls playsinline preload="none" poster="images/videos/live7_poster.jpg" style="width:100%;height:100%;object-fit:contain;display:block"><source src="images/videos/live7.mp4" type="video/mp4" /></video></div></div>
+<div data-clip style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:6px;overflow:hidden;transition:border-color .3s,transform .3s"><div style="width:100%;aspect-ratio:3/4"><video controls playsinline preload="none" poster="images/videos/live8_poster.jpg" style="width:100%;height:100%;object-fit:contain;display:block"><source src="images/videos/live8.mp4" type="video/mp4" /></video></div></div>
+<div data-clip style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:6px;overflow:hidden;transition:border-color .3s,transform .3s"><div style="width:100%;aspect-ratio:3/4"><video controls playsinline preload="none" poster="images/videos/live9_poster.jpg" style="width:100%;height:100%;object-fit:contain;display:block"><source src="images/videos/live9.mp4" type="video/mp4" /></video></div></div>
+<div data-clip style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:6px;overflow:hidden;transition:border-color .3s,transform .3s"><div style="width:100%;aspect-ratio:3/4"><video controls playsinline preload="none" poster="images/videos/live10_poster.jpg" style="width:100%;height:100%;object-fit:contain;display:block"><source src="images/videos/live10.mp4" type="video/mp4" /></video></div></div>
+<div data-clip style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:6px;overflow:hidden;transition:border-color .3s,transform .3s"><div style="width:100%;aspect-ratio:3/4"><video controls playsinline preload="none" poster="images/videos/live11_poster.jpg" style="width:100%;height:100%;object-fit:contain;display:block"><source src="images/videos/live11.mp4" type="video/mp4" /></video></div></div>
+<div data-clip style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:6px;overflow:hidden;transition:border-color .3s,transform .3s"><div style="width:100%;aspect-ratio:3/4"><video controls playsinline preload="none" poster="images/videos/live12_poster.jpg" style="width:100%;height:100%;object-fit:contain;display:block"><source src="images/videos/live12.mp4" type="video/mp4" /></video></div></div>
+<div data-clip style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:6px;overflow:hidden;transition:border-color .3s,transform .3s"><div style="width:100%;aspect-ratio:3/4"><video controls playsinline preload="none" poster="images/videos/live13_poster.jpg" style="width:100%;height:100%;object-fit:contain;display:block"><source src="images/videos/live13.mp4" type="video/mp4" /></video></div></div>
+<div data-clip style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:6px;overflow:hidden;transition:border-color .3s,transform .3s"><div style="width:100%;aspect-ratio:3/4"><video controls playsinline preload="none" poster="images/videos/live14_poster.jpg" style="width:100%;height:100%;object-fit:contain;display:block"><source src="images/videos/live14.mp4" type="video/mp4" /></video></div></div>
+<div data-clip style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:6px;overflow:hidden;transition:border-color .3s,transform .3s"><div style="width:100%;aspect-ratio:3/4"><video controls playsinline preload="none" poster="images/videos/live15_poster.jpg" style="width:100%;height:100%;object-fit:contain;display:block"><source src="images/videos/live15.mp4" type="video/mp4" /></video></div></div>
+<div data-clip style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:6px;overflow:hidden;transition:border-color .3s,transform .3s"><div style="width:100%;aspect-ratio:3/4"><video controls playsinline preload="none" poster="images/videos/live16_poster.jpg" style="width:100%;height:100%;object-fit:contain;display:block"><source src="images/videos/live16.mp4" type="video/mp4" /></video></div></div>
+<div data-clip style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:6px;overflow:hidden;transition:border-color .3s,transform .3s"><div style="width:100%;aspect-ratio:3/4"><video controls playsinline preload="none" poster="images/videos/live17_poster.jpg" style="width:100%;height:100%;object-fit:contain;display:block"><source src="images/videos/live17.mp4" type="video/mp4" /></video></div></div>
+<div data-clip style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:6px;overflow:hidden;transition:border-color .3s,transform .3s"><div style="width:100%;aspect-ratio:3/4"><video controls playsinline preload="none" poster="images/videos/live18_poster.jpg" style="width:100%;height:100%;object-fit:contain;display:block"><source src="images/videos/live18.mp4" type="video/mp4" /></video></div></div>
+<div data-clip style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:6px;overflow:hidden;transition:border-color .3s,transform .3s"><div style="width:100%;aspect-ratio:3/4"><video controls playsinline preload="none" poster="images/videos/live19_poster.jpg" style="width:100%;height:100%;object-fit:contain;display:block"><source src="images/videos/live19.mp4" type="video/mp4" /></video></div></div>
+<div data-clip style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:6px;overflow:hidden;transition:border-color .3s,transform .3s"><div style="width:100%;aspect-ratio:3/4"><video controls playsinline preload="none" poster="images/videos/live20_poster.jpg" style="width:100%;height:100%;object-fit:contain;display:block"><source src="images/videos/live20.mp4" type="video/mp4" /></video></div></div>
+<div data-clip style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:6px;overflow:hidden;transition:border-color .3s,transform .3s"><div style="width:100%;aspect-ratio:3/4"><video controls playsinline preload="none" poster="images/videos/live21_poster.jpg" style="width:100%;height:100%;object-fit:contain;display:block"><source src="images/videos/live21.mp4" type="video/mp4" /></video></div></div>
+
+    </div>
+  </div>
+</section>
+
+<footer style="border-top:1px solid rgba(255,255,255,.08);padding:30px clamp(20px,4vw,44px);display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;color:#8A8A92;font-size:14px">
+  <span>© 2026 EtchLab</span>
+  <span style="opacity:.4">·</span><a href="index.html" style="color:inherit">Home</a>
+  <span style="opacity:.4">·</span><a href="privacy.html" style="color:inherit">Privacy Policy</a>
+  <span style="opacity:.4">·</span><a href="terms.html" style="color:inherit">Terms of Service</a>
+</footer>
+
+</div>
+
+<script>
+(function(){
+  // Pause every other clip when one starts playing, so only one plays at a time.
+  var vids=[].slice.call(document.querySelectorAll('[data-clip] video'));
+  vids.forEach(function(v){
+    v.addEventListener('play',function(){
+      vids.forEach(function(o){ if(o!==v) o.pause(); });
+    });
+  });
+
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var beam=document.getElementById('beam'),dot=document.getElementById('dot');
+  if(!beam||!dot) return;
+  var tx=innerWidth/2,ty=innerHeight/2,cx=tx,cy=ty,fade;
+  document.addEventListener('mousemove',function(e){tx=e.clientX;ty=e.clientY;beam.style.opacity='1';dot.style.opacity='1'});
+  document.addEventListener('mouseleave',function(){beam.style.opacity='0';dot.style.opacity='0'});
+  function touch(e){var t=e.touches&&e.touches[0];if(!t)return;tx=t.clientX;ty=t.clientY;beam.style.opacity='1';dot.style.opacity='1';clearTimeout(fade)}
+  document.addEventListener('touchstart',touch,{passive:true});
+  document.addEventListener('touchmove',touch,{passive:true});
+  document.addEventListener('touchend',function(){fade=setTimeout(function(){beam.style.opacity='0';dot.style.opacity='0'},900)},{passive:true});
+  (function loop(){
+    cx+=(tx-cx)*.18;cy+=(ty-cy)*.18;
+    beam.style.width=Math.sqrt(cx*cx+cy*cy)+'px';
+    beam.style.transform='rotate('+(Math.atan2(cy,cx)*180/Math.PI)+'deg)';
+    dot.style.left=cx+'px';dot.style.top=cy+'px';
+    requestAnimationFrame(loop);
+  })();
+})();
+</script>
+</body>
+</html>
