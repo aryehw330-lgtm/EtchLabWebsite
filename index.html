@@ -30,6 +30,11 @@
   [data-etch-input]::placeholder{color:#5A5A62;opacity:1}
   [data-mail-menu] a:hover,[data-mail-copy]:hover{background:rgba(0,229,192,.12);color:#00E5C0}
   nav a:hover,footer a:hover,.top-bar a:hover{color:#00E5C0}
+
+  @media(max-width:640px){
+    nav{flex-wrap:wrap;row-gap:10px}
+    nav > div{width:100%;justify-content:space-between;flex-wrap:wrap;row-gap:8px}
+  }
 </style>
 
 </head>
@@ -77,9 +82,20 @@
     <a href="#pricing" style="color:inherit">Pricing</a>
     <a href="engravables.html" style="color:inherit">Items</a>
     <a href="watch.html" style="color:inherit">Watch</a>
+    <button type="button" data-sound-toggle aria-label="Toggle background music" title="Toggle background music" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;flex:none;border:1px solid rgba(255,255,255,.14);background:transparent;color:#8A8A92;border-radius:50%;cursor:pointer">
+      <svg data-sound-icon viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:17px;height:17px">
+        <path d="M11 5 6 9H2v6h4l5 4V5Z"></path>
+        <path data-sound-wave1 d="M15.5 8.5a5 5 0 0 1 0 7" style="display:none"></path>
+        <path data-sound-wave2 d="M18.5 5.5a9 9 0 0 1 0 13" style="display:none"></path>
+        <line data-sound-x1 x1="16" y1="8" x2="22" y2="16"></line>
+        <line data-sound-x2 x1="22" y1="8" x2="16" y2="16"></line>
+      </svg>
+    </button>
     <a href="#contact" style="padding:9px 16px;border:1px solid rgba(0,229,192,.45);color:#00E5C0;border-radius:2px">Book</a>
   </div>
 </nav>
+
+<audio id="bgm" src="audio/homepage-bgm.mp3" loop muted preload="none"></audio>
 
 <header id="top" style="position:relative;padding:clamp(16px,2.5vw,32px) clamp(20px,4vw,44px) clamp(48px,7vw,88px);background:radial-gradient(1100px 620px at 72% -12%,rgba(0,229,192,.09),transparent 62%),radial-gradient(760px 480px at 6% 108%,rgba(255,94,58,.06),transparent 62%)">
   <div style="position:absolute;inset:0;opacity:.4;background-image:linear-gradient(rgba(255,255,255,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.08) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse at 50% 30%,#000 15%,transparent 72%);-webkit-mask-image:radial-gradient(ellipse at 50% 30%,#000 15%,transparent 72%)"></div>
@@ -373,6 +389,31 @@
       }
       requestAnimationFrame(frame);
     })();
+  })();
+
+  // Background music: off by default (browsers block real autoplay-with-
+  // sound anyway), one click to turn on/off from the nav.
+  (function(){
+    var bgm=q('#bgm'),soundBtn=q('[data-sound-toggle]'),
+        wave1=q('[data-sound-wave1]'),wave2=q('[data-sound-wave2]'),
+        xIcon1=q('[data-sound-x1]'),xIcon2=q('[data-sound-x2]');
+    if(!bgm||!soundBtn) return;
+    var musicOn=false;
+    function updateIcon(){
+      if(wave1) wave1.style.display=musicOn?'':'none';
+      if(wave2) wave2.style.display=musicOn?'':'none';
+      if(xIcon1) xIcon1.style.display=musicOn?'none':'';
+      if(xIcon2) xIcon2.style.display=musicOn?'none':'';
+    }
+    soundBtn.addEventListener('click',function(){
+      musicOn=!musicOn;
+      bgm.muted=!musicOn;
+      if(musicOn) bgm.play().catch(function(){});
+      else bgm.pause();
+      soundBtn.style.borderColor=musicOn?'rgba(0,229,192,.5)':'rgba(255,255,255,.14)';
+      soundBtn.style.color=musicOn?'#00E5C0':'#8A8A92';
+      updateIcon();
+    });
   })();
 
   var trigger=q('[data-mail-trigger]'),menu=q('[data-mail-menu]');
