@@ -455,15 +455,24 @@
       if(xIcon1) xIcon1.style.display=musicOn?'none':'';
       if(xIcon2) xIcon2.style.display=musicOn?'none':'';
     }
-    soundBtn.addEventListener('click',function(){
-      musicOn=!musicOn;
-      bgm.muted=!musicOn;
-      if(musicOn) bgm.play().catch(function(){});
-      else bgm.pause();
+    function setOnState(on){
+      musicOn=on;
       soundBtn.style.borderColor=musicOn?'rgba(0,229,192,.5)':'rgba(255,255,255,.14)';
       soundBtn.style.color=musicOn?'#00E5C0':'#8A8A92';
       updateIcon();
+    }
+    soundBtn.addEventListener('click',function(){
+      setOnState(!musicOn);
+      bgm.muted=!musicOn;
+      if(musicOn) bgm.play().catch(function(){});
+      else bgm.pause();
     });
+
+    // Best-effort autoplay: browsers only allow unmuted autoplay once a
+    // visitor has already interacted with the site this session. Try it;
+    // if it's blocked, fall back silently to the off-by-default button.
+    bgm.muted=false;
+    bgm.play().then(function(){ setOnState(true); }).catch(function(){ bgm.muted=true; });
   })();
 
   var trigger=q('[data-mail-trigger]'),menu=q('[data-mail-menu]');
