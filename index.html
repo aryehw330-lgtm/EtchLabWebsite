@@ -44,7 +44,7 @@
 
   @keyframes soundPulseSm{0%,40%,100%{box-shadow:0 0 0 0 rgba(0,229,192,.5),0 0 10px rgba(0,229,192,.3)}20%{box-shadow:0 0 0 8px rgba(0,229,192,0),0 0 16px rgba(180,92,255,.5)}}
   @keyframes iconWiggleSm{0%,100%{transform:rotate(0deg) scale(1)}20%{transform:rotate(-12deg) scale(1.1)}40%{transform:rotate(10deg) scale(1.1)}60%{transform:rotate(-6deg) scale(1.05)}80%{transform:rotate(0deg) scale(1)}}
-  @keyframes labelBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+  @keyframes labelBob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-2px)}}
   [data-sound-toggle]{animation:soundPulseSm 2.4s ease-in-out infinite;position:relative}
   [data-sound-toggle]:not(.is-on) [data-sound-icon]{animation:iconWiggleSm 2.4s ease-in-out infinite}
   [data-sound-toggle].is-on{background:#00E5C0!important;border-color:#00E5C0!important;color:#04211C!important;animation:none}

@@ -181,6 +181,7 @@
     soundBtn.addEventListener('click',function(){
       musicOn=!musicOn;
       try{ localStorage.setItem(MUSIC_KEY,musicOn?'1':'0'); }catch(e){}
+      if(musicOn) bgm.currentTime=3.5; // skip the slow intro when the track starts
       bgm.muted=!musicOn;
       if(soundLabel) soundLabel.textContent=musicOn?'Turn off music':'Touch for epic sound';
       soundBtn.classList.toggle('is-on',musicOn);
@@ -208,6 +209,7 @@
       updateSoundIcon();
       if(soundBtn) soundBtn.classList.add('is-on');
       bgm.muted=false;
+      bgm.currentTime=3.5; // skip the slow intro when the track starts
       bgm.play().catch(function(){
         musicOn=false;
         bgm.muted=true;
