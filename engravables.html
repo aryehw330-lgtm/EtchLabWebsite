@@ -67,9 +67,20 @@
     <a href="index.html#pricing" style="color:inherit">Pricing</a>
     <a href="engravables.html" style="color:#00E5C0">Items</a>
     <a href="watch.html" style="color:inherit">Watch</a>
+    <button type="button" data-sound-toggle aria-label="Toggle background music" title="Toggle background music" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;flex:none;border:1px solid rgba(255,255,255,.14);background:transparent;color:#8A8A92;border-radius:50%;cursor:pointer">
+      <svg data-sound-icon viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:17px;height:17px">
+        <path d="M11 5 6 9H2v6h4l5 4V5Z"></path>
+        <path data-sound-wave1 d="M15.5 8.5a5 5 0 0 1 0 7" style="display:none"></path>
+        <path data-sound-wave2 d="M18.5 5.5a9 9 0 0 1 0 13" style="display:none"></path>
+        <line data-sound-x1 x1="16" y1="8" x2="22" y2="16"></line>
+        <line data-sound-x2 x1="22" y1="8" x2="16" y2="16"></line>
+      </svg>
+    </button>
     <a href="index.html#contact" style="padding:9px 16px;border:1px solid rgba(0,229,192,.45);color:#00E5C0;border-radius:2px">Book</a>
   </div>
 </nav>
+
+<audio id="bgm" src="audio/items-bgm.mp3" loop muted preload="none"></audio>
 
 <section style="padding:clamp(40px,6vw,76px) clamp(20px,4vw,44px) clamp(20px,3vw,30px);background:radial-gradient(900px 480px at 60% -20%,rgba(0,229,192,.09),transparent 62%)">
   <div style="max-width:1180px;margin:0 auto;display:flex;flex-direction:column;align-items:center;text-align:center">
@@ -1527,6 +1538,31 @@
     beam.style.transform='rotate('+(Math.atan2(cy,cx)*180/Math.PI)+'deg)';
     dot.style.left=cx+'px';dot.style.top=cy+'px';
     requestAnimationFrame(loop);
+  })();
+
+  // Background music: off by default (browsers block real autoplay-with-
+  // sound anyway), one click to turn on/off from the nav.
+  (function(){
+    var bgm=q('#bgm'),soundBtn=q('[data-sound-toggle]'),
+        wave1=q('[data-sound-wave1]'),wave2=q('[data-sound-wave2]'),
+        xIcon1=q('[data-sound-x1]'),xIcon2=q('[data-sound-x2]');
+    if(!bgm||!soundBtn) return;
+    var musicOn=false;
+    function updateIcon(){
+      if(wave1) wave1.style.display=musicOn?'':'none';
+      if(wave2) wave2.style.display=musicOn?'':'none';
+      if(xIcon1) xIcon1.style.display=musicOn?'none':'';
+      if(xIcon2) xIcon2.style.display=musicOn?'none':'';
+    }
+    soundBtn.addEventListener('click',function(){
+      musicOn=!musicOn;
+      bgm.muted=!musicOn;
+      if(musicOn) bgm.play().catch(function(){});
+      else bgm.pause();
+      soundBtn.style.borderColor=musicOn?'rgba(0,229,192,.5)':'rgba(255,255,255,.14)';
+      soundBtn.style.color=musicOn?'#00E5C0':'#8A8A92';
+      updateIcon();
+    });
   })();
 })();
 </script>
