@@ -17,11 +17,13 @@
   a:hover{color:#00E5C0}
   @keyframes beamShift{0%{background-position:0% 0}100%{background-position:-220% 0}}
   @keyframes dotHue{0%{filter:drop-shadow(0 0 10px #00E5C0) drop-shadow(0 0 22px #FF5E3A) hue-rotate(0deg)}100%{filter:drop-shadow(0 0 10px #00E5C0) drop-shadow(0 0 22px #FF5E3A) hue-rotate(360deg)}}
-  @keyframes soundPulse{0%,100%{box-shadow:0 0 0 0 rgba(0,229,192,.45)}50%{box-shadow:0 0 0 14px rgba(0,229,192,0)}}
+  @keyframes soundPulse{0%,40%,100%{box-shadow:0 0 0 0 rgba(0,229,192,.5),0 0 20px rgba(0,229,192,.3)}20%{box-shadow:0 0 0 14px rgba(0,229,192,0),0 0 30px rgba(180,92,255,.45)}}
+  @keyframes iconWiggle{0%,100%{transform:rotate(0deg) scale(1)}20%{transform:rotate(-12deg) scale(1.1)}40%{transform:rotate(10deg) scale(1.1)}60%{transform:rotate(-6deg) scale(1.05)}80%{transform:rotate(0deg) scale(1)}}
   @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}#laser-layer{display:none}}
 
-  [data-sound-toggle]{animation:soundPulse 2.2s ease-out infinite}
+  [data-sound-toggle]{animation:soundPulse 2.4s ease-in-out infinite}
   [data-sound-toggle]:hover{background:rgba(0,229,192,.16)!important;transform:translateY(-2px)}
+  [data-sound-toggle]:not(.is-on) [data-sound-icon]{animation:iconWiggle 2.4s ease-in-out infinite}
   [data-sound-toggle].is-on{background:#00E5C0!important;color:#04211C!important;border-color:#00E5C0!important;animation:none}
   [data-sound-toggle].is-on:hover{background:#00c9a8!important}
 
@@ -81,7 +83,7 @@
         <line data-sound-x1 x1="16" y1="8" x2="22" y2="16"></line>
         <line data-sound-x2 x1="22" y1="8" x2="16" y2="16"></line>
       </svg>
-      <span data-sound-label>Turn music on</span>
+      <span data-sound-label>Touch for epic sound</span>
     </button>
   </div>
 </section>
@@ -145,6 +147,10 @@
   // Background music: off by default (browsers block real autoplay-with-
   // sound anyway), toggled on with one click, and auto-ducked whenever any
   // clip is actively playing so it never competes with a clip's own audio.
+  // Preference is shared across pages via localStorage, so once a visitor
+  // turns music on anywhere on the site, clicking to another page picks it
+  // back up too -- navigating via a click is itself a user gesture.
+  var MUSIC_KEY='etchlab.musicOn';
   var bgm=document.getElementById('bgm'),soundBtn=document.querySelector('[data-sound-toggle]'),
       soundLabel=document.querySelector('[data-sound-label]'),
       wave1=document.querySelector('[data-sound-wave1]'),wave2=document.querySelector('[data-sound-wave2]'),
@@ -174,8 +180,9 @@
   if(soundBtn&&bgm){
     soundBtn.addEventListener('click',function(){
       musicOn=!musicOn;
+      try{ localStorage.setItem(MUSIC_KEY,musicOn?'1':'0'); }catch(e){}
       bgm.muted=!musicOn;
-      if(soundLabel) soundLabel.textContent=musicOn?'Turn music off':'Turn music on';
+      if(soundLabel) soundLabel.textContent=musicOn?'Turn off music':'Touch for epic sound';
       soundBtn.classList.toggle('is-on',musicOn);
       updateSoundIcon();
       syncBgm();
@@ -187,20 +194,28 @@
     v.addEventListener('pause',syncBgm);
   });
 
-  // Best-effort autoplay: browsers only allow unmuted autoplay once a
-  // visitor has already interacted with the site this session (e.g.
-  // clicked something on the homepage first). Try it; if it's blocked,
-  // fall back silently to the button -- same off-by-default state as before.
   if(bgm){
-    bgm.muted=false;
-    bgm.play().then(function(){
+    var wantsMusic=false;
+    try{ wantsMusic=localStorage.getItem(MUSIC_KEY)==='1'; }catch(e){}
+    if(wantsMusic){
+      // Set musicOn synchronously, before play() resolves -- clips
+      // autoplaying into view fire 'play' events almost immediately via
+      // the IntersectionObserver above, which call syncBgm(). If musicOn
+      // were still false at that instant, syncBgm() would pause() bgm
+      // mid-flight and interrupt (reject) this very play() call.
       musicOn=true;
-      if(soundLabel) soundLabel.textContent='Turn music off';
+      if(soundLabel) soundLabel.textContent='Turn off music';
       updateSoundIcon();
       if(soundBtn) soundBtn.classList.add('is-on');
-    }).catch(function(){
-      bgm.muted=true;
-    });
+      bgm.muted=false;
+      bgm.play().catch(function(){
+        musicOn=false;
+        bgm.muted=true;
+        if(soundLabel) soundLabel.textContent='Touch for epic sound';
+        updateSoundIcon();
+        if(soundBtn) soundBtn.classList.remove('is-on');
+      });
+    }
   }
 
   // Click a clip to pop it up larger, with real controls.

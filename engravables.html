@@ -24,6 +24,16 @@
   [data-suggest]:hover{box-shadow:0 8px 30px rgba(0,229,192,.3);transform:translateY(-2px)}
   [data-lightbox-close]:hover{border-color:rgba(0,229,192,.5);color:#00E5C0}
 
+  @keyframes soundPulseSm{0%,40%,100%{box-shadow:0 0 0 0 rgba(0,229,192,.5),0 0 10px rgba(0,229,192,.3)}20%{box-shadow:0 0 0 8px rgba(0,229,192,0),0 0 16px rgba(180,92,255,.5)}}
+  @keyframes iconWiggleSm{0%,100%{transform:rotate(0deg) scale(1)}20%{transform:rotate(-12deg) scale(1.1)}40%{transform:rotate(10deg) scale(1.1)}60%{transform:rotate(-6deg) scale(1.05)}80%{transform:rotate(0deg) scale(1)}}
+  @keyframes labelBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+  [data-sound-toggle]{animation:soundPulseSm 2.4s ease-in-out infinite;position:relative}
+  [data-sound-toggle]:not(.is-on) [data-sound-icon]{animation:iconWiggleSm 2.4s ease-in-out infinite}
+  [data-sound-toggle].is-on{background:#00E5C0!important;border-color:#00E5C0!important;color:#04211C!important;animation:none}
+  [data-sound-label-float]{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);white-space:nowrap;font-family:'IBM Plex Mono',monospace;font-size:9.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#00E5C0;pointer-events:none;animation:labelBob 1.8s ease-in-out infinite}
+  [data-sound-label-float]::after{content:"";position:absolute;top:100%;left:50%;transform:translateX(-50%);border:4px solid transparent;border-top-color:#00E5C0}
+  [data-sound-toggle].is-on [data-sound-label-float]{display:none}
+
   @media(max-width:640px){
     nav{flex-wrap:wrap;row-gap:10px}
     nav > div{width:100%;justify-content:space-between;flex-wrap:wrap;row-gap:8px}
@@ -67,7 +77,8 @@
     <a href="index.html#pricing" style="color:inherit">Pricing</a>
     <a href="engravables.html" style="color:#00E5C0">Items</a>
     <a href="watch.html" style="color:inherit">Watch</a>
-    <button type="button" data-sound-toggle aria-label="Toggle background music" title="Toggle background music" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;flex:none;border:1px solid rgba(255,255,255,.14);background:transparent;color:#8A8A92;border-radius:50%;cursor:pointer">
+    <button type="button" data-sound-toggle aria-label="Toggle background music" title="Toggle background music" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;flex:none;border:1px solid rgba(0,229,192,.5);background:transparent;color:#00E5C0;border-radius:50%;cursor:pointer">
+      <span data-sound-label-float>Epic sound</span>
       <svg data-sound-icon viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:17px;height:17px">
         <path d="M11 5 6 9H2v6h4l5 4V5Z"></path>
         <path data-sound-wave1 d="M15.5 8.5a5 5 0 0 1 0 7" style="display:none"></path>
@@ -1541,12 +1552,16 @@
   })();
 
   // Background music: off by default (browsers block real autoplay-with-
-  // sound anyway), one click to turn on/off from the nav.
+  // sound anyway), one click to turn on/off from the nav. Preference is
+  // shared across pages via localStorage, so once a visitor turns music on
+  // anywhere on the site, clicking to another page picks it back up too --
+  // navigating via a click is itself a user gesture, so autoplay is allowed.
   (function(){
     var bgm=q('#bgm'),soundBtn=q('[data-sound-toggle]'),
         wave1=q('[data-sound-wave1]'),wave2=q('[data-sound-wave2]'),
         xIcon1=q('[data-sound-x1]'),xIcon2=q('[data-sound-x2]');
     if(!bgm||!soundBtn) return;
+    var MUSIC_KEY='etchlab.musicOn';
     var musicOn=false;
     function updateIcon(){
       if(wave1) wave1.style.display=musicOn?'':'none';
@@ -1556,22 +1571,25 @@
     }
     function setOnState(on){
       musicOn=on;
+      soundBtn.classList.toggle('is-on',musicOn);
       soundBtn.style.borderColor=musicOn?'rgba(0,229,192,.5)':'rgba(255,255,255,.14)';
       soundBtn.style.color=musicOn?'#00E5C0':'#8A8A92';
       updateIcon();
     }
     soundBtn.addEventListener('click',function(){
       setOnState(!musicOn);
+      try{ localStorage.setItem(MUSIC_KEY,musicOn?'1':'0'); }catch(e){}
       bgm.muted=!musicOn;
       if(musicOn) bgm.play().catch(function(){});
       else bgm.pause();
     });
 
-    // Best-effort autoplay: browsers only allow unmuted autoplay once a
-    // visitor has already interacted with the site this session. Try it;
-    // if it's blocked, fall back silently to the off-by-default button.
-    bgm.muted=false;
-    bgm.play().then(function(){ setOnState(true); }).catch(function(){ bgm.muted=true; });
+    var wantsMusic=false;
+    try{ wantsMusic=localStorage.getItem(MUSIC_KEY)==='1'; }catch(e){}
+    if(wantsMusic){
+      bgm.muted=false;
+      bgm.play().then(function(){ setOnState(true); }).catch(function(){ bgm.muted=true; });
+    }
   })();
 })();
 </script>
