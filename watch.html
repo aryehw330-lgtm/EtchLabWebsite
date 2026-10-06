@@ -43,10 +43,6 @@
 
 <div style="position:relative;width:100%;background:#0A0A0B;overflow:hidden">
 
-<div id="laser-layer" aria-hidden="true" style="position:fixed;inset:0;pointer-events:none;z-index:9999">
-  <div id="beam" style="position:absolute;top:0;left:0;height:2px;transform-origin:left center;background:linear-gradient(90deg,rgba(255,0,128,0) 0%,#FF5E3A 18%,#FFD166 34%,#00E5C0 52%,#3AA0FF 70%,#B45CFF 86%,#FF5E3A 100%);background-size:220% 100%;animation:beamShift 2.4s linear infinite;filter:drop-shadow(0 0 7px rgba(0,229,192,.85)) drop-shadow(0 0 14px rgba(180,92,255,.55));opacity:0;transition:opacity .3s"></div>
-  <div id="dot" style="position:absolute;width:16px;height:16px;border-radius:50%;background:radial-gradient(circle,#fff 0%,#00E5C0 38%,rgba(0,229,192,0) 72%);animation:dotHue 2.4s linear infinite;transform:translate(-50%,-50%);opacity:0;transition:opacity .3s"></div>
-</div>
 
 <div data-lightbox style="display:none;position:fixed;inset:0;z-index:9998;background:rgba(6,6,8,.93);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:clamp(16px,4vw,48px);cursor:zoom-out">
   <button type="button" data-lightbox-close aria-label="Close" style="position:absolute;top:clamp(14px,3vw,26px);right:clamp(14px,3vw,26px);width:42px;height:42px;border-radius:50%;border:1px solid rgba(255,255,255,.16);background:rgba(20,20,22,.85);color:#EDEDED;font-size:20px;line-height:1;cursor:pointer">×</button>
@@ -251,23 +247,6 @@
     document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeLightbox(); });
   }
 
-  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  var beam=document.getElementById('beam'),dot=document.getElementById('dot');
-  if(!beam||!dot) return;
-  var tx=innerWidth/2,ty=innerHeight/2,cx=tx,cy=ty,fade;
-  document.addEventListener('mousemove',function(e){tx=e.clientX;ty=e.clientY;beam.style.opacity='1';dot.style.opacity='1'});
-  document.addEventListener('mouseleave',function(){beam.style.opacity='0';dot.style.opacity='0'});
-  function touch(e){var t=e.touches&&e.touches[0];if(!t)return;tx=t.clientX;ty=t.clientY;beam.style.opacity='1';dot.style.opacity='1';clearTimeout(fade)}
-  document.addEventListener('touchstart',touch,{passive:true});
-  document.addEventListener('touchmove',touch,{passive:true});
-  document.addEventListener('touchend',function(){fade=setTimeout(function(){beam.style.opacity='0';dot.style.opacity='0'},900)},{passive:true});
-  (function loop(){
-    cx+=(tx-cx)*.18;cy+=(ty-cy)*.18;
-    beam.style.width=Math.sqrt(cx*cx+cy*cy)+'px';
-    beam.style.transform='rotate('+(Math.atan2(cy,cx)*180/Math.PI)+'deg)';
-    dot.style.left=cx+'px';dot.style.top=cy+'px';
-    requestAnimationFrame(loop);
-  })();
 })();
 </script>
 </body>
