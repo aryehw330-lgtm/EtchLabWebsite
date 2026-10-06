@@ -36,7 +36,8 @@
 
   @media(max-width:640px){
     nav{flex-wrap:wrap;row-gap:10px}
-    nav > div{width:100%;justify-content:space-between;flex-wrap:wrap;row-gap:8px}
+    nav > div{width:100%;justify-content:center;flex-wrap:wrap;gap:26px 18px}
+    nav > a img{width:44px!important;height:44px!important}
     [data-item-grid]{grid-template-columns:repeat(4,1fr)!important;gap:7px!important}
     [data-item-card] div[style*="8A8A92"]{display:none!important}
     [data-item-card] > div:last-child{padding:6px 5px 8px!important}
@@ -1564,20 +1565,48 @@
   var search=q('[data-item-search]'),cards=[].slice.call(document.querySelectorAll('[data-item-card]')),
       buttons=[].slice.call(document.querySelectorAll('[data-item-filter]')),
       count=q('[data-item-count]'),empty=q('[data-item-empty]'),cat='all';
+  // With no search/filter active, long categories show a first slice plus a
+  // "Show all" button so the page isn't thousands of pixels of thumbnails.
+  // Searching or picking a category always shows every match.
+  var PREVIEW_LIMIT=24,expanded={},moreBtns={};
+  function moreButton(sec){
+    var key=sec.getAttribute('data-section');
+    if(moreBtns[key]) return moreBtns[key];
+    var b=document.createElement('button');
+    b.type='button';
+    b.setAttribute('data-show-more','');
+    b.style.cssText="display:none;margin:22px auto 0;font-family:'IBM Plex Mono',monospace;font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;padding:13px 22px;border:1px solid rgba(0,229,192,.5);background:rgba(0,229,192,.1);color:#00E5C0;border-radius:3px;cursor:pointer";
+    b.addEventListener('click',function(){expanded[key]=true;apply();});
+    sec.appendChild(b);
+    moreBtns[key]=b;
+    return b;
+  }
   function apply(){
     var qq=((search&&search.value)||'').trim().toLowerCase(),shown=0;
     cards.forEach(function(c){
       var descEl=c.querySelector('div[style*="8A8A92"]');
       var hay=(c.dataset.name+' '+c.dataset.num+' '+c.dataset.cat+' '+(c.dataset.search||'')+' '+(descEl?descEl.textContent:'')).toLowerCase();
       var ok=(cat==='all'||c.dataset.cat===cat)&&(!qq||hay.indexOf(qq)>-1);
-      c.style.display=ok?'':'none'; if(ok)shown++;
+      c._match=ok; if(ok)shown++;
     });
+    var capping=(cat==='all'&&!qq);
     [].slice.call(document.querySelectorAll('[data-section]')).forEach(function(sec){
+      var key=sec.getAttribute('data-section');
       var secCards=[].slice.call(sec.querySelectorAll('[data-item-card]'));
-      var visCount=secCards.filter(function(c){return c.style.display!=='none'}).length;
-      sec.style.display=visCount?'':'none';
+      var matched=secCards.filter(function(c){return c._match});
+      var limit=(capping&&!expanded[key])?PREVIEW_LIMIT:Infinity;
+      secCards.forEach(function(c){
+        var idx=matched.indexOf(c);
+        c.style.display=(idx>-1&&idx<limit)?'':'none';
+      });
+      sec.style.display=matched.length?'':'none';
       var cEl=sec.querySelector('[data-section-count]');
-      if(cEl)cEl.textContent=visCount===1?'1 item':visCount+' items';
+      if(cEl)cEl.textContent=matched.length===1?'1 item':matched.length+' items';
+      var btn=moreButton(sec);
+      if(matched.length>limit){
+        btn.textContent='Show all '+matched.length+' '+key.toLowerCase()+' items';
+        btn.style.display='block';
+      }else btn.style.display='none';
     });
     if(count)count.textContent=shown===1?'1 item':shown+' items';
     if(empty)empty.style.display=shown?'none':'block';
