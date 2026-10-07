@@ -86,11 +86,11 @@
   @media(max-width:640px){.reel-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
   @media(max-width:640px){
-    nav{flex-wrap:wrap;row-gap:10px}
+    nav{flex-wrap:wrap;row-gap:10px;position:static!important}
     .topbar{justify-content:center;gap:4px 16px;font-size:11px;letter-spacing:.06em}
     .topbar > div{justify-content:center;gap:4px 14px}
     .topbar span[style*="opacity:.3"]{display:none}
-    nav > div{width:100%;justify-content:center;flex-wrap:wrap;gap:26px 18px}
+    nav > div{width:100%;justify-content:center;flex-wrap:wrap;gap:38px 11px!important;font-size:12px!important;letter-spacing:.03em!important}
     nav > a img{width:44px!important;height:44px!important}
   }
 </style>
@@ -99,7 +99,7 @@
 <body>
 
 
-<div style="position:relative;width:100%;background:#0A0A0B;overflow:hidden">
+<div style="position:relative;width:100%;background:#0A0A0B;overflow:clip">
 
 <div id="laser-layer" aria-hidden="true" style="position:fixed;inset:0;pointer-events:none;z-index:9999">
       <div id="etch-beam" style="position:fixed;top:0;left:0;height:2px;transform-origin:left center;background:linear-gradient(90deg,rgba(255,0,128,0) 0%,#FF5E3A 18%,#FFD166 34%,#00E5C0 52%,#3AA0FF 70%,#B45CFF 86%,#FF5E3A 100%);background-size:220% 100%;animation:beamShift 2.4s linear infinite;filter:drop-shadow(0 0 7px rgba(0,229,192,.85)) drop-shadow(0 0 14px rgba(180,92,255,.55));opacity:0;transition:opacity .25s"></div>

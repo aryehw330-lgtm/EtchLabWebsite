@@ -31,8 +31,8 @@
   [data-clip] video{background:#000}
 
   @media(max-width:640px){
-    nav{flex-wrap:wrap;row-gap:10px}
-    nav > div{width:100%;justify-content:center;flex-wrap:wrap;gap:26px 18px}
+    nav{flex-wrap:wrap;row-gap:10px;position:static!important}
+    nav > div{width:100%;justify-content:center;flex-wrap:wrap;gap:38px 11px!important;font-size:12px!important;letter-spacing:.03em!important}
     nav > a img{width:44px!important;height:44px!important}
     [data-clip-grid]{grid-template-columns:repeat(2,1fr)!important;gap:10px!important}
   }
@@ -42,7 +42,7 @@
 <body>
 
 
-<div style="position:relative;width:100%;background:#0A0A0B;overflow:hidden">
+<div style="position:relative;width:100%;background:#0A0A0B;overflow:clip">
 
 
 <div data-lightbox style="display:none;position:fixed;inset:0;z-index:9998;background:rgba(6,6,8,.93);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:clamp(16px,4vw,48px);cursor:zoom-out">

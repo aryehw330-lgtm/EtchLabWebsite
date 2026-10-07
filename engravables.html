@@ -35,11 +35,12 @@
   [data-sound-toggle].is-on [data-sound-label-float]{display:none}
 
   @media(max-width:640px){
-    nav{flex-wrap:wrap;row-gap:10px}
-    nav > div{width:100%;justify-content:center;flex-wrap:wrap;gap:26px 18px}
+    nav{flex-wrap:wrap;row-gap:10px;position:static!important}
+    nav > div{width:100%;justify-content:center;flex-wrap:wrap;gap:38px 11px!important;font-size:12px!important;letter-spacing:.03em!important}
     nav > a img{width:44px!important;height:44px!important}
     [data-item-grid]{grid-template-columns:repeat(4,1fr)!important;gap:7px!important}
     [data-item-card] div[style*="8A8A92"]{display:none!important}
+    [data-item-card] div[style*="justify-content:space-between"]{flex-wrap:wrap;gap:3px 8px!important}
     [data-item-card] > div:last-child{padding:6px 5px 8px!important}
     [data-item-card] span{font-size:9.5px!important;line-height:1.25}
   }
@@ -49,7 +50,7 @@
 <body>
 
 
-<div style="position:relative;width:100%;background:#0A0A0B;overflow:hidden">
+<div style="position:relative;width:100%;background:#0A0A0B;overflow:clip">
 
 
 <div data-lightbox style="display:none;position:fixed;inset:0;z-index:9998;background:rgba(6,6,8,.93);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:clamp(16px,4vw,48px);cursor:zoom-out">
@@ -721,7 +722,7 @@
   <div data-section="Leather" style="margin-bottom:clamp(36px,5vw,56px)">
     <div style="display:flex;align-items:baseline;gap:14px;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,.08)">
       <h2 style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:clamp(20px,3vw,28px);letter-spacing:-.02em;color:#EDEDED">Leather</h2>
-      <span data-section-count style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#8A8A92">80 items</span>
+      <span data-section-count style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#8A8A92">92 items</span>
     </div>
     <div data-item-grid style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:clamp(12px,2vw,20px)">
 <div data-item-card data-cat="Leather" data-name="Leather luggage tag" data-num="301" style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:4px;overflow:hidden;transition:border-color .3s,transform .3s">
@@ -1123,13 +1124,73 @@
 <div data-item-card data-cat="Leather" data-name="Leather Strap Keychain" data-num="1288" data-search="Black, red, blue, apricot, grey, brown" style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:4px;overflow:hidden;transition:border-color .3s,transform .3s">
         <div style="width:100%;aspect-ratio:1/1;background:#0F0F11"><img src="images/items/1288.jpg" alt="Leather Strap Keychain" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" /></div>
         <div style="padding:13px 14px 15px"><div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px"><span style="font-size:15.5px">Leather Strap Keychain</span><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#00E5C0;flex:none">1288</span></div><div style="color:#8A8A92;font-size:13px;margin-top:5px">$1.00 each</div></div>
+      </div>
+
+<div data-item-card data-cat="Leather" data-name="Clasp Journals" data-num="1295" data-search="Faux leather cover with clasp, teal, green, journal, notebook, teacher gift" style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:4px;overflow:hidden;transition:border-color .3s,transform .3s">
+        <div style="width:100%;aspect-ratio:1/1;background:#0F0F11"><img src="images/items/1295.jpg" alt="Clasp Journals" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" /></div>
+        <div style="padding:13px 14px 15px"><div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px"><span style="font-size:15.5px">Clasp Journals</span><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#00E5C0;flex:none">1295</span></div><div style="color:#8A8A92;font-size:13px;margin-top:5px">$2.22 each</div></div>
+      </div>
+
+<div data-item-card data-cat="Leather" data-name="Hardcover Journals" data-num="1296" data-search="Elastic band & pen loop, 7 colors, black, brown, grey, green, navy, teal, blush, journal, notebook, teacher gift" style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:4px;overflow:hidden;transition:border-color .3s,transform .3s">
+        <div style="width:100%;aspect-ratio:1/1;background:#0F0F11"><img src="images/items/1296.jpg" alt="Hardcover Journals" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" /></div>
+        <div style="padding:13px 14px 15px"><div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px"><span style="font-size:15.5px">Hardcover Journals</span><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#00E5C0;flex:none">1296</span></div><div style="color:#8A8A92;font-size:13px;margin-top:5px">$2.86 each</div></div>
+      </div>
+
+<div data-item-card data-cat="Leather" data-name="Bookmarks" data-num="1297" data-search="Leather with cord tassel, pink, tan, brown, sage, teal, navy, bookmark, teacher gift" style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:4px;overflow:hidden;transition:border-color .3s,transform .3s">
+        <div style="width:100%;aspect-ratio:1/1;background:#0F0F11"><img src="images/items/1297.jpg" alt="Bookmarks" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" /></div>
+        <div style="padding:13px 14px 15px"><div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px"><span style="font-size:15.5px">Bookmarks</span><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#00E5C0;flex:none">1297</span></div><div style="color:#8A8A92;font-size:13px;margin-top:5px">$1.00 each</div></div>
+      </div>
+
+<div data-item-card data-cat="Leather" data-name="Cosmetic Bags" data-num="1298" data-search="Assorted pastel colors, pastel, pink, mint, yellow, blue, cream, makeup bag, pouch, teacher gift" style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:4px;overflow:hidden;transition:border-color .3s,transform .3s">
+        <div style="width:100%;aspect-ratio:1/1;background:#0F0F11"><img src="images/items/1298.jpg" alt="Cosmetic Bags" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" /></div>
+        <div style="padding:13px 14px 15px"><div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px"><span style="font-size:15.5px">Cosmetic Bags</span><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#00E5C0;flex:none">1298</span></div><div style="color:#8A8A92;font-size:13px;margin-top:5px">$1.17 each</div></div>
+      </div>
+
+<div data-item-card data-cat="Leather" data-name="Luggage Tags - Light Blue" data-num="1300" data-search="Other colors available, blue, light blue, travel, teacher gift" style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:4px;overflow:hidden;transition:border-color .3s,transform .3s">
+        <div style="width:100%;aspect-ratio:1/1;background:#0F0F11"><img src="images/items/1300.jpg" alt="Luggage Tags - Light Blue" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" /></div>
+        <div style="padding:13px 14px 15px"><div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px"><span style="font-size:15.5px">Luggage Tags - Light Blue</span><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#00E5C0;flex:none">1300</span></div><div style="color:#8A8A92;font-size:13px;margin-top:5px">$0.96 each</div></div>
+      </div>
+
+<div data-item-card data-cat="Leather" data-name="Desk Trays" data-num="1301" data-search="Leather snap valet tray, valet tray, orange, red, black, pink, blue, mustard, grey, desk, teacher gift" style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:4px;overflow:hidden;transition:border-color .3s,transform .3s">
+        <div style="width:100%;aspect-ratio:1/1;background:#0F0F11"><img src="images/items/1301.jpg" alt="Desk Trays" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" /></div>
+        <div style="padding:13px 14px 15px"><div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px"><span style="font-size:15.5px">Desk Trays</span><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#00E5C0;flex:none">1301</span></div><div style="color:#8A8A92;font-size:13px;margin-top:5px">$2.00 each</div></div>
+      </div>
+
+<div data-item-card data-cat="Leather" data-name="PU Pencil Cases" data-num="1304" data-search="Faux leather zip case, pencil case, pink, green, teal, tan, school, teacher gift" style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:4px;overflow:hidden;transition:border-color .3s,transform .3s">
+        <div style="width:100%;aspect-ratio:1/1;background:#0F0F11"><img src="images/items/1304.jpg" alt="PU Pencil Cases" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" /></div>
+        <div style="padding:13px 14px 15px"><div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px"><span style="font-size:15.5px">PU Pencil Cases</span><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#00E5C0;flex:none">1304</span></div><div style="color:#8A8A92;font-size:13px;margin-top:5px">$3.00 each</div></div>
+      </div>
+
+<div data-item-card data-cat="Leather" data-name="Storage Pouches" data-num="1305" data-search="Zip pouch with clip, 8 colors, pouch, clip, black, brown, lavender, coral, white, keychain, teacher gift" style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:4px;overflow:hidden;transition:border-color .3s,transform .3s">
+        <div style="width:100%;aspect-ratio:1/1;background:#0F0F11"><img src="images/items/1305.jpg" alt="Storage Pouches" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" /></div>
+        <div style="padding:13px 14px 15px"><div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px"><span style="font-size:15.5px">Storage Pouches</span><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#00E5C0;flex:none">1305</span></div><div style="color:#8A8A92;font-size:13px;margin-top:5px">$4.00 each</div></div>
+      </div>
+
+<div data-item-card data-cat="Leather" data-name="Teacher Apple Pouch" data-num="1306" data-search="Leather apple zip pouch, clip, apple, red, green, pouch, keychain, teacher gift" style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:4px;overflow:hidden;transition:border-color .3s,transform .3s">
+        <div style="width:100%;aspect-ratio:1/1;background:#0F0F11"><img src="images/items/1306.jpg" alt="Teacher Apple Pouch" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" /></div>
+        <div style="padding:13px 14px 15px"><div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px"><span style="font-size:15.5px">Teacher Apple Pouch</span><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#00E5C0;flex:none">1306</span></div><div style="color:#8A8A92;font-size:13px;margin-top:5px">$4.00 each</div></div>
+      </div>
+
+<div data-item-card data-cat="Leather" data-name="PU Wallet / ID Holders" data-num="1307" data-search="Price depends on style, wallet, id holder, card holder, blue, yellow, red, grey, tan, pink, teal, teacher gift" style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:4px;overflow:hidden;transition:border-color .3s,transform .3s">
+        <div style="width:100%;aspect-ratio:1/1;background:#0F0F11"><img src="images/items/1307.jpg" alt="PU Wallet / ID Holders" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" /></div>
+        <div style="padding:13px 14px 15px"><div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px"><span style="font-size:15.5px">PU Wallet / ID Holders</span><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#00E5C0;flex:none">1307</span></div><div style="color:#8A8A92;font-size:13px;margin-top:5px">$3–$5 each</div></div>
+      </div>
+
+<div data-item-card data-cat="Leather" data-name="Leather Keychains" data-num="1309" data-search="Leather strap with key ring, 6 colors, keychain, strap, cream, black, brown, gold ring, teacher gift" style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:4px;overflow:hidden;transition:border-color .3s,transform .3s">
+        <div style="width:100%;aspect-ratio:1/1;background:#0F0F11"><img src="images/items/1309.jpg" alt="Leather Keychains" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" /></div>
+        <div style="padding:13px 14px 15px"><div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px"><span style="font-size:15.5px">Leather Keychains</span><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#00E5C0;flex:none">1309</span></div><div style="color:#8A8A92;font-size:13px;margin-top:5px">$0.62 each</div></div>
+      </div>
+
+<div data-item-card data-cat="Leather" data-name="Corner Heart Bookmarks" data-num="1310" data-search="Stitched leather, page corner, bookmark, heart, corner, blue, red, black, pink, tan, orange, brown, grey, teacher gift" style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:4px;overflow:hidden;transition:border-color .3s,transform .3s">
+        <div style="width:100%;aspect-ratio:1/1;background:#0F0F11"><img src="images/items/1310.jpg" alt="Corner Heart Bookmarks" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" /></div>
+        <div style="padding:13px 14px 15px"><div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px"><span style="font-size:15.5px">Corner Heart Bookmarks</span><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#00E5C0;flex:none">1310</span></div><div style="color:#8A8A92;font-size:13px;margin-top:5px">$0.50 each</div></div>
       </div></div>
   </div>
 
   <div data-section="Metal" style="margin-bottom:clamp(36px,5vw,56px)">
     <div style="display:flex;align-items:baseline;gap:14px;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,.08)">
       <h2 style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:clamp(20px,3vw,28px);letter-spacing:-.02em;color:#EDEDED">Metal</h2>
-      <span data-section-count style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#8A8A92">45 items</span>
+      <span data-section-count style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#8A8A92">48 items</span>
     </div>
     <div data-item-grid style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:clamp(12px,2vw,20px)">
 <div data-item-card data-cat="Metal" data-name="Bottle and corkscrew opener wood" data-num="201" style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:4px;overflow:hidden;transition:border-color .3s,transform .3s">
@@ -1356,13 +1417,28 @@
 <div data-item-card data-cat="Metal" data-name="Folding Compact Mirror" data-num="1294" data-search="Black, other colors available" style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:4px;overflow:hidden;transition:border-color .3s,transform .3s">
         <div style="width:100%;aspect-ratio:1/1;background:#0F0F11"><img src="images/items/1294.jpg" alt="Folding Compact Mirror" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" /></div>
         <div style="padding:13px 14px 15px"><div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px"><span style="font-size:15.5px">Folding Compact Mirror</span><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#00E5C0;flex:none">1294</span></div><div style="color:#8A8A92;font-size:13px;margin-top:5px">$3.00 each</div></div>
+      </div>
+
+<div data-item-card data-cat="Metal" data-name="Travel Mugs" data-num="1299" data-search="Stainless steel with straw, tumbler, aqua, red, pink, white, silver, rose gold, navy, black, teacher gift" style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:4px;overflow:hidden;transition:border-color .3s,transform .3s">
+        <div style="width:100%;aspect-ratio:1/1;background:#0F0F11"><img src="images/items/1299.jpg" alt="Travel Mugs" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" /></div>
+        <div style="padding:13px 14px 15px"><div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px"><span style="font-size:15.5px">Travel Mugs</span><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#00E5C0;flex:none">1299</span></div><div style="color:#8A8A92;font-size:13px;margin-top:5px">$5.00 each</div></div>
+      </div>
+
+<div data-item-card data-cat="Metal" data-name="Desk Tins" data-num="1302" data-search="Metal lidded tin, assorted colors, tin, sage green, black, rose gold, orange, red, white, desk, teacher gift" style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:4px;overflow:hidden;transition:border-color .3s,transform .3s">
+        <div style="width:100%;aspect-ratio:1/1;background:#0F0F11"><img src="images/items/1302.jpg" alt="Desk Tins" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" /></div>
+        <div style="padding:13px 14px 15px"><div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px"><span style="font-size:15.5px">Desk Tins</span><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#00E5C0;flex:none">1302</span></div><div style="color:#8A8A92;font-size:13px;margin-top:5px">$1.06 each</div></div>
+      </div>
+
+<div data-item-card data-cat="Metal" data-name="Compact Mirrors" data-num="1308" data-search="Folding stand mirror, 5 colors, mirror, folding, pink, compact, teacher gift" style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:4px;overflow:hidden;transition:border-color .3s,transform .3s">
+        <div style="width:100%;aspect-ratio:1/1;background:#0F0F11"><img src="images/items/1308.jpg" alt="Compact Mirrors" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" /></div>
+        <div style="padding:13px 14px 15px"><div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px"><span style="font-size:15.5px">Compact Mirrors</span><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#00E5C0;flex:none">1308</span></div><div style="color:#8A8A92;font-size:13px;margin-top:5px">$1.25 each</div></div>
       </div></div>
   </div>
 
   <div data-section="Wood" style="margin-bottom:clamp(36px,5vw,56px)">
     <div style="display:flex;align-items:baseline;gap:14px;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,.08)">
       <h2 style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:clamp(20px,3vw,28px);letter-spacing:-.02em;color:#EDEDED">Wood</h2>
-      <span data-section-count style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#8A8A92">7 items</span>
+      <span data-section-count style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#8A8A92">8 items</span>
     </div>
     <div data-item-grid style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:clamp(12px,2vw,20px)">
 <div data-item-card data-cat="Wood" data-name="Cutting board acacia walnut monogram" data-num="101" style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:4px;overflow:hidden;transition:border-color .3s,transform .3s">
@@ -1399,6 +1475,11 @@
 <div data-item-card data-cat="Wood" data-name="Wood & Leather Keychain" data-num="1289" data-search="Walnut wood, leather strap" style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:4px;overflow:hidden;transition:border-color .3s,transform .3s">
         <div style="width:100%;aspect-ratio:1/1;background:#0F0F11"><img src="images/items/1289.jpg" alt="Wood & Leather Keychain" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" /></div>
         <div style="padding:13px 14px 15px"><div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px"><span style="font-size:15.5px">Wood & Leather Keychain</span><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#00E5C0;flex:none">1289</span></div><div style="color:#8A8A92;font-size:13px;margin-top:5px">$1.00 each</div></div>
+      </div>
+
+<div data-item-card data-cat="Wood" data-name="Wood Heart Coasters" data-num="1303" data-search="Natural bamboo, bamboo, coaster, heart, natural, teacher gift" style="background:#141416;border:1px solid rgba(255,255,255,.08);border-radius:4px;overflow:hidden;transition:border-color .3s,transform .3s">
+        <div style="width:100%;aspect-ratio:1/1;background:#0F0F11"><img src="images/items/1303.jpg" alt="Wood Heart Coasters" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" /></div>
+        <div style="padding:13px 14px 15px"><div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px"><span style="font-size:15.5px">Wood Heart Coasters</span><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#00E5C0;flex:none">1303</span></div><div style="color:#8A8A92;font-size:13px;margin-top:5px">$1.00 each</div></div>
       </div></div>
   </div>
 
