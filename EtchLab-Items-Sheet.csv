@@ -202,10 +202,10 @@ Number,Item,Category,Pack Size,Product Cost (Pack),Cost Each,Engraving Price,Not
 1226,Heart Double Card Holder Keychain,Leather,,,,,"From customer proposal PDFs, NEEDS PRICING",PENDING,Yes,No
 1227,Mini Wristlet Purse Keychain,Leather,,,,,"From customer proposal PDFs, NEEDS PRICING",PENDING,Yes,No
 1228,Tulip Charm Keychain,Leather,,,,,"From customer proposal PDFs, NEEDS PRICING",PENDING,Yes,No
-1229,Mini Quilted Backpack Pouch Keychain,Leather,,,,,"From customer proposal PDFs, NEEDS PRICING",PENDING,Yes,No
+1229,Mini Quilted Backpack Pouch Keychain,Leather,1,$4.00,$4.00,$0,"Price from Beach Bat Mitzvah proposal",PENDING,Yes,No
 1230,Mirror & Lip Case Keychain Set,Leather,,,,,"From customer proposal PDFs, NEEDS PRICING",PENDING,Yes,No
 1231,Lipstick Case & Mirror Keychain Set,Leather,,,,,"From customer proposal PDFs, NEEDS PRICING",PENDING,Yes,No
-1232,Lipstick Case & Heart Mirror Keychain Set,Leather,,,,,"From customer proposal PDFs, NEEDS PRICING",PENDING,Yes,No
+1232,Lipstick Case & Heart Mirror Keychain Set,Leather,1,$3.00,$3.00,$0,"Price from Beach Bat Mitzvah proposal",PENDING,Yes,No
 1233,Zip Pouch Card Case Keychain,Leather,,,,,"From customer proposal PDFs, NEEDS PRICING",PENDING,Yes,No
 1234,Heart Charm Tassel,Leather,,,,,"From customer proposal PDFs, NEEDS PRICING",PENDING,Yes,No
 1235,Mini Bag with Heart Mirror Wristlet Keychain,Leather,,,,,"From customer proposal PDFs, NEEDS PRICING",PENDING,Yes,No
@@ -284,3 +284,48 @@ Number,Item,Category,Pack Size,Product Cost (Pack),Cost Each,Engraving Price,Not
 1308,"Compact Mirrors",Metal,24,$30.00,$1.25,$0,"From Teachers Event proposal, real price",PENDING,Yes,No
 1309,"Leather Keychains",Leather,24,$15.00,$0.62,$0,"From Teachers Event proposal, real price",PENDING,Yes,No
 1310,"Corner Heart Bookmarks",Leather,30,$15.00,$0.50,$0,"From Teachers Event proposal, real price",PENDING,Yes,No
+1311,"Snowcapped Peaks Necklace",Jewelry,1,$4.00,$4.00,$0,"From Winter Bat Mitzvah proposal, real price",PENDING,Yes,No
+1312,"Winter Bear & Cub Necklace",Jewelry,1,$4.00,$4.00,$0,"From Winter Bat Mitzvah proposal, real price",PENDING,Yes,No
+1313,"Ice Skate Necklace",Jewelry,1,$4.00,$4.00,$0,"From Winter Bat Mitzvah proposal, real price",PENDING,Yes,No
+1314,"Hockey Sticks Necklace",Jewelry,1,$4.00,$4.00,$0,"From Winter Bat Mitzvah proposal, real price",PENDING,Yes,No
+1315,"Snowflake Necklace",Jewelry,1,$4.00,$4.00,$0,"From Winter Bat Mitzvah proposal, real price",PENDING,Yes,No
+1316,"Lip Balm Keychain",Leather,1,$1.50,$1.50,$0,"From Winter Bat Mitzvah proposal, real price",PENDING,Yes,No
+1317,"Metallic Lip Balm Keychain",Accessories,1,,,$0,"From Winter Bat Mitzvah proposal, custom quote",PENDING,Yes,No
+1318,"Chrome Lip Balm",Accessories,1,,,$0,"From Winter Bat Mitzvah proposal, custom quote",PENDING,Yes,No
+1319,"Hot Cocoa Tumbler · 14 oz",Metal,24,$200.00,$8.33,$0,"From Winter Bat Mitzvah proposal, real price",PENDING,Yes,No
+1320,"Hot Cocoa Tumbler · Pastels",Metal,24,$200.00,$8.33,$0,"From Winter Bat Mitzvah proposal, real price",PENDING,Yes,No
+1321,"Snow Day Tumbler · 30 oz",Metal,24,$200.00,$8.33,$0,"From Winter Bat Mitzvah proposal, real price",PENDING,Yes,No
+1322,"Fireside Camp Mug · 12 oz",Metal,25,$215.00,$8.60,$0,"From Winter Bat Mitzvah proposal, real price",PENDING,Yes,No
+1323,"Rechargeable Hand Warmer",Tech,1,,,$0,"From Winter Bat Mitzvah proposal, custom quote",PENDING,Yes,No
+1324,"Snowboard & Snowflake Keychain",Metal,1,$1.50,$1.50,$0,"From Winter Bat Mitzvah proposal, real price",PENDING,Yes,No
+1325,"Cozy Mitten Keychain",Accessories,1,$1.50,$1.50,$0,"From Winter Bat Mitzvah proposal, real price",PENDING,Yes,No
+1326,"Leather Bottle Opener Keychain",Leather,50,$75.00,$1.50,$0,"From Winter Bat Mitzvah proposal, real price",PENDING,Yes,No
+1327,"Wine & Bottle Opener Keychain",Metal,48,$50.00,$1.04,$0,"From Winter Bat Mitzvah proposal, real price",PENDING,Yes,No
+1328,"Fireside Wood Coaster",Wood,20,$48.00,$2.40,$0,"From Winter Bat Mitzvah proposal, real price",PENDING,Yes,No
+1329,"Wallet Card Bottle Opener",Metal,40,$40.00,$1.00,$0,"From Winter Bat Mitzvah proposal, real price",PENDING,Yes,No
+1330,"Leather Luggage Tag",Leather,50,$50.00,$1.00,$0,"From Winter Bat Mitzvah proposal, real price",PENDING,Yes,No
+1331,"Cosmetic Travel Bag",Leather,24,$52.00,$2.17,$0,"From Winter Bat Mitzvah proposal, real price",PENDING,Yes,No
+1332,"Claw Clip Set",Accessories,2,$4.00,$2.00,$0,"From Winter Bat Mitzvah proposal, real price",PENDING,Yes,No
+1333,"Snow White Claw Clip",Accessories,8,$25.00,$3.13,$0,"From Winter Bat Mitzvah proposal, real price",PENDING,Yes,No
+1334,"Palm Tree Leather Keychain",Leather,1,$2.00,$2.00,$0,"From Beach Bat Mitzvah proposal, real price",PENDING,Yes,No
+1335,"Palm Tree Leather Charm",Leather,1,$1.50,$1.50,$0,"From Beach Bat Mitzvah proposal, real price",PENDING,Yes,No
+1336,"Dolphin Leather Keychain",Leather,1,$3.00,$3.00,$0,"From Beach Bat Mitzvah proposal, real price",PENDING,Yes,No
+1337,"Sea Turtle Leather Bag Charm",Leather,1,$2.00,$2.00,$0,"From Beach Bat Mitzvah proposal, real price",PENDING,Yes,No
+1338,"Surfboard Keychain",Metal,1,$3.00,$3.00,$0,"From Beach Bat Mitzvah proposal, real price",PENDING,Yes,No
+1339,"Wave Cutout Bar Necklace",Jewelry,1,$4.00,$4.00,$0,"From Beach Bat Mitzvah proposal, real price",PENDING,Yes,No
+1340,"Dolphin Necklace",Jewelry,1,$4.00,$4.00,$0,"From Beach Bat Mitzvah proposal, real price",PENDING,Yes,No
+1341,"Wave and Heart Cutout Necklace",Jewelry,1,$4.00,$4.00,$0,"From Beach Bat Mitzvah proposal, real price",PENDING,Yes,No
+1342,"Swimmer Cutout Necklace",Jewelry,1,$4.00,$4.00,$0,"From Beach Bat Mitzvah proposal, real price",PENDING,Yes,No
+1343,"Shark Necklace",Jewelry,1,$3.00,$3.00,$0,"From Beach Bat Mitzvah proposal, real price",PENDING,Yes,No
+1344,"Bar Anklet",Jewelry,1,$4.00,$4.00,$0,"From Beach Bat Mitzvah proposal, real price",PENDING,Yes,No
+1345,"Heart Leather Coin Purse",Leather,1,$4.00,$4.00,$0,"From Beach Bat Mitzvah proposal, real price",PENDING,Yes,No
+1346,"Waterproof Zip Pouch",Leather,1,$3.00,$3.00,$0,"From Beach Bat Mitzvah proposal, real price",PENDING,Yes,No
+1347,"Squeeze Top Leather Pouch",Leather,12,$20.00,$1.67,$0,"From Beach Bat Mitzvah proposal, real price",PENDING,Yes,No
+1348,"Gold Oval Sunglasses",Metal,1,$8.00,$8.00,$0,"From Beach Bat Mitzvah proposal, real price",PENDING,Yes,No
+1349,"Classic Frame Sunglasses",Metal,10,$30.00,$3.00,$0,"From Beach Bat Mitzvah proposal, real price",PENDING,Yes,No
+1350,"Leather Sunglasses Case",Leather,1,$2.00,$2.00,$0,"From Beach Bat Mitzvah proposal, real price",PENDING,Yes,No
+1351,"20oz Skinny Tumbler",Metal,24,$190.00,$7.92,$0,"From Beach Bat Mitzvah proposal, real price",PENDING,Yes,No
+1352,"30oz Curve Tumbler",Metal,24,$200.00,$8.33,$0,"From Beach Bat Mitzvah proposal, real price",PENDING,Yes,No
+1353,"32oz Pink Tumbler",Metal,25,$200.00,$8.00,$0,"From Beach Bat Mitzvah proposal, real price",PENDING,Yes,No
+1354,"Wireless Earbuds",Tech,1,,,$0,"From Beach Bat Mitzvah proposal, custom quote",PENDING,Yes,No
+1355,"Bluetooth Headphones",Tech,1,,,$0,"From Beach Bat Mitzvah proposal, custom quote",PENDING,Yes,No
