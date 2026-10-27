@@ -1,2 +1,6 @@
-# Internal only: supplier links and cost basis. Never publish.
+# Internal only: supplier links, cost basis, payment handles. Never publish.
 proposal-builder.html
+.internal/
+Files/
+.claude/
+.DS_Store
