@@ -33,4 +33,4 @@ These tools are private and live in a separate private repo, `aryehw330-lgtm/Etc
 - Do not commit anything from those tools to this public repo.
 
 ## Known issue to keep in mind
-`EtchLab-Items-Sheet.csv` is tracked here and served publicly, but it has costs and supplier links. The owner is deciding whether to move it private. Until then keep updating it as `.internal/CLAUDE.md` describes, never link to it from a page, and ask the owner before moving, renaming or restructuring it.
+`EtchLab-Items-Sheet.csv` is tracked here and served publicly, but it has costs and supplier links. The owner knows and has decided to leave it public. Keep updating it as `.internal/CLAUDE.md` describes, don't bring it up again, never link to it from a page, and ask the owner before moving, renaming or restructuring it.
