@@ -15,7 +15,7 @@ Marketing site for EtchLab live laser-engraving events. Static HTML on GitHub Pa
 - Both owners edit this repo at the same time. `git pull` before you start and again before you push.
 - Test at phone width (375px) before pushing. Check the nav, the items grid and the hero.
 - Commit straight to `main` with a clear message. Never force-push or rewrite history. A mistake can always be undone with `git revert`.
-- Local preview: `python3 -m http.server 8743` in this folder, then open http://localhost:8743.
+- Local preview: `python3 -m http.server 8743 --bind 127.0.0.1` in this folder (local only, never the whole network), then open http://localhost:8743.
 
 ## Items catalog (`engravables.html`)
 - Cards are `<div data-item-card data-cat data-name data-num data-search>`, grouped in `<div data-section="Jewelry|Leather|Metal|Wood|Tech|Judaica|Accessories">`. Copy an existing card for the exact markup.
