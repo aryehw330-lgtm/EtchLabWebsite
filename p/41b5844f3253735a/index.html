@@ -265,6 +265,7 @@
       document.querySelector('[data-job=signature]').classList.toggle("hidden", c.signatureOn === false);
       if (start === "photo" && c.photoOn === false) start = "";
       if (start === "signature" && c.signatureOn === false) start = "";
+      openedFromEvent = !!start;
       $("nameLabel").textContent = c.nameQuestion || "Your name";
       $("fsPhone").classList.toggle("hidden", !c.wantPhone);
       var sel = $("item"); sel.innerHTML = "";
@@ -293,7 +294,14 @@
   document.querySelectorAll("[data-job]").forEach(function(b){
     b.addEventListener("click", function(){ startJob(b.getAttribute("data-job")); });
   });
-  $("backBtn").addEventListener("click", function(){ show("screenPick"); job = null; });
+  // Came from the event's own page (its Add a photo / Add a signature button)? Back goes
+  // straight there. Only a visitor who opened this page directly sees the choice screen.
+  var openedFromEvent = false;
+  $("backBtn").addEventListener("click", function(){
+    var home = cfg && (cfg.homeUrl || cfg.textUrl);
+    if (openedFromEvent && home) { location.href = home; return; }
+    show("screenPick"); job = null;
+  });
   $("againBtn").addEventListener("click", function(){ resetAll(); show("screenPick"); });
 
   function startJob(j){
