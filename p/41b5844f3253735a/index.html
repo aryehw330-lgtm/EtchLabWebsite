@@ -398,7 +398,12 @@
 
   function startJob(j){
     job = j;
-    if (cfg && cfg.itemPics) { var keepIt = currentItem(); fillItems(cfg, j, keepIt); onItemChange(); }
+    if (cfg && cfg.itemPics) {
+      // Rebuilding the item list for this job also rebuilds the colors: keep the color already chosen.
+      var keepIt = currentItem(), keepCol = $("color").value;
+      fillItems(cfg, j, keepIt); onItemChange();
+      if (keepCol) for (var kc = 0; kc < $("color").options.length; kc++) if ($("color").options[kc].value === keepCol) $("color").selectedIndex = kc;
+    }
     $("err").textContent = "";
     $("fsPhoto").classList.toggle("hidden", j !== "photo");
     $("fsSig").classList.toggle("hidden", j !== "signature");
