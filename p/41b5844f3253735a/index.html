@@ -226,6 +226,7 @@
     dogtag:    {ar: 1.75},
     square:    {ar: 1},
     circle:    {ar: 1},
+    heart:     {ar: 1},
     portrait:  {ar: 0.75},
     landscape: {ar: 1.333}
   };
@@ -238,6 +239,16 @@
   function shapePath(ctx, id, w, h){
     ctx.beginPath();
     if (id === "circle") { ctx.ellipse(w/2, h/2, w/2, h/2, 0, 0, Math.PI*2); return; }
+    if (id === "heart") {
+      ctx.moveTo(w*.5,h*.25);
+      ctx.bezierCurveTo(w*.5,h*.1, w*.38,0, w*.25,0);
+      ctx.bezierCurveTo(w*.1,0, 0,h*.12, 0,h*.3);
+      ctx.bezierCurveTo(0,h*.6, w*.35,h*.78, w*.5,h);
+      ctx.bezierCurveTo(w*.65,h*.78, w,h*.6, w,h*.3);
+      ctx.bezierCurveTo(w,h*.12, w*.9,0, w*.75,0);
+      ctx.bezierCurveTo(w*.62,0, w*.5,h*.1, w*.5,h*.25);
+      ctx.closePath(); return;
+    }
     var r = id === "dogtag" ? h*0.22 : Math.min(w,h)*0.04;
     ctx.moveTo(r,0); ctx.lineTo(w-r,0); ctx.quadraticCurveTo(w,0,w,r);
     ctx.lineTo(w,h-r); ctx.quadraticCurveTo(w,h,w-r,h);
