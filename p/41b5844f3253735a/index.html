@@ -186,6 +186,7 @@
         <input type="tel" id="phone" autocomplete="tel" maxlength="40" inputmode="tel">
       </fieldset>
 
+      <p class="err hidden" id="soldOutMsg">Everything is claimed for now. Please check with the team.</p>
       <button class="btn primary" type="submit" id="submitBtn" style="width:100%">Send to the laser</button>
       <p class="err" id="err" role="alert"></p>
     </form>
@@ -294,12 +295,48 @@
       (c.items || []).forEach(function(it){ var o = document.createElement("option"); o.value = it; o.textContent = it; sel.appendChild(o); });
       $("fsItem").classList.toggle("hidden", !(c.items && c.items.length > 1));
       onItemChange();
+      $("soldOutMsg").classList.toggle("hidden", !c.soldOut);
+      // The item and color already chosen on the event's sign-up page come along in the link.
+      var wantItem = (qs.get("item") || "").trim().toLowerCase(), wantColor = (qs.get("color") || "").trim().toLowerCase();
+      if (wantItem) {
+        for (var oi = 0; oi < $("item").options.length; oi++) {
+          if ($("item").options[oi].value.toLowerCase() === wantItem) { $("item").selectedIndex = oi; break; }
+        }
+        onItemChange();
+        if (wantColor) {
+          for (var ci = 0; ci < $("color").options.length; ci++) {
+            if ($("color").options[ci].value.toLowerCase() === wantColor) { $("color").selectedIndex = ci; break; }
+          }
+        }
+      }
       // The sign-up page's "Add a photo" / "Add a signature" buttons open straight to that tool.
       if (start === "photo" || start === "signature" || start === "logo") startJob(start); else show("screenPick");
     }).catch(function(){ problem("We couldn't reach the event. Check your connection and try again."); });
   }
 
   function currentItem(){ return (cfg.items && cfg.items.length) ? $("item").value : ""; }
+  // Sold-out choices are simply not shown. Stock can change while this page sits open, so look
+  // again whenever someone comes back to it.
+  document.addEventListener("visibilitychange", function(){
+    if (document.visibilityState === "visible" && cfg && !$("screenForm").classList.contains("hidden")) refreshAvailability();
+  });
+
+  // Re-read what is still available (it can change while someone is on this page) and rebuild the
+  // item and color choices, keeping their pick if it is still there.
+  function refreshAvailability(){
+    return apiGet({action:"config", e:EVENT}).then(function(c){
+      if (!c.ok) return;
+      var keepItem = currentItem(), keepColor = $("color").value;
+      cfg.items = c.items; cfg.colors = c.colors; cfg.soldOut = c.soldOut;
+      var sel = $("item"); sel.innerHTML = "";
+      (c.items || []).forEach(function(it){ var o = document.createElement("option"); o.value = it; o.textContent = it; sel.appendChild(o); });
+      $("fsItem").classList.toggle("hidden", !(c.items && c.items.length > 1));
+      if (keepItem) for (var i = 0; i < sel.options.length; i++) if (sel.options[i].value === keepItem) sel.selectedIndex = i;
+      onItemChange();
+      if (keepColor) for (var j = 0; j < $("color").options.length; j++) if ($("color").options[j].value === keepColor) $("color").selectedIndex = j;
+      $("soldOutMsg").classList.toggle("hidden", !c.soldOut);
+    });
+  }
 
   function onItemChange(){
     var colors = (cfg.colors && cfg.colors[currentItem() || "__single_item__"]) || [];
@@ -832,7 +869,10 @@
                               bg: (job === "photo" && $("removeBg").checked) ? "remove" : "keep"})
       });
     }).then(function(r){ return r.json(); }).then(function(res){
-      if (!res.ok) throw new Error(res.error || "Something went wrong.");
+      if (!res.ok) {
+        if (res.refresh) refreshAvailability();
+        throw new Error(res.error || "Something went wrong.");
+      }
       $("doneMsg").textContent = "Thanks, " + name + ". We'll call your name when it's ready.";
       show("screenDone");
     }).catch(function(e){
