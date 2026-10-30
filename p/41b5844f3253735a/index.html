@@ -198,6 +198,7 @@
       <div class="tick"><svg viewBox="0 0 36 36" aria-hidden="true"><path d="M8 19l7 7 13-15"/></svg></div>
       <h1>You're in the line!</h1>
       <p class="lede" id="doneMsg">We'll call your name when it's ready.</p>
+      <p class="lede hidden" id="oneNote">Please — only one item per person.</p>
       <button class="btn" type="button" id="againBtn" style="max-width:260px;margin:0 auto">Add another</button>
       <a class="btn hidden" id="homeBtn" style="max-width:260px;margin:12px auto 0;text-decoration:none">Back to the sign-up</a>
     </div>
@@ -281,6 +282,12 @@
       var back = c.homeUrl || c.textUrl;
       if (back) $("chooseText").href = back; else $("chooseText").classList.add("hidden");
       if (c.homeUrl) { $("homeBtn").href = c.homeUrl; $("homeBtn").classList.remove("hidden"); }
+      // One item per person: say so after sending, and no "Add another", just the way back to the sign-up.
+      if (c.onePerPerson) {
+        $("oneNote").classList.remove("hidden"); $("againBtn").classList.add("hidden");
+        var back1 = c.homeUrl || c.textUrl;
+        if (back1) { $("homeBtn").href = back1; $("homeBtn").classList.remove("hidden"); }
+      }
       var start = (qs.get("start") || "").toLowerCase();
       document.querySelector('[data-job=photo]').classList.toggle("hidden", c.photoOn === false);
       document.querySelector('[data-job=signature]').classList.toggle("hidden", c.signatureOn === false);
@@ -291,9 +298,7 @@
       openedFromEvent = !!start;
       $("nameLabel").textContent = c.nameQuestion || "Your name";
       $("fsPhone").classList.toggle("hidden", !c.wantPhone);
-      var sel = $("item"); sel.innerHTML = "";
-      (c.items || []).forEach(function(it){ var o = document.createElement("option"); o.value = it; o.textContent = it; sel.appendChild(o); });
-      $("fsItem").classList.toggle("hidden", !(c.items && c.items.length > 1));
+      fillItems(c, null, "");
       onItemChange();
       $("soldOutMsg").classList.toggle("hidden", !c.soldOut);
       // The item and color already chosen on the event's sign-up page come along in the link.
@@ -314,6 +319,21 @@
     }).catch(function(){ problem("We couldn't reach the event. Check your connection and try again."); });
   }
 
+  // The item choices. When the event lets only some items take a photo / signature / logo (the
+  // itemPics setting), a job lists just the items that allow it; with no job picked yet, every
+  // item that allows anything. No setting = every item, as always.
+  function itemAllows(c, it, kind){
+    if (!c.itemPics) return true;
+    var k = c.itemPics[it] || [];
+    return kind ? k.indexOf(kind) >= 0 : k.length > 0;
+  }
+  function fillItems(c, kind, keep){
+    var sel = $("item"), list = (c.items || []).filter(function(it){ return itemAllows(c, it, kind); });
+    sel.innerHTML = "";
+    list.forEach(function(it){ var o = document.createElement("option"); o.value = it; o.textContent = it; sel.appendChild(o); });
+    if (keep) for (var i = 0; i < sel.options.length; i++) if (sel.options[i].value === keep) sel.selectedIndex = i;
+    $("fsItem").classList.toggle("hidden", !(list.length > 1));
+  }
   function currentItem(){ return (cfg.items && cfg.items.length) ? $("item").value : ""; }
   // Sold-out choices are simply not shown. Stock can change while this page sits open, so look
   // again whenever someone comes back to it.
@@ -327,11 +347,8 @@
     return apiGet({action:"config", e:EVENT}).then(function(c){
       if (!c.ok) return;
       var keepItem = currentItem(), keepColor = $("color").value;
-      cfg.items = c.items; cfg.colors = c.colors; cfg.soldOut = c.soldOut;
-      var sel = $("item"); sel.innerHTML = "";
-      (c.items || []).forEach(function(it){ var o = document.createElement("option"); o.value = it; o.textContent = it; sel.appendChild(o); });
-      $("fsItem").classList.toggle("hidden", !(c.items && c.items.length > 1));
-      if (keepItem) for (var i = 0; i < sel.options.length; i++) if (sel.options[i].value === keepItem) sel.selectedIndex = i;
+      cfg.items = c.items; cfg.colors = c.colors; cfg.soldOut = c.soldOut; cfg.itemPics = c.itemPics;
+      fillItems(c, job, keepItem);
       onItemChange();
       if (keepColor) for (var j = 0; j < $("color").options.length; j++) if ($("color").options[j].value === keepColor) $("color").selectedIndex = j;
       $("soldOutMsg").classList.toggle("hidden", !c.soldOut);
@@ -361,10 +378,16 @@
     if (openedFromEvent && home) { location.href = home; return; }
     show("screenPick"); job = null;
   });
-  $("againBtn").addEventListener("click", function(){ resetAll(); show("screenPick"); });
+  $("againBtn").addEventListener("click", function(){
+    // Back to the event's own sign-up page (the one the guest started from), not this picture page.
+    var home = cfg && (cfg.homeUrl || cfg.textUrl);
+    if (home) { location.href = home; return; }
+    resetAll(); show("screenPick");
+  });
 
   function startJob(j){
     job = j;
+    if (cfg && cfg.itemPics) { var keepIt = currentItem(); fillItems(cfg, j, keepIt); onItemChange(); }
     $("err").textContent = "";
     $("fsPhoto").classList.toggle("hidden", j !== "photo");
     $("fsSig").classList.toggle("hidden", j !== "signature");
@@ -473,6 +496,8 @@
     slate:           {label:"slate",                 invert:true,  contrast:1.40, gamma:1.05, local:0.70, sharpen:1.0, bg:[52,56,60],    ink:[214,214,210]},
     glass:           {label:"glass",                 invert:true,  contrast:1.15, gamma:0.95, local:0.40, sharpen:0.8, bg:[38,58,66],    ink:[225,236,238]},
     acrylic_dark:    {label:"acrylic",               invert:true,  contrast:1.20, gamma:0.95, local:0.45, sharpen:0.9, bg:[18,18,22],    ink:[240,240,244]},
+    plastic:         {label:"plastic",               invert:false, contrast:1.20, gamma:0.95, local:0.40, sharpen:0.9, bg:[196,200,204], ink:[38,40,46]},
+    plain:           {label:"",                      invert:false, contrast:1.15, gamma:0.95, local:0.35, sharpen:0.9, bg:[225,225,225], ink:[40,40,44]},
     leather:         {label:"leather",               invert:false, contrast:1.25, gamma:0.90, local:0.30, sharpen:0.6, bg:[150,98,60],   ink:[52,30,16]}
   };
   function presetFor(item){
@@ -513,7 +538,7 @@
     var ac = a.getContext("2d"); ac.clearRect(0,0,pw,ph); ac.fillStyle = "#1B1B1E"; ac.fillRect(0,0,pw,ph); ac.drawImage(tmp,0,0);
 
     var p = presetFor(currentItem());
-    $("engraveLab").textContent = "How it will look on " + p.label;
+    $("engraveLab").textContent = p.label ? "How it will look on " + p.label : "How it will look";
     var d = t.getImageData(0,0,pw,ph), px = d.data, n = pw*ph, i, L = new Float32Array(n), A = new Float32Array(n);
     for (i = 0; i < n; i++) { L[i] = (0.299*px[4*i] + 0.587*px[4*i+1] + 0.114*px[4*i+2]) / 255; A[i] = px[4*i+3] / 255; }
 
@@ -866,7 +891,8 @@
         headers: {"Content-Type": "text/plain;charset=utf-8"},   // plain text keeps this a "simple" request (no CORS preflight)
         body: JSON.stringify({e: EVENT, jobType: job, name: name, phone: $("phone").value.trim(),
                               item: currentItem(), color: $("color").value, png: b64, svg: svg,
-                              bg: (job === "photo" && $("removeBg").checked) ? "remove" : "keep"})
+                              bg: (job === "photo" && $("removeBg").checked) ? "remove" : "keep",
+                              s: (qs.get("s") || "").replace(/[^A-Za-z0-9]/g, "").slice(0, 40)})
       });
     }).then(function(r){ return r.json(); }).then(function(res){
       if (!res.ok) {
