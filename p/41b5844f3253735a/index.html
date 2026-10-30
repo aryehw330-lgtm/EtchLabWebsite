@@ -91,6 +91,10 @@
         <svg viewBox="0 0 34 34" aria-hidden="true"><path d="M4 24c4-12 7-16 9-14s-3 12-1 12 4-9 6-9-1 7 1 7 4-4 7-6"/><path d="M4 29h26"/></svg>
         <div><b>Signature</b><span>Sign with your finger</span></div>
       </button>
+      <button class="choice hidden" type="button" data-job="logo">
+        <svg viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="11"/><path d="M12 21l5-10 5 10M13.5 18h7"/></svg>
+        <div><b>Logo</b><span>A logo or design, cleaned up for the laser</span></div>
+      </button>
     </div>
   </section>
 
@@ -153,6 +157,22 @@
           <div class="row" style="margin-top:12px">
             <button class="btn small" type="button" id="undoBtn">Undo</button>
             <button class="btn small" type="button" id="clearBtn">Clear</button>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset id="fsLogo" class="hidden">
+        <span class="lab">Your logo</span>
+        <div id="logoChoose">
+          <div class="tips"><b>Tip:</b> use a big, clear picture of the logo on a plain background. A PNG with a see-through background is best. We turn it into a clean, sharp engraving.</div>
+          <div class="row"><button class="btn" type="button" id="pickLogoBtn">Choose a logo file</button></div>
+        </div>
+        <input type="file" id="fileLogo" accept="image/*" hidden>
+        <div id="logoArea" class="hidden">
+          <div class="stage-card">
+            <canvas id="logoPreview" aria-label="Preview of the logo on your item" style="cursor:default"></canvas>
+            <p class="hint" id="logoHint"></p>
+            <div class="row" style="margin-top:12px"><button class="btn small" type="button" id="changeLogo">Use a different file</button></div>
           </div>
         </div>
       </fieldset>
@@ -263,6 +283,8 @@
       var start = (qs.get("start") || "").toLowerCase();
       document.querySelector('[data-job=photo]').classList.toggle("hidden", c.photoOn === false);
       document.querySelector('[data-job=signature]').classList.toggle("hidden", c.signatureOn === false);
+      document.querySelector('[data-job=logo]').classList.toggle("hidden", c.logoOn !== true);
+      if (start === "logo" && c.logoOn !== true) start = "";
       if (start === "photo" && c.photoOn === false) start = "";
       if (start === "signature" && c.signatureOn === false) start = "";
       openedFromEvent = !!start;
@@ -273,7 +295,7 @@
       $("fsItem").classList.toggle("hidden", !(c.items && c.items.length > 1));
       onItemChange();
       // The sign-up page's "Add a photo" / "Add a signature" buttons open straight to that tool.
-      if (start === "photo" || start === "signature") startJob(start); else show("screenPick");
+      if (start === "photo" || start === "signature" || start === "logo") startJob(start); else show("screenPick");
     }).catch(function(){ problem("We couldn't reach the event. Check your connection and try again."); });
   }
 
@@ -287,7 +309,7 @@
     }
     colors.forEach(function(c){ var o = document.createElement("option"); o.value = c; o.textContent = c; sel.appendChild(o); });
     $("fsColor").classList.toggle("hidden", colors.length < 2);
-    if (job === "photo") layoutCrop(); else if (job === "signature") layoutSig();
+    if (job === "photo") layoutCrop(); else if (job === "signature") layoutSig(); else if (job === "logo") drawLogoPreview();
   }
   $("item").addEventListener("change", onItemChange);
 
@@ -309,14 +331,18 @@
     $("err").textContent = "";
     $("fsPhoto").classList.toggle("hidden", j !== "photo");
     $("fsSig").classList.toggle("hidden", j !== "signature");
-    $("formTitle").textContent = j === "photo" ? "Add your photo" : "Add your signature";
-    $("formLede").textContent = j === "photo" ? "We crop it to fit your item, then engrave it." : "Sign below. Your signature is engraved just like you draw it.";
+    $("fsLogo").classList.toggle("hidden", j !== "logo");
+    $("formTitle").textContent = j === "photo" ? "Add your photo" : j === "logo" ? "Add your logo" : "Add your signature";
+    $("formLede").textContent = j === "photo" ? "We crop it to fit your item, then engrave it."
+      : j === "logo" ? "We clean it up and fit it to your item, ready for the laser."
+      : "Sign below. Your signature is engraved just like you draw it.";
     show("screenForm");
-    if (j === "photo") layoutCrop(); else layoutSig();
+    if (j === "photo") layoutCrop(); else if (j === "logo") drawLogoPreview(); else layoutSig();
   }
 
   function resetAll(){
-    img = null; bgMask = null; $("removeBg").checked = false; strokes = []; $("name").value = ""; $("phone").value = ""; $("err").textContent = "";
+    img = null; bgMask = null; $("removeBg").checked = false; strokes = [];
+    logoImg = null; $("logoArea").classList.add("hidden"); $("logoChoose").classList.remove("hidden"); $("name").value = ""; $("phone").value = ""; $("err").textContent = "";
     $("cropArea").classList.add("hidden"); $("photoButtons").classList.remove("hidden");
     $("submitBtn").disabled = false; $("submitBtn").textContent = "Send to the laser";
   }
@@ -574,7 +600,7 @@
   cropCv.addEventListener("wheel", function(e){ if (!img) return; e.preventDefault(); setZoom(zoom * (e.deltaY < 0 ? 1.06 : 0.94)); clampCrop(); schedule(); }, {passive:false});
   function setZoom(z){ zoom = Math.min(4, Math.max(1, z)); $("zoom").value = zoom; }
   $("zoom").addEventListener("input", function(){ zoom = parseFloat(this.value); clampCrop(); schedule(); });
-  window.addEventListener("resize", function(){ if (job === "photo" && img) layoutCrop(); else if (job === "signature") layoutSig(); });
+  window.addEventListener("resize", function(){ if (job === "photo" && img) layoutCrop(); else if (job === "signature") layoutSig(); else if (job === "logo") drawLogoPreview(); });
 
   // Full-size crop for the laser: color, transparent outside the shape.
   function exportPhoto(){
@@ -677,6 +703,91 @@
     return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+W+' '+H+'" width="'+W+'" height="'+H+'">'+parts.join("")+'</svg>';
   }
 
+  // =================== LOGO ===================
+  // The guest picks a logo file. We show how it will engrave (background removed, sharp edges,
+  // fitted inside the item). The helper does the real laser-ready cleanup; this is the preview.
+  var logoImg = null, logoNotice = "";
+  var logoCv = $("logoPreview");
+  function sstep(x, lo, hi){ var y = Math.min(1, Math.max(0, (x - lo) / (hi - lo))); return y * y * (3 - 2 * y); }
+
+  function loadLogo(file){
+    if (!file) return;
+    var p = window.createImageBitmap ? createImageBitmap(file).catch(function(){ return viaImg(file); }) : viaImg(file);
+    p.then(shrinkIfHuge).then(function(bmp){
+      if (!bmp.width || !bmp.height) throw new Error("empty");
+      logoImg = bmp;
+      $("logoArea").classList.remove("hidden"); $("logoChoose").classList.add("hidden");
+      $("err").textContent = "";
+      logoNotice = Math.max(bmp.width, bmp.height) < 400
+        ? "This logo is small, so its edges may look rough. A bigger file engraves better. " : "";
+      drawLogoPreview();
+    }).catch(function(){ $("err").textContent = "That file couldn't be opened. Please choose a PNG or JPG picture of the logo."; });
+  }
+  $("pickLogoBtn").addEventListener("click", function(){ $("fileLogo").click(); });
+  $("fileLogo").addEventListener("change", function(){ loadLogo(this.files[0]); this.value = ""; });
+  $("changeLogo").addEventListener("click", function(){ logoImg = null; $("logoArea").classList.add("hidden"); $("logoChoose").classList.remove("hidden"); });
+
+  function drawLogoPreview(){
+    if (!logoImg || !cfg) return;
+    var id = shapeFor(currentItem()), ar = SHAPES[id].ar, p = presetFor(currentItem());
+    var w = Math.min(logoCv.parentNode.clientWidth - 24 || 320, 520), h = Math.max(1, Math.round(w / ar));
+    logoCv.width = w; logoCv.height = h; logoCv.style.height = h + "px";
+    var ctx = logoCv.getContext("2d");
+    var f = Math.min(1, 700 / Math.max(logoImg.width, logoImg.height));
+    var ww = Math.max(1, Math.round(logoImg.width * f)), wh = Math.max(1, Math.round(logoImg.height * f));
+    var wc = document.createElement("canvas"); wc.width = ww; wc.height = wh;
+    var wx = wc.getContext("2d"); wx.drawImage(logoImg, 0, 0, ww, wh);
+    var px = wx.getImageData(0, 0, ww, wh).data, n = ww * wh, i, x, y, S = new Float32Array(n), see = 0;
+    for (i = 0; i < n; i++) if (px[4*i+3] < 230) see++;
+    if (see / n > 0.02) {                       // a PNG with a see-through background
+      for (i = 0; i < n; i++) S[i] = px[4*i+3] / 255;
+    } else {                                    // background colour = median of the picture's border
+      var rs = [], gs = [], bs = [];
+      var add = function(a, b){ var k = 4 * (b * ww + a); rs.push(px[k]); gs.push(px[k+1]); bs.push(px[k+2]); };
+      for (x = 0; x < ww; x++) { add(x, 0); add(x, wh - 1); }
+      for (y = 0; y < wh; y++) { add(0, y); add(ww - 1, y); }
+      var med = function(a){ a.sort(function(u, v){ return u - v; }); return a[a.length >> 1]; };
+      var br = med(rs), bg = med(gs), bb = med(bs);
+      for (i = 0; i < n; i++) {
+        var dr = px[4*i] - br, dg = px[4*i+1] - bg, db = px[4*i+2] - bb;
+        S[i] = sstep(Math.sqrt(dr*dr + dg*dg + db*db) / 255 / Math.sqrt(3), 0.08, 0.30);
+      }
+    }
+    var minx = ww, miny = wh, maxx = -1, maxy = -1;
+    for (i = 0; i < n; i++) {
+      S[i] = sstep(S[i], 0.35, 0.65);
+      if (S[i] > 0.094) { x = i % ww; y = (i / ww) | 0; if (x < minx) minx = x; if (x > maxx) maxx = x; if (y < miny) miny = y; if (y > maxy) maxy = y; }
+    }
+    ctx.clearRect(0, 0, w, h); ctx.fillStyle = "#1B1B1E"; ctx.fillRect(0, 0, w, h);
+    ctx.save(); shapePath(ctx, id, w, h); ctx.clip();
+    ctx.fillStyle = "rgb(" + p.bg.join(",") + ")"; ctx.fillRect(0, 0, w, h);
+    if (maxx < 0) {
+      ctx.restore();
+      $("logoHint").textContent = "We couldn't find a logo in this picture. Try a clearer one.";
+      return;
+    }
+    var cw = maxx - minx + 1, chh = maxy - miny + 1;
+    var mc = document.createElement("canvas"); mc.width = cw; mc.height = chh;
+    var mx = mc.getContext("2d"), md = mx.createImageData(cw, chh);
+    for (y = 0; y < chh; y++) for (x = 0; x < cw; x++) {
+      var k = 4 * (y * cw + x), s = S[(y + miny) * ww + (x + minx)];
+      md.data[k] = p.ink[0]; md.data[k+1] = p.ink[1]; md.data[k+2] = p.ink[2]; md.data[k+3] = s * 255;
+    }
+    mx.putImageData(md, 0, 0);
+    var m = 0.06, sc = Math.min(w * (1 - 2*m) / cw, h * (1 - 2*m) / chh);
+    ctx.imageSmoothingQuality = "high";
+    ctx.drawImage(mc, (w - cw * sc) / 2, (h - chh * sc) / 2, cw * sc, chh * sc);
+    ctx.restore();
+    $("logoHint").textContent = logoNotice + "This is how it will engrave on " + p.label + ". We clean it up further for the laser.";
+  }
+
+  function exportLogo(){
+    var f = Math.min(1, 2000 / Math.max(logoImg.width, logoImg.height));
+    var c = document.createElement("canvas"); c.width = Math.round(logoImg.width * f); c.height = Math.round(logoImg.height * f);
+    c.getContext("2d").drawImage(logoImg, 0, 0, c.width, c.height);
+    return c;
+  }
+
   // =================== SUBMIT ===================
   function canvasToB64(cv){
     return new Promise(function(res, rej){
@@ -702,12 +813,15 @@
     var name = $("name").value.trim();
     if (job === "photo" && !img) return err.textContent = "Please add a photo first.";
     if (job === "signature" && !strokes.length) return err.textContent = "Please sign in the box first.";
+    if (job === "logo" && !logoImg) return err.textContent = "Please choose a logo file first.";
     if (!$("fsColor").classList.contains("hidden") && !$("color").value) return err.textContent = "Please choose a color.";
     if (!name) { $("name").focus(); return err.textContent = "Please enter your name."; }
 
     var btn = $("submitBtn"); btn.disabled = true; btn.textContent = "Sending…";
     var svg = "", cv;
-    if (job === "photo") cv = exportPhoto(); else { var sg = exportSignature(); cv = sg.canvas; svg = sg.svg; }
+    if (job === "photo") cv = exportPhoto();
+    else if (job === "logo") cv = exportLogo();
+    else { var sg = exportSignature(); cv = sg.canvas; svg = sg.svg; }
 
     canvasToB64(cv).then(function(b64){
       return fetch(ENDPOINT, {
