@@ -217,6 +217,10 @@
   var isLocal = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
   if (isLocal && qs.get("api")) ENDPOINT = qs.get("api");
   var EVENT = (qs.get("e") || "").trim();
+  // Opened inside the tablet's own sign-up page (a pop-up over it): tell that page when the guest is
+  // done or goes back, so the tablet stays on its main page instead of leaving it.
+  var EMBED = qs.get("embed") === "1";
+  function tellParent(what){ try { window.parent.postMessage({lnhGuest: what}, "*"); } catch (x) {} }
 
   var $ = function(id){ return document.getElementById(id); };
   var cfg = null, job = null;
@@ -385,6 +389,7 @@
   // straight there. Only a visitor who opened this page directly sees the choice screen.
   var openedFromEvent = false;
   $("backBtn").addEventListener("click", function(){
+    if (EMBED) { tellParent("close"); return; }
     var home = cfg && (cfg.homeUrl || cfg.textUrl);
     if (openedFromEvent && home) { location.href = home; return; }
     show("screenPick"); job = null;
@@ -917,6 +922,7 @@
       }
       $("doneMsg").textContent = "Thanks, " + name + ". We'll call your name when it's ready.";
       show("screenDone");
+      if (EMBED) tellParent("done");
     }).catch(function(e){
       err.textContent = (e && e.message && e.message !== "Failed to fetch") ? e.message : "That didn't send. Check your connection and tap Send again.";
       btn.disabled = false; btn.textContent = "Send to the laser";
