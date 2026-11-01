@@ -127,8 +127,8 @@
           <div class="stage-card">
             <canvas id="cropCanvas" aria-label="Crop area. Drag to move the photo."></canvas>
             <label class="lab" for="zoom" style="margin-top:12px">Zoom</label>
-            <input type="range" id="zoom" min="1" max="4" step="0.01" value="1">
-            <p class="hint">Drag the photo to line it up. Pinch or use the slider to zoom.</p>
+            <input type="range" id="zoom" min="0.3" max="4" step="0.01" value="1">
+            <p class="hint">Drag the photo to line it up. Pinch or use the slider to zoom in or out.</p>
           </div>
           <div class="previews">
             <div class="pv"><span class="lab">Shape</span><canvas id="shapePreview"></canvas></div>
@@ -240,8 +240,8 @@
     if (!id) id = cfg.defaultShape || "square";
     return SHAPES[id] ? id : "square";
   }
-  function shapePath(ctx, id, w, h){
-    ctx.beginPath();
+  function shapePath(ctx, id, w, h, keep){
+    if (!keep) ctx.beginPath();          // keep = add this shape to the path already started (for the dimming below)
     if (id === "circle") { ctx.ellipse(w/2, h/2, w/2, h/2, 0, 0, Math.PI*2); return; }
     if (id === "heart") {
       ctx.moveTo(w*.5,h*.25);
@@ -485,22 +485,30 @@
   }
   function minScale(){ return Math.max(sw/iw, sh/ih); }
   function scale(){ return minScale() * zoom; }
+  // The photo can be zoomed out until it is smaller than the frame. Then it can sit anywhere inside the frame
+  // (never off the edge), and the empty rest of the frame stays transparent, so nothing is engraved there.
   function clampCrop(){
     if (!img) return;
     var s = scale(), hw = sw/(2*s), hh = sh/(2*s);
-    cx = Math.min(Math.max(cx, hw), iw - hw); cy = Math.min(Math.max(cy, hh), ih - hh);
+    cx = hw >= iw/2 ? Math.min(Math.max(cx, iw - hw), hw) : Math.min(Math.max(cx, hw), iw - hw);
+    cy = hh >= ih/2 ? Math.min(Math.max(cy, ih - hh), hh) : Math.min(Math.max(cy, hh), ih - hh);
+  }
+  // Draws the whole picture (or a same-shaped mask of it) into a W x H box that stands for the frame.
+  function drawFrame(ctx, src, W, H){
+    var s = scale(), kx = W/sw, ky = H/sh;
+    ctx.drawImage(src, 0, 0, src.width, src.height, (sw/2 - cx*s)*kx, (sh/2 - cy*s)*ky, iw*s*kx, ih*s*ky);
   }
   function schedule(){ if (!raf) raf = requestAnimationFrame(function(){ raf = 0; drawCrop(); }); }
 
   function drawCrop(){
     if (!img) return;
     var s = scale(), id = shapeFor(currentItem());
-    cropCtx.clearRect(0,0,sw,sh);
-    cropCtx.drawImage(img, cx - sw/(2*s), cy - sh/(2*s), sw/s, sh/s, 0, 0, sw, sh);
+    cropCtx.fillStyle = "#1B1B1E"; cropCtx.fillRect(0,0,sw,sh);
+    drawFrame(cropCtx, img, sw, sh);
     // dim everything outside the item's shape
     cropCtx.save();
     cropCtx.beginPath(); cropCtx.rect(0,0,sw,sh);
-    shapePath(cropCtx, id, sw, sh); // appended as a second sub-path
+    shapePath(cropCtx, id, sw, sh, true); // appended as a second sub-path: the dim covers only OUTSIDE the shape
     cropCtx.fillStyle = "rgba(0,0,0,.6)"; cropCtx.fill("evenodd");
     cropCtx.restore();
     shapePath(cropCtx, id, sw, sh);
@@ -554,7 +562,7 @@
     var t = tmp.getContext("2d");
     t.clearRect(0,0,pw,ph);
     t.save(); shapePath(t, id, pw, ph); t.clip();
-    t.drawImage(img, cx - sw/(2*s), cy - sh/(2*s), sw/s, sh/s, 0, 0, pw, ph);
+    drawFrame(t, img, pw, ph);
     t.restore();
     var ac = a.getContext("2d"); ac.clearRect(0,0,pw,ph); ac.fillStyle = "#1B1B1E"; ac.fillRect(0,0,pw,ph); ac.drawImage(tmp,0,0);
 
@@ -567,9 +575,9 @@
     if (bgMask && $("removeBg").checked) {
       var mc = drawPreviews.mc || (drawPreviews.mc = document.createElement("canvas"));
       mc.width = pw; mc.height = ph;
-      var mx = mc.getContext("2d"), f = bgMask.width / iw;
+      var mx = mc.getContext("2d");
       mx.clearRect(0,0,pw,ph);
-      mx.drawImage(bgMask, (cx - sw/(2*s))*f, (cy - sh/(2*s))*f, sw/s*f, sh/s*f, 0, 0, pw, ph);
+      drawFrame(mx, bgMask, pw, ph);
       var md = mx.getImageData(0,0,pw,ph).data, M = new Float32Array(n);
       for (i = 0; i < n; i++) M[i] = md[4*i+3] / 255;
       M = boxBlur(M, pw, ph, 2);
@@ -681,7 +689,7 @@
   function endPtr(e){ pointers.delete(e.pointerId); lastDist = 0; cropCv.style.cursor = "grab"; }
   cropCv.addEventListener("pointerup", endPtr); cropCv.addEventListener("pointercancel", endPtr);
   cropCv.addEventListener("wheel", function(e){ if (!img) return; e.preventDefault(); setZoom(zoom * (e.deltaY < 0 ? 1.06 : 0.94)); clampCrop(); schedule(); }, {passive:false});
-  function setZoom(z){ zoom = Math.min(4, Math.max(1, z)); $("zoom").value = zoom; }
+  function setZoom(z){ zoom = Math.min(4, Math.max(0.3, z)); $("zoom").value = zoom; }
   $("zoom").addEventListener("input", function(){ zoom = parseFloat(this.value); clampCrop(); schedule(); });
   window.addEventListener("resize", function(){ if (job === "photo" && img) layoutCrop(); else if (job === "signature") layoutSig(); else if (job === "logo") drawLogoPreview(); });
 
@@ -693,7 +701,7 @@
     var o = out.getContext("2d"), s = scale();
     o.save(); shapePath(o, id, w, h); o.clip();
     o.imageSmoothingQuality = "high";
-    o.drawImage(img, cx - sw/(2*s), cy - sh/(2*s), sw/s, sh/s, 0, 0, w, h);
+    drawFrame(o, img, w, h);
     o.restore();
     return out;
   }
