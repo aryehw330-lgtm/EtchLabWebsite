@@ -45,6 +45,9 @@
   #cropCanvas,#sigCanvas{width:100%;border-radius:4px;touch-action:none;background:#000;cursor:grab}
   #sigCanvas{background:#F3F1EC;cursor:crosshair}
   #fsSig .stage-card.full{position:fixed;inset:0;z-index:60;border-radius:0;border:0;background:var(--bg);overflow:auto;padding:12px 14px calc(12px + env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:center}
+  #sigBox{position:relative}
+  #fullBtn{position:absolute;top:6px;right:6px;z-index:3;min-height:38px;padding:0 12px;border-radius:6px;border:1px solid var(--accent);background:rgba(10,10,11,.8);color:var(--accent);font:inherit;font-weight:600;font-size:14px;cursor:pointer}
+  #fsSig .stage-card.full #fullBtn{position:fixed;top:12px;right:12px;min-height:50px;padding:0 18px;font-size:17px;background:var(--accent);color:var(--accent-ink);border-color:var(--accent);z-index:70}
   #fsSig .stage-card.full .seg{width:100%;max-width:520px}
   #fsSig .stage-card.full .row{justify-content:center}
   .previews{display:grid;grid-template-columns:1fr;gap:10px;margin-top:12px}
@@ -156,13 +159,12 @@
             <button type="button" data-w="0.014" aria-pressed="false">Bold</button>
           </div>
           <span class="lab" style="margin-top:14px">2. Sign inside the box</span>
-          <canvas id="sigCanvas" aria-label="Signature area. Draw with your finger or a stylus."></canvas>
+          <div id="sigBox"><canvas id="sigCanvas" aria-label="Signature area. Draw with your finger or a stylus."></canvas><button type="button" id="fullBtn">&#x26F6; Full screen</button></div>
           <p class="hint" id="sigHint">Sign inside the box.</p>
           <p class="hint hidden" id="sigTurn">Tip: turn your phone sideways to get a bigger box.</p>
           <div class="row" style="margin-top:12px">
             <button class="btn small" type="button" id="undoBtn">Undo</button>
             <button class="btn small" type="button" id="clearBtn">Clear</button>
-            <button class="btn small" type="button" id="fullBtn">Draw full screen</button>
           </div>
         </div>
       </fieldset>
@@ -781,12 +783,12 @@
   function setSigFull(on){
     sigFull = on;
     document.querySelector("#fsSig .stage-card").classList.toggle("full", on);
-    $("fullBtn").textContent = on ? "Done" : "Draw full screen";
-    $("fullBtn").classList.toggle("primary", on);
+    $("fullBtn").innerHTML = on ? "&#x2715; Exit full screen" : "&#x26F6; Full screen";
     if (!on) $("sigTurn").classList.add("hidden");
     layoutSig(); window.scrollTo(0, 0);
   }
   $("fullBtn").addEventListener("click", function(){ setSigFull(!sigFull); });
+  document.addEventListener("keydown", function(e){ if (e.key === "Escape" && sigFull) setSigFull(false); });
   $("undoBtn").addEventListener("click", function(){ strokes.pop(); drawSig(); });
   $("clearBtn").addEventListener("click", function(){ strokes = []; drawSig(); });
   document.querySelectorAll("#thickSeg button").forEach(function(b){
