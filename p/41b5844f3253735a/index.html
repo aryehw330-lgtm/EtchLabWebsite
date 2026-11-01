@@ -44,6 +44,9 @@
   canvas{display:block;max-width:100%}
   #cropCanvas,#sigCanvas{width:100%;border-radius:4px;touch-action:none;background:#000;cursor:grab}
   #sigCanvas{background:#F3F1EC;cursor:crosshair}
+  #fsSig .stage-card.full{position:fixed;inset:0;z-index:60;border-radius:0;border:0;background:var(--bg);overflow:auto;padding:12px 14px calc(12px + env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:center}
+  #fsSig .stage-card.full .seg{width:100%;max-width:520px}
+  #fsSig .stage-card.full .row{justify-content:center}
   .previews{display:grid;grid-template-columns:1fr;gap:10px;margin-top:12px}
   .pv{background:var(--panel2);border-radius:4px;padding:10px}
   .pv canvas{width:100%;height:auto;border-radius:3px}
@@ -146,17 +149,20 @@
       <fieldset id="fsSig" class="hidden">
         <span class="lab">Your signature</span>
         <div class="stage-card">
-          <canvas id="sigCanvas" aria-label="Signature area. Draw with your finger or a stylus."></canvas>
-          <p class="hint" id="sigHint">Sign inside the box.</p>
-          <span class="lab" style="margin-top:12px">Line thickness</span>
+          <span class="lab">1. Choose your line thickness</span>
           <div class="seg" id="thickSeg">
             <button type="button" data-w="0.004" aria-pressed="false">Thin</button>
             <button type="button" data-w="0.008" aria-pressed="true">Medium</button>
             <button type="button" data-w="0.014" aria-pressed="false">Bold</button>
           </div>
+          <span class="lab" style="margin-top:14px">2. Sign inside the box</span>
+          <canvas id="sigCanvas" aria-label="Signature area. Draw with your finger or a stylus."></canvas>
+          <p class="hint" id="sigHint">Sign inside the box.</p>
+          <p class="hint hidden" id="sigTurn">Tip: turn your phone sideways to get a bigger box.</p>
           <div class="row" style="margin-top:12px">
             <button class="btn small" type="button" id="undoBtn">Undo</button>
             <button class="btn small" type="button" id="clearBtn">Clear</button>
+            <button class="btn small" type="button" id="fullBtn">Draw full screen</button>
           </div>
         </div>
       </fieldset>
@@ -422,6 +428,7 @@
   }
 
   function resetAll(){
+    if (sigFull) setSigFull(false);
     img = null; bgMask = null; $("removeBg").checked = false; strokes = [];
     logoImg = null; $("logoArea").classList.add("hidden"); $("logoChoose").classList.remove("hidden"); $("name").value = ""; $("phone").value = ""; $("err").textContent = "";
     $("cropArea").classList.add("hidden"); $("photoButtons").classList.remove("hidden");
@@ -708,13 +715,18 @@
 
   // =================== SIGNATURE ===================
   var sigCv = $("sigCanvas"), sigCtx = sigCv.getContext("2d");
-  var strokes = [], cur = null, sigW = 0, sigH = 0, thick = 0.008;
+  var strokes = [], cur = null, sigW = 0, sigH = 0, thick = 0.008, sigFull = false;
 
   function layoutSig(){
     if (!cfg) return;
     var id = shapeFor(currentItem()), ar = SHAPES[id].ar;
     if (ar < 1.3) ar = 1.6;       // a signature needs a wide box even on a square item
     var w = Math.min(sigCv.parentNode.clientWidth - 24 || 320, 520);
+    if (sigFull) {      // same shape of box, as big as the screen allows (room kept for the buttons)
+      var vw = window.innerWidth - 28, vh = window.innerHeight - 230;
+      w = Math.max(240, Math.min(vw, vh * ar));
+      $("sigTurn").classList.toggle("hidden", !(window.innerHeight > window.innerWidth));
+    }
     sigW = Math.round(w); sigH = Math.round(w / ar); dpr = window.devicePixelRatio || 1;
     sigCv.width = sigW*dpr; sigCv.height = sigH*dpr; sigCv.style.height = sigH + "px";
     sigCtx.setTransform(dpr,0,0,dpr,0,0);
@@ -766,6 +778,15 @@
   });
   function sigEnd(){ if (!cur) return; strokes.push(cur); cur = null; drawSig(); }
   sigCv.addEventListener("pointerup", sigEnd); sigCv.addEventListener("pointercancel", sigEnd);
+  function setSigFull(on){
+    sigFull = on;
+    document.querySelector("#fsSig .stage-card").classList.toggle("full", on);
+    $("fullBtn").textContent = on ? "Done" : "Draw full screen";
+    $("fullBtn").classList.toggle("primary", on);
+    if (!on) $("sigTurn").classList.add("hidden");
+    layoutSig(); window.scrollTo(0, 0);
+  }
+  $("fullBtn").addEventListener("click", function(){ setSigFull(!sigFull); });
   $("undoBtn").addEventListener("click", function(){ strokes.pop(); drawSig(); });
   $("clearBtn").addEventListener("click", function(){ strokes = []; drawSig(); });
   document.querySelectorAll("#thickSeg button").forEach(function(b){
