@@ -47,10 +47,12 @@
   #fsSig .stage-card.full{position:fixed;inset:0;z-index:60;border-radius:0;border:0;background:var(--bg);overflow:auto;padding:12px 14px calc(12px + env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:center}
   .labrow{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-top:14px}
   .labrow .lab{margin:0 0 4px}
-  #fsSig .stage-card.full{padding-top:74px}
   #fullBtn{flex:none;min-height:38px;padding:0 12px;border-radius:6px;border:1px solid var(--accent);background:rgba(10,10,11,.8);color:var(--accent);font:inherit;font-weight:600;font-size:14px;cursor:pointer}
   #fsSig .stage-card.full #fullBtn{position:fixed;top:12px;right:12px;min-height:50px;padding:0 18px;font-size:17px;background:var(--accent);color:var(--accent-ink);border-color:var(--accent);z-index:70}
-  #fsSig .stage-card.full .seg{width:100%;max-width:520px}
+  #fsSig .stage-card.full .seg{width:calc(100% - 205px);align-self:flex-start}
+  #fsSig .stage-card.full .lab,#fsSig .stage-card.full #sigHint{display:none}
+  #fsSig .stage-card.full .labrow{height:14px;margin:0}
+  @media (max-width:560px){#fsSig .stage-card.full .seg{width:100%;margin-top:58px}}
   #fsSig .stage-card.full .row{justify-content:center}
   .previews{display:grid;grid-template-columns:1fr;gap:10px;margin-top:12px}
   .pv{background:var(--panel2);border-radius:4px;padding:10px}
@@ -726,10 +728,20 @@
     var id = shapeFor(currentItem()), ar = SHAPES[id].ar;
     if (ar < 1.3) ar = 1.6;       // a signature needs a wide box even on a square item
     var w = Math.min(sigCv.parentNode.clientWidth - 24 || 320, 520);
-    if (sigFull) {      // same shape of box, as big as the screen allows (room kept for the buttons)
-      var vw = window.innerWidth - 28, vh = window.innerHeight - 230;
-      w = Math.max(240, Math.min(vw, vh * ar));
+    if (sigFull) {
+      // Full screen: the box fills the width and takes whatever height is left, so every button
+      // fits one screen with no scrolling. It never gets narrower than the item's own shape;
+      // a signature that is already started keeps its shape.
+      var card = document.querySelector("#fsSig .stage-card"), cs = getComputedStyle(card), locked = (strokes.length && sigW && sigH) ? sigW / sigH : 0;
+      var FLAT = 4.5, fw = Math.max(240, card.clientWidth - 28), kids = card.children, last = null;
       $("sigTurn").classList.toggle("hidden", !(window.innerHeight > window.innerWidth));
+      sigW = Math.round(fw); sigH = Math.round(fw / (locked || FLAT)); sigCv.style.height = sigH + "px"; card.scrollTop = 0;
+      for (var ki = 0; ki < kids.length; ki++) { if (kids[ki].offsetHeight > 0) last = kids[ki]; }
+      var over = last ? last.getBoundingClientRect().bottom - card.getBoundingClientRect().top - parseFloat(cs.borderTopWidth) - sigH : 0;
+      var avail = window.innerHeight - over - parseFloat(cs.paddingBottom) - 6, hh;
+      if (locked) { hh = Math.min(fw / locked, Math.max(avail, 120)); fw = hh * locked; }
+      else { hh = Math.max(Math.min(avail, fw / ar), Math.max(fw / FLAT, 110)); }
+      w = fw; ar = fw / hh;
     }
     sigW = Math.round(w); sigH = Math.round(w / ar); dpr = window.devicePixelRatio || 1;
     sigCv.width = sigW*dpr; sigCv.height = sigH*dpr; sigCv.style.height = sigH + "px";
