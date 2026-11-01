@@ -965,7 +965,8 @@
         if (res.refresh) refreshAvailability();
         throw new Error(res.error || "Something went wrong.");
       }
-      $("doneMsg").textContent = "Thanks, " + name + ". We'll call your name when it's ready.";
+      var pickedText = [currentItem(), $("color").value].filter(function(x){ return x; }).join(" \u00b7 ");
+      $("doneMsg").textContent = "Thanks, " + name + "! Your " + (job === "logo" ? "logo" : job) + " was sent" + (pickedText ? " (" + pickedText + ")" : "") + ". We'll call your name when it's ready.";
       show("screenDone");
       if (EMBED) tellParent("done");
     }).catch(function(e){
