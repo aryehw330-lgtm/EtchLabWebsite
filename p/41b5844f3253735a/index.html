@@ -893,6 +893,36 @@
   $("fileLogo").addEventListener("change", function(){ loadLogo(this.files[0]); this.value = ""; });
   $("changeLogo").addEventListener("click", function(){ logoImg = null; $("logoArea").classList.add("hidden"); $("logoChoose").classList.remove("hidden"); });
 
+  // Is the picture's border NOT one steady colour (a logo photographed on wood, fabric, a table...)? The four
+  // edges are read as lines; the slow drift of a line (a gradient or shadow) is taken off and the texture
+  // that is left must show on at least two edges. Same rule the app uses, so a guest is told the truth.
+  function logoBackgroundBusy(px, ww, wh){
+    var m = Math.max(2, Math.round(Math.min(ww, wh) * 0.015)), lines = [], i, k;
+    function line(len, at){
+      var out = [];
+      for (i = 0; i < len; i++) { var a = 0, b = 0, c = 0; for (k = 0; k < m; k++) { var p = at(i, k); a += px[p]; b += px[p+1]; c += px[p+2]; } out.push([a/m/255, b/m/255, c/m/255]); }
+      return out;
+    }
+    lines.push(line(ww, function(i, k){ return 4*(k*ww + i); }));
+    lines.push(line(ww, function(i, k){ return 4*((wh-1-k)*ww + i); }));
+    lines.push(line(wh, function(i, k){ return 4*(i*ww + k); }));
+    lines.push(line(wh, function(i, k){ return 4*(i*ww + (ww-1-k)); }));
+    var tex = lines.map(function(ln){
+      var n = ln.length, kk = Math.max(15, Math.floor(n/6)); if (kk % 2 === 0) kk++;
+      var half = kk >> 1, sum = 0, j, t, v, a0, a1, a2;
+      function at(q){ if (q < 0) q = -q; if (q >= n) q = 2*n - 2 - q; return ln[Math.min(n-1, Math.max(0, q))]; }
+      for (j = 0; j < n; j++) {
+        a0 = a1 = a2 = 0;
+        for (t = -half; t <= half; t++) { v = at(j + t); a0 += v[0]; a1 += v[1]; a2 += v[2]; }
+        var d0 = ln[j][0] - a0/kk, d1 = ln[j][1] - a1/kk, d2 = ln[j][2] - a2/kk;
+        sum += Math.sqrt((d0*d0 + d1*d1 + d2*d2) / 3);
+      }
+      return sum / n;
+    });
+    tex.sort(function(a, b){ return b - a; });
+    return tex[1] > 0.03;
+  }
+
   function drawLogoPreview(){
     if (!logoImg || !cfg) return;
     var id = shapeFor(currentItem()), ar = SHAPES[id].ar, p = presetFor(currentItem());
@@ -907,6 +937,16 @@
     for (i = 0; i < n; i++) if (px[4*i+3] < 230) see++;
     if (see / n > 0.02) {                       // a PNG with a see-through background
       for (i = 0; i < n; i++) S[i] = px[4*i+3] / 255;
+    } else if (logoBackgroundBusy(px, ww, wh)) {  // busy background: the colour method can't tell it apart
+      ctx.clearRect(0, 0, w, h); ctx.fillStyle = "#1B1B1E"; ctx.fillRect(0, 0, w, h);
+      ctx.save(); shapePath(ctx, id, w, h); ctx.clip();
+      ctx.fillStyle = "#f2f2f2"; ctx.fillRect(0, 0, w, h);
+      var bsc = Math.min(w / logoImg.width, h / logoImg.height);
+      ctx.imageSmoothingQuality = "high";
+      ctx.drawImage(logoImg, (w - logoImg.width*bsc)/2, (h - logoImg.height*bsc)/2, logoImg.width*bsc, logoImg.height*bsc);
+      ctx.restore();
+      $("logoHint").textContent = logoNotice + "This picture has a busy background. No problem: we cut your logo out for you when we engrave it, so you can send it as it is.";
+      return;
     } else {                                    // background colour = median of the picture's border
       var rs = [], gs = [], bs = [];
       var add = function(a, b){ var k = 4 * (b * ww + a); rs.push(px[k]); gs.push(px[k+1]); bs.push(px[k+2]); };
@@ -944,7 +984,7 @@
     ctx.imageSmoothingQuality = "high";
     ctx.drawImage(mc, (w - cw * sc) / 2, (h - chh * sc) / 2, cw * sc, chh * sc);
     ctx.restore();
-    $("logoHint").textContent = logoNotice + "This is how it will engrave on " + p.label + ". We clean it up further for the laser.";
+    $("logoHint").textContent = logoNotice + (p.label ? "This is how it will engrave on " + p.label : "This is how it will engrave") + ". We clean it up further for the laser.";
   }
 
   function exportLogo(){
