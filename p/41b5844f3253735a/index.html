@@ -638,9 +638,43 @@
       var files = await mod.FilesetResolver.forVisionTasks(MP_BASE + "/wasm");
       return mod.ImageSegmenter.createFromOptions(files, {
         baseOptions: {modelAssetPath: MP_MODEL}, runningMode: "IMAGE",
-        outputCategoryMask: true, outputConfidenceMasks: false});
+        outputCategoryMask: true, outputConfidenceMasks: true});
     })(), 30000).then(function(s){ segmenter = s; return s; }, function(e){ segLoading = null; throw e; });
     return segLoading;
+  }
+
+  // Makes the small model's rough, blocky mask follow the real edges of the photo: the model's soft
+  // "how sure am I" values are stretched to the photo's size, then a guided filter (He et al.) pulls the
+  // edge onto the actual light/dark edge in the picture. Costs about 20 ms and no extra download.
+  function guidedFilter(I, p, w, h, r, eps){
+    var n = w*h, i, mI = boxBlur(I, w, h, r), mp = boxBlur(p, w, h, r), Ip = new Float32Array(n), II = new Float32Array(n);
+    for (i = 0; i < n; i++) { Ip[i] = I[i]*p[i]; II[i] = I[i]*I[i]; }
+    var mIp = boxBlur(Ip, w, h, r), mII = boxBlur(II, w, h, r), a = new Float32Array(n), b = new Float32Array(n);
+    for (i = 0; i < n; i++) { var cov = mIp[i] - mI[i]*mp[i], v = mII[i] - mI[i]*mI[i]; a[i] = cov/(v + eps); b[i] = mp[i] - a[i]*mI[i]; }
+    var ma = boxBlur(a, w, h, r), mb = boxBlur(b, w, h, r), q = new Float32Array(n);
+    for (i = 0; i < n; i++) q[i] = ma[i]*I[i] + mb[i];
+    return q;
+  }
+  function edgeFitMask(res, srcCanvas, w, h){
+    var cms = res.confidenceMasks, mw = res.categoryMask.width, mh = res.categoryMask.height, i, k;
+    if (!cms || !cms.length) return null;
+    var soft = new Float32Array(mw*mh);
+    for (k in KEEP_CLASSES) { var arr = cms[k] && cms[k].getAsFloat32Array(); if (arr) for (i = 0; i < soft.length; i++) soft[i] += arr[i]; }
+    var sc = document.createElement("canvas"); sc.width = mw; sc.height = mh;
+    var sx = sc.getContext("2d"), sd = sx.createImageData(mw, mh);
+    for (i = 0; i < soft.length; i++) { var g = Math.round(255*Math.min(1, soft[i])); sd.data[4*i] = sd.data[4*i+1] = sd.data[4*i+2] = g; sd.data[4*i+3] = 255; }
+    sx.putImageData(sd, 0, 0);
+    var up = document.createElement("canvas"); up.width = w; up.height = h;
+    var ux = up.getContext("2d"); ux.imageSmoothingQuality = "high"; ux.drawImage(sc, 0, 0, w, h);
+    var ud = ux.getImageData(0, 0, w, h).data, pd = srcCanvas.getContext("2d").getImageData(0, 0, w, h).data;
+    var n = w*h, S = new Float32Array(n), I = new Float32Array(n);
+    for (i = 0; i < n; i++) { S[i] = ud[4*i]/255; I[i] = (0.299*pd[4*i] + 0.587*pd[4*i+1] + 0.114*pd[4*i+2])/255; }
+    var G = guidedFilter(I, S, w, h, Math.max(4, Math.round(Math.max(w, h)/60)), 1e-3);
+    var out = document.createElement("canvas"); out.width = w; out.height = h;
+    var ox = out.getContext("2d"), od = ox.createImageData(w, h), t;
+    for (i = 0; i < n; i++) { t = Math.min(1, Math.max(0, (G[i] - 0.3)/0.4)); od.data[4*i+3] = Math.round(255*t*t*(3 - 2*t)); }
+    ox.putImageData(od, 0, 0);
+    return out;
   }
 
   function bgNote(msg){ $("bgNote").textContent = msg; }
@@ -662,13 +696,17 @@
       var mx = mc.getContext("2d"), od = mx.createImageData(mw, mh), kept = 0;
       for (var i = 0; i < data.length; i++) if (KEEP_CLASSES[data[i]]) { od.data[4*i+3] = 255; kept++; }
       mx.putImageData(od, 0, 0);
-      if (res.close) res.close();
+      var closeRes = function(){ if (res.close) res.close(); };
       if (kept < data.length * 0.03) {
+        closeRes();
         $("removeBg").checked = false;
         bgNote("We couldn't find a person or pet, so your background stays. Choose a closer photo to try again.");
         return;
       }
-      bgMask = mc; bgNote(BG_DEFAULT_NOTE); schedule();
+      var fitted = null;
+      try { fitted = edgeFitMask(res, src, w, h); } catch (x) { fitted = null; }    // the plain mask is the fallback
+      closeRes();
+      bgMask = fitted || mc; bgNote(BG_DEFAULT_NOTE); schedule();
     }).catch(function(){
       bgFailed = true;
       bgNote("The preview isn't available right now, but we'll still remove your background when we engrave.");
